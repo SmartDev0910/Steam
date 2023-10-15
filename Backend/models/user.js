@@ -13,13 +13,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  roleName: {
+  steamId: {
     type: String,
     trim: true,
   },
-  sponsorName: {
-    type: String,
-    trim: true,
+  isWhiteListed: {
+    type: Boolean,
+    default: false,
   },
   role: {
     type: String,
