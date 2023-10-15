@@ -55,7 +55,6 @@ import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
 
 // Data
-import { allSponsors } from "actions/sponsorAction";
 import { createUser, allUsers, deleteUser, editUser, detailUser } from "actions/userAction";
 import { getRoleColor } from "layouts/users/utils";
 
@@ -90,7 +89,9 @@ function Users() {
   const columns = [
     { name: "name", align: "left" },
     { name: "email", align: "left" },
+    { name: "steam id", align: "left" },
     { name: "role", align: "center" },
+    { name: "white list", align: "center" },
     { name: "action", align: "center" },
   ];
 
@@ -99,28 +100,15 @@ function Users() {
   const [open, setOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState();
   const [openTypeFlag, setOpenTypeFlag] = useState("");
-  const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [sponsorData, setSponsorData] = useState([]);
-  const [sponsorOptions, setSponsorOptions] = useState([]);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [sponsorName, setSponsorName] = useState({ label: "Select Sponsor", value: "" });
-  const [roleName, setRoleName] = useState({ label: "User Role", value: "" });
-  const [role, setRole] = useState({
-    fans: { view: false, edit: false, delete: false },
-    shops: { view: false, edit: false, delete: false },
-    videos: { view: false, edit: false, delete: false },
-    agendas: { view: false, edit: false, delete: false },
-    marketplace: { view: false, edit: false, delete: false },
-    sponsor: { view: false, edit: false, delete: false },
-  });
-
-  const steps = ["User Details", "Define Roles"];
+  const [steamId, setSteamId] = useState("");
+  const [role, setRole] = useState({ label: "", value: "" });
+  const [isWhiteListed, setWhiteListed] = useState({ label: "", value: "" });
 
   const handleAddUserOpen = () => {
-    setStep(0);
     setOpenTypeFlag("Create User");
     setOpen(true);
   };
@@ -140,7 +128,7 @@ function Users() {
   };
 
   const handleSubmitUser = async () => {
-    if (firstName === "" || lastName === "" || email === "" || roleName.value === "") {
+    if (firstName === "" || lastName === "" || email === "" || isWhiteListed.value === "") {
       toast.error("Input Fields Correctly");
     } else {
       setLoading(true);
@@ -148,9 +136,9 @@ function Users() {
         firstName: firstName,
         lastName: lastName,
         email: email,
-        roleName: roleName.value,
-        sponsorName: sponsorName.value,
-        role: JSON.stringify(role),
+        steamId: steamId,
+        role: role.value,
+        isWhiteListed: isWhiteListed.value,
       };
       let response = null;
       if (openTypeFlag === "Create User") {
@@ -177,32 +165,21 @@ function Users() {
       setFirstName(resUser?.data?.data?.firstName);
       setLastName(resUser?.data?.data?.lastName);
       setEmail(resUser?.data?.data?.email);
-      setSponsorName({
-        label: resUser?.data?.data?.sponsorName,
-        value: resUser?.data?.data?.sponsorName,
+      setSteamId(resUser?.data?.data?.steamId);
+      setRole({
+        label: resUser?.data?.data?.role,
+        value: resUser?.data?.data?.role,
       });
-      setRoleName({ label: resUser?.data?.data?.roleName, value: resUser?.data?.data?.roleName });
-      setRole(JSON.parse(resUser?.data?.data?.role));
+      setWhiteListed({
+        label: resUser?.data?.data?.isWhiteListed,
+        value: resUser?.data?.data?.isWhiteListed,
+      });
       setOpenTypeFlag("Edit User");
       setSelectedUserId(id);
     } else {
       toast.error("Fail API");
     }
     setLoading(false);
-  };
-
-  const handleNextStep = () => {
-    let nextStep = step + 1;
-    if (nextStep === 2) {
-      handleSubmitUser();
-      return;
-    } else {
-      setStep(nextStep);
-    }
-  };
-
-  const handleBackClick = () => {
-    setStep(0);
   };
 
   const getInitData = async () => {
@@ -230,41 +207,50 @@ function Users() {
                 {user.email}
               </SoftTypography>
             ),
+            "steam id": (
+              <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+                {user.steamId}
+              </SoftTypography>
+            ),
             role: (
               <SoftBadge
                 variant="gradient"
-                badgeContent={user.roleName}
-                color={getRoleColor(user.roleName)}
+                badgeContent={user.role}
+                color={getRoleColor(user.role)}
                 size="xs"
                 container
               />
             ),
-
-            action:
-              user.email !== "admin@waveplus.eu" ? (
-                <>
-                  <Tooltip title="Edit User" placement="top">
-                    <SoftButton
-                      variant="text"
-                      color="info"
-                      onClick={() => handleEditUser(user._id)}
-                    >
-                      <DriveFileRenameOutlineIcon />
-                    </SoftButton>
-                  </Tooltip>
-                  <Tooltip title="Delete User" placement="top">
-                    <SoftButton
-                      variant="text"
-                      color="error"
-                      onClick={() => handleDeleteUser(user._id)}
-                    >
-                      <DeleteIcon />
-                    </SoftButton>
-                  </Tooltip>
-                </>
+            "white list":
+              user.isWhiteListed === "true" ? (
+                <SoftBadge
+                  variant="gradient"
+                  badgeContent="WhiteListed"
+                  color="success"
+                  size="xs"
+                  container
+                />
               ) : (
                 ""
               ),
+            action: (
+              <>
+                <Tooltip title="Edit User" placement="top">
+                  <SoftButton variant="text" color="info" onClick={() => handleEditUser(user._id)}>
+                    <DriveFileRenameOutlineIcon />
+                  </SoftButton>
+                </Tooltip>
+                <Tooltip title="Delete User" placement="top">
+                  <SoftButton
+                    variant="text"
+                    color="error"
+                    onClick={() => handleDeleteUser(user._id)}
+                  >
+                    <DeleteIcon />
+                  </SoftButton>
+                </Tooltip>
+              </>
+            ),
           });
         });
         setRows(data);
@@ -273,18 +259,6 @@ function Users() {
       }
     } else {
       toast.error("Error");
-    }
-
-    const sponsors = await allSponsors();
-    if (sponsors?.status === 200) {
-      let options = [];
-      sponsors?.data?.data?.map((item, index) => {
-        options.push({ label: item.sponsorName, value: index });
-      });
-      setSponsorData(sponsors?.data?.data);
-      setSponsorOptions(options);
-    } else {
-      toast.error("Fetch Videos Failed!");
     }
 
     setLoading(false);
@@ -330,16 +304,17 @@ function Users() {
             sx={{ display: "flex", justifyContent: "flex-end", fontSize: "17px" }}
             alignItems="center"
           >
-            <Select
-              value={sortBy}
-              onChange={(value) => setSortBy(value)}
-              placeholder="Sort By"
-              options={[
-                { value: "chocolate", label: "Chocolate" },
-                { value: "strawberry", label: "Strawberry" },
-                { value: "vanilla", label: "Vanilla" },
-              ]}
-            />
+            <SoftTypography variant="h6" fontWeight="bold" color={"dark"}>
+              <Select
+                value={sortBy}
+                onChange={(value) => setSortBy(value)}
+                placeholder="Sort By"
+                options={[
+                  { value: "A-Z", label: "A-Z" },
+                  { value: "Z-A", label: "Z-A" },
+                ]}
+              />
+            </SoftTypography>
             <SoftButton
               sx={{ marginLeft: "12px" }}
               rel="noreferrer"
@@ -379,17 +354,10 @@ function Users() {
           </Card>
         </SoftBox>
       </SoftBox>
-      <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-        sx={{
-          "& .css-lzee2o-MuiPaper-root-MuiDialog-paper": { maxWidth: "50%" },
-        }}
-      >
+      <BootstrapDialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <DialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">
           <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
-            Create Shop
+            {openTypeFlag}
           </SoftTypography>
         </DialogTitle>
         <IconButton
@@ -412,456 +380,85 @@ function Users() {
           )}
           <Grid container spacing={3} alignItems="center" sx={{ padding: "10px" }}>
             <Grid item lg={12}>
-              <Box sx={{ width: "100%", border: "solid 1px black" }}>
-                <Stepper activeStep={step} alternativeLabel>
-                  {steps.map((label) => (
-                    <Step key={label}>
-                      <StepLabel>{label}</StepLabel>
-                    </Step>
-                  ))}
-                </Stepper>
-              </Box>
-            </Grid>
-            <Grid item lg={12}>
-              <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
-                {steps[step]}
-              </SoftTypography>
-            </Grid>
-            <Grid item lg={12}>
-              {step === 0 ? (
-                <Grid lg={12}>
-                  <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
-                    <SoftTypography variant="h6" color={"dark"}>
-                      First Name
-                    </SoftTypography>
-                    <SoftInput
-                      placeholder="Alex"
-                      icon={false}
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
-                    <SoftTypography variant="h6" color={"dark"}>
-                      Last Name
-                    </SoftTypography>
-                    <SoftInput
-                      placeholder="James"
-                      icon={false}
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
-                    <SoftTypography variant="h6" color={"dark"}>
-                      Email Address
-                    </SoftTypography>
-                    <SoftInput
-                      placeholder="user@waveplus.eu"
-                      icon={false}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
-                    <SoftTypography variant="h6" color={"dark"}>
-                      User Role
-                    </SoftTypography>
-                    <SoftTypography variant="h6" color={"dark"}>
-                      <Select
-                        value={roleName}
-                        onChange={(value) => setRoleName(value)}
-                        sx={{ width: "100%", fontSize: "10px !important" }}
-                        options={[
-                          { value: "Sponsor", label: "Sponsor" },
-                          { value: "Marketplace Partner", label: "Marketplace Partner" },
-                          { value: "Super Admin", label: "Super Admin" },
-                          { value: "Admin", label: "Admin" },
-                        ]}
-                      />
-                    </SoftTypography>
-                  </Grid>
-                  {roleName.value === "Sponsor" ? (
-                    <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Select Sponsor
-                      </SoftTypography>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        <Select
-                          sx={{ width: "100%", fontSize: "10px !important" }}
-                          value={sponsorName}
-                          onChange={(value) => setSponsorName(value)}
-                          options={sponsorOptions}
-                        />
-                      </SoftTypography>
-                    </Grid>
-                  ) : (
-                    ""
-                  )}
+              <Grid lg={12} container>
+                <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
+                  <SoftTypography variant="h6" color={"dark"}>
+                    First Name
+                  </SoftTypography>
+                  <SoftInput
+                    icon={false}
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
                 </Grid>
-              ) : (
-                ""
-              )}
-
-              {step === 1 ? (
-                <Grid lg={12}>
-                  <Grid container xs={12} md={12} lg={12} spacing={2}>
-                    <Grid item xs={12} md={12} lg={6}></Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        View
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Edit
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Delete
-                      </SoftTypography>
-                    </Grid>
-                  </Grid>
-                  <Grid container xs={12} md={12} lg={12} spacing={2}>
-                    <Grid item xs={12} md={12} lg={6}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Fans
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.fans.view}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            fans: {
-                              ...role.fans,
-                              view: !role.fans.view,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.fans.edit}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            fans: {
-                              ...role.fans,
-                              edit: !role.fans.edit,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.fans.delete}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            fans: {
-                              ...role.fans,
-                              delete: !role.fans.delete,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container xs={12} md={12} lg={12} spacing={2}>
-                    <Grid item xs={12} md={12} lg={6}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Shops
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.shops.view}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            shops: {
-                              ...role.shops,
-                              view: !role.shops.view,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.shops.edit}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            shops: {
-                              ...role.shops,
-                              edit: !role.shops.edit,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.shops.delete}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            shops: {
-                              ...role.shops,
-                              delete: !role.shops.delete,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container xs={12} md={12} lg={12} spacing={2}>
-                    <Grid item xs={12} md={12} lg={6}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Videos
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.videos.view}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            videos: {
-                              ...role.videos,
-                              view: !role.videos.view,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.videos.edit}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            videos: {
-                              ...role.videos,
-                              edit: !role.videos.edit,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.videos.delete}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            videos: {
-                              ...role.videos,
-                              delete: !role.videos.delete,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container xs={12} md={12} lg={12} spacing={2}>
-                    <Grid item xs={12} md={12} lg={6}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Agendas
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.agendas.view}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            agendas: {
-                              ...role.agendas,
-                              view: !role.agendas.view,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.agendas.edit}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            agendas: {
-                              ...role.agendas,
-                              edit: !role.agendas.edit,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.agendas.delete}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            agendas: {
-                              ...role.agendas,
-                              delete: !role.agendas.delete,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container xs={12} md={12} lg={12} spacing={2}>
-                    <Grid item xs={12} md={12} lg={6}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Marketplace
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.marketplace.view}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            marketplace: {
-                              ...role.marketplace,
-                              view: !role.marketplace.view,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.marketplace.edit}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            marketplace: {
-                              ...role.marketplace,
-                              edit: !role.marketplace.edit,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.marketplace.delete}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            marketplace: {
-                              ...role.marketplace,
-                              delete: !role.marketplace.delete,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                  </Grid>
-                  <Grid container xs={12} md={12} lg={12} spacing={2}>
-                    <Grid item xs={12} md={12} lg={6}>
-                      <SoftTypography variant="h6" color={"dark"}>
-                        Sponsor
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.sponsor.view}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            sponsor: {
-                              ...role.sponsor,
-                              view: !role.sponsor.view,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.sponsor.edit}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            sponsor: {
-                              ...role.sponsor,
-                              edit: !role.sponsor.edit,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={12} lg={2}>
-                      <Switch
-                        checked={role.sponsor.delete}
-                        onChange={() =>
-                          setRole({
-                            ...role,
-                            sponsor: {
-                              ...role.sponsor,
-                              delete: !role.sponsor.delete,
-                            },
-                          })
-                        }
-                      />
-                    </Grid>
-                  </Grid>
+                <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
+                  <SoftTypography variant="h6" color={"dark"}>
+                    Last Name
+                  </SoftTypography>
+                  <SoftInput
+                    icon={false}
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
                 </Grid>
-              ) : (
-                ""
-              )}
-
-              <Grid item lg={12} mt={3}>
-                {step === 0 ? (
-                  <SoftButton
-                    variant="gradient"
-                    color="success"
-                    onClick={handleNextStep}
-                    sx={{ width: "100%" }}
-                  >
-                    Next
-                  </SoftButton>
-                ) : (
-                  ""
-                )}
-                {step === 1 ? (
-                  <Grid container lg={12} spacing={2}>
-                    <Grid item lg={6} md={12} xs={12}>
-                      <SoftButton
-                        variant="gradient"
-                        color="dark"
-                        onClick={handleBackClick}
-                        sx={{ width: "100%" }}
-                      >
-                        Back
-                      </SoftButton>
-                    </Grid>
-                    <Grid item lg={6} md={12} xs={12}>
-                      <SoftButton
-                        variant="gradient"
-                        color="success"
-                        onClick={handleNextStep}
-                        sx={{ width: "100%" }}
-                      >
-                        Submit
-                      </SoftButton>
-                    </Grid>
-                  </Grid>
-                ) : (
-                  ""
-                )}
+                <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
+                  <SoftTypography variant="h6" color={"dark"}>
+                    Email Address
+                  </SoftTypography>
+                  <SoftInput
+                    icon={false}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
+                  <SoftTypography variant="h6" color={"dark"}>
+                    Steam ID
+                  </SoftTypography>
+                  <SoftInput
+                    icon={false}
+                    value={steamId}
+                    onChange={(e) => setSteamId(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
+                  <SoftTypography variant="h6" color={"dark"}>
+                    Role
+                  </SoftTypography>
+                  <SoftTypography variant="h6" color={"dark"}>
+                    <Select
+                      value={role}
+                      onChange={(value) => setRole(value)}
+                      sx={{ width: "100%", fontSize: "10px !important" }}
+                      options={[
+                        { value: "Admin", label: "Admin" },
+                        { value: "User", label: "User" },
+                      ]}
+                    />
+                  </SoftTypography>
+                </Grid>
+                <Grid item xs={12} md={12} lg={12} sx={{ marginBottom: 2 }}>
+                  <SoftTypography variant="h6" color={"dark"}>
+                    WhiteListed
+                  </SoftTypography>
+                  <SoftTypography variant="h6" color={"dark"}>
+                    <Select
+                      value={isWhiteListed}
+                      onChange={(value) => setWhiteListed(value)}
+                      sx={{ width: "100%", fontSize: "10px !important" }}
+                      options={[
+                        { value: "true", label: "true" },
+                        { value: "false", label: "false" },
+                      ]}
+                    />
+                  </SoftTypography>
+                </Grid>
               </Grid>
+            </Grid>
+            <Grid item container lg={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <SoftButton variant="gradient" color="success" onClick={handleSubmitUser}>
+                {openTypeFlag}
+              </SoftButton>
             </Grid>
           </Grid>
         </DialogContent>

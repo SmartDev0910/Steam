@@ -18,8 +18,8 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
   isWhiteListed: {
-    type: Boolean,
-    default: false,
+    type: String,
+    trim: true,
   },
   role: {
     type: String,
