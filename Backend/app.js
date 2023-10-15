@@ -12,14 +12,7 @@ const path = require("path");
 const { DB_URL, SESSION_SECRET, PORT } = require("./config");
 
 const userRoutes = require("./routes/userRoutes");
-const clubRoutes = require("./routes/clubRoutes");
-const fanRoutes = require("./routes/fanRoutes");
-const foodRoutes = require("./routes/foodRoutes");
-const ticketRoutes = require("./routes/ticketRoutes");
-const videoRoutes = require("./routes/videoRoutes");
-const sponsorRoutes = require("./routes/sponsorRoutes");
-const shopRoutes = require("./routes/shopRoutes");
-const marketplaceRoutes = require("./routes/marketplaceRoutes");
+const applicationRoutes = require("./routes/applicationRoutes");
 
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 
@@ -93,43 +86,12 @@ app.post("/upload", upload.single("file"), (req, res) => {
   res.status(200).send({ status: 200, data: file });
 });
 
-const uploadLogo = multer({ dest: "uploads/logo" });
-
-app.post("/upload/logo", uploadLogo.single("logo"), (req, res) => {
-  // Handle the uploaded file here
-  const file = req.file;
-
-  // Send a response back to the client
-  res.status(200).send({ status: 200, data: file });
-});
-
-const uploadLogoMarketplace = multer({ dest: "uploads/marketplace" });
-
-app.post(
-  "/upload/logo/marketplace",
-  uploadLogoMarketplace.single("marketplace"),
-  (req, res) => {
-    // Handle the uploaded file here
-    const file = req.file;
-
-    // Send a response back to the client
-    res.status(200).send({ status: 200, data: file });
-  }
-);
-
 //Routes
 app.use(userRoutes);
-app.use(clubRoutes);
-app.use(fanRoutes);
-app.use(foodRoutes);
-app.use(ticketRoutes);
-app.use(videoRoutes);
-app.use(sponsorRoutes);
-app.use(shopRoutes);
-app.use(marketplaceRoutes);
+app.use(applicationRoutes);
 
 const port = PORT || 8080;
 
 app.listen(port, () =>
-  console.log(`API WAVE PLUS APP is running on port ${port}!`)
+  console.log(`STEAM BackEnd APP is running on port ${port}!`)
 );
