@@ -104,7 +104,7 @@ function DefaultNavbar({ transparent, light, action }) {
           />
           &nbsp;
           <SoftTypography variant="button" fontWeight="bold" color={light ? "white" : "dark"}>
-            WavePlus
+            Steam
           </SoftTypography>
         </SoftBox>
         <SoftBox
