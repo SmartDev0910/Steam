@@ -11,7 +11,7 @@ const multer = require("multer");
 const path = require("path");
 const { DB_URL, SESSION_SECRET, PORT } = require("./config");
 
-const userRoutes = require("./routes/userRoutes");
+const memberRoutes = require("./routes/memberRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
 
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
@@ -87,7 +87,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 });
 
 //Routes
-app.use(userRoutes);
+app.use(memberRoutes);
 app.use(applicationRoutes);
 
 const port = PORT || 8080;

@@ -1,19 +1,11 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    trim: true,
-  },
-  lastName: {
-    type: String,
-    trim: true,
-  },
+const memberSchema = new mongoose.Schema({
   email: {
     type: String,
     trim: true,
   },
-  steamId: {
+  steam64: {
     type: String,
     trim: true,
   },
@@ -21,11 +13,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  role: {
+  isBanned: {
     type: String,
     trim: true,
   },
-  password: String,
+  ipAddress: {
+    type: String,
+    trim: true,
+  },
+  password: {
+    type: String,
+    trim: true,
+  },
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Member", memberSchema);
