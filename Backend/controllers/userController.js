@@ -82,6 +82,41 @@ exports.DetailUser = (req, res, next) => {
     .catch((err) => res.status(400).send({ status: 400, data: err }));
 };
 
+// user -> whitelisted -> :steamId
+exports.WhiteListedBySteamId = (req, res, next) => {
+  const { steamId } = req.params;
+  User.findOne({ steamId })
+    .then((resUser) => {
+      if (resUser) {
+        res.status(200).send({ status: 200, data: resUser.isWhiteListed });
+      } else {
+        res.status(404).send({ status: 404, data: "Not Found" });
+      }
+    })
+    .catch((err) => res.status(400).send({ status: 400, data: err }));
+};
+
+// user -> whitelist -> :streamId
+exports.SetWhiteListBySteamId = (req, res, next) => {
+  const { steamId } = req.params;
+  User.findOne({ steamId })
+    .then((resUser) => {
+      if (resUser) {
+        resUser.isWhiteListed = req.body.isWhiteListed;
+
+        resUser
+          .save()
+          .then((editUser) =>
+            res.status(200).send({ status: 200, data: editUser })
+          )
+          .catch((err) => res.status(400).send({ status: 400, data: err }));
+      } else {
+        res.status(404).send({ status: 404, data: "Not Found" });
+      }
+    })
+    .catch((err) => res.status(400).send({ status: 400, data: err }));
+};
+
 // user -> edit
 exports.EditUser = (req, res, next) => {
   User.findById(req.params.id)
