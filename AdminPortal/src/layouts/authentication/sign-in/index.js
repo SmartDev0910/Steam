@@ -34,7 +34,7 @@ import CoverLayout from "layouts/authentication/components/CoverLayout";
 import curved9 from "assets/images/curved-images/curved14.jpg";
 
 // Actions
-import { userLogin } from "actions/userAction";
+import { MembersSignIn } from "actions/membersAction";
 
 import { toast } from "react-toastify";
 
@@ -50,11 +50,11 @@ function SignIn() {
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const handleSignIn = async () => {
-    const response = await userLogin(email, password);
-    if (response?.data?.status === 200) {
+    const response = await MembersSignIn(email, password);
+    if (response?.status === 200) {
       toast.success("Success");
-      setAuthentication(dispatch, JSON.stringify(response.data.data));
-      window.location.pathname = "/users";
+      setAuthentication(dispatch, JSON.stringify(response?.data));
+      window.location.pathname = "/members";
     } else toast.error(response.data);
   };
 

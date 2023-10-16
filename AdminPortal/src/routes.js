@@ -37,7 +37,7 @@ Coded by www.creative-tim.com
 
 // Soft UI Dashboard React layouts
 import SignIn from "layouts/authentication/sign-in";
-import Users from "layouts/users";
+import Members from "layouts/members";
 
 // Soft UI Dashboard React icons
 
@@ -46,11 +46,11 @@ import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlin
 const routes = [
   {
     type: "collapse",
-    name: "Users",
-    key: "users",
-    route: "/users",
+    name: "Members",
+    key: "members",
+    route: "/members",
     icon: <ManageAccountsOutlinedIcon size="12px" />,
-    component: <Users />,
+    component: <Members />,
     noCollapse: true,
   },
   {

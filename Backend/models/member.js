@@ -10,12 +10,12 @@ const memberSchema = new mongoose.Schema({
     trim: true,
   },
   isWhiteListed: {
-    type: String,
-    trim: true,
+    type: Boolean,
+    default: false,
   },
   isBanned: {
-    type: String,
-    trim: true,
+    type: Boolean,
+    default: false,
   },
   ipAddress: {
     type: String,
