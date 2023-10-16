@@ -6,19 +6,34 @@ exports.test = (req, res, next) => {
   res.send("Application Controller Running Successfully!");
 };
 
-// application -> create
+// application -> :steam64
+exports.GetApplicationBySteam64 = (req, res, next) => {
+  const { steam64 } = req.params;
+  Application.findOne({ submittedBy: steam64 })
+    .then((resApplication) => {
+      if (resApplication) {
+        res.status(200).send(resApplication);
+      } else {
+        res.status(404).send("Not Found");
+      }
+    })
+    .catch((err) => res.status(400).send(err));
+};
+
+// application -> create -> :steam64
 exports.CreateApplication = (req, res, next) => {
   const newApplication = new Application({
-    title: req.body.title,
-    description: req.body.description,
-    submittedBy: req.body.submittedBy,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    age: req.body.age,
+    submittedBy: req.params.steam64,
   });
   newApplication
     .save()
     .then((resApplication) => {
-      res.status(200).send({ status: 200, data: resApplication });
+      res.status(200).send(resApplication);
     })
     .catch((err) => {
-      res.status(400).send({ status: 400, data: err });
+      res.status(400).send(err);
     });
 };

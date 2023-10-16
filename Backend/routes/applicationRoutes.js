@@ -5,9 +5,17 @@ const router = express.Router();
 // importing controller
 const applicationController = require("../controllers/applicationController");
 
-// user -> test
+// application -> test
 router.get("/application/test", applicationController.test);
 
-router.post("/application/create", applicationController.CreateApplication);
+router.get(
+  "/application/:steam64",
+  applicationController.GetApplicationBySteam64
+);
+
+router.post(
+  "/application/create/:steam64",
+  applicationController.CreateApplication
+);
 
 module.exports = router;

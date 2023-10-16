@@ -1,11 +1,15 @@
 const mongoose = require("mongoose");
 
 const applicationSchema = new mongoose.Schema({
-  title: {
+  firstName: {
     type: String,
     trim: true,
   },
-  description: {
+  lastName: {
+    type: String,
+    trim: true,
+  },
+  age: {
     type: String,
     trim: true,
   },
