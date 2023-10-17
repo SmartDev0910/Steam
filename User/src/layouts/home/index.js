@@ -14,6 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -36,6 +37,7 @@ import { Rings } from "react-loader-spinner";
 
 // Data
 import { MembersWhiteList, AuthSteam } from "actions/membersAction";
+import { REACT_APP_SERVER_IP } from "actions/config";
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -55,21 +57,14 @@ const useStyles = makeStyles({
 
 function Home() {
   const classes = useStyles();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isWhiteListed, setIsWhiteListed] = useState(false);
   const [isSteamConnected, setIsSteamConnected] = useState(false);
   const [isDiscordConnected, setIsDiscordConnected] = useState(false);
 
-  const handleConnectSteam = async () => {
-    setLoading(true);
-    const response = await AuthSteam();
-    if (response?.status === 200) {
-      console.log("------------", response?.data);
-      setIsSteamConnected(true);
-    } else {
-      toast.error("API Failed");
-    }
-    setLoading(false);
+  const handleConnectSteam = () => {
+    window.open(`${REACT_APP_SERVER_IP}api/auth/steam`, "_self");
   };
 
   const handleConnectDiscord = async () => {
