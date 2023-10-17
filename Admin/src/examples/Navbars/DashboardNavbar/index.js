@@ -193,9 +193,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 <SoftBox display="flex" flexDirection="column">
                   <SoftTypography variant="button" fontWeight="medium">
                     {JSON.parse(localStorage.getItem("currentUser"))
-                      ? JSON.parse(localStorage.getItem("currentUser"))?.firstName +
-                        " " +
-                        JSON.parse(localStorage.getItem("currentUser"))?.lastName
+                      ? JSON.parse(localStorage.getItem("currentUser"))?.steam64.substring(0, 8) +
+                        "..." +
+                        JSON.parse(localStorage.getItem("currentUser"))?.steam64.substring(
+                          JSON.parse(localStorage.getItem("currentUser"))?.steam64.length - 3
+                        )
                       : ""}
                   </SoftTypography>
                   <SoftTypography variant="caption" color="secondary">

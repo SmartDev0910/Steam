@@ -18,6 +18,15 @@ export const MembersCreate = async (member) => {
   }
 };
 
+export const AuthSteam = async () => {
+  try {
+    const response = await axios.get("/api/auth/steam");
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const MembersAll = async () => {
   try {
     const response = await axios.get("/members/all");
@@ -36,18 +45,18 @@ export const MembersDetail = async (steam64) => {
   }
 };
 
-export const MembersUpdate = async (steam64, member) => {
+export const MembersUpdate = async (id, member) => {
   try {
-    const response = await axios.post(`/members/update/${steam64}`, member);
+    const response = await axios.post(`/members/update/${id}`, member);
     return response;
   } catch (error) {
     return error;
   }
 };
 
-export const MembersWhiteList = async (steam64) => {
+export const MembersWhiteList = async (id) => {
   try {
-    const response = await axios.post(`/members/whitelist/${steam64}`);
+    const response = await axios.post(`/members/whitelist/${id}`);
     return response;
   } catch (error) {
     return error;

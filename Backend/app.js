@@ -7,9 +7,11 @@ const MongoStore = require("connect-mongodb-session")(session);
 const flash = require("connect-flash");
 const cors = require("cors");
 const passport = require("passport");
+const passportSteam = require("passport-steam");
+const SteamStrategy = passportSteam.Strategy;
 const multer = require("multer");
 const path = require("path");
-const { DB_URL, SESSION_SECRET, PORT } = require("./config");
+const { DB_URL, SESSION_SECRET, PORT, STEAM_API_KEY } = require("./config");
 
 const memberRoutes = require("./routes/memberRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
@@ -41,6 +43,32 @@ const store = new MongoStore({
   collection: "sessions",
 });
 
+// Required to get data from user for sessions
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+// Initiate Strategy
+passport.use(
+  new SteamStrategy(
+    {
+      returnURL: "http://localhost:" + PORT + "/members/auth/steam/return",
+      realm: "http://localhost:" + PORT + "/",
+      apiKey: STEAM_API_KEY,
+    },
+    function (identifier, profile, done) {
+      process.nextTick(function () {
+        profile.identifier = identifier;
+        return done(null, profile);
+      });
+    }
+  )
+);
+
 app.use(
   session({
     //must be declared before passport session and initialize method
@@ -65,6 +93,27 @@ app.use((req, res, next) => {
 });
 
 app.get("/test", (req, res) => res.send("Hello World!"));
+
+// Routes
+app.get("/", (req, res) => {
+  res.send(req.user);
+});
+
+app.get(
+  "/api/auth/steam",
+  passport.authenticate("steam", { failureRedirect: "/" }),
+  function (req, res) {
+    res.redirect("/");
+  }
+);
+
+app.get(
+  "/api/auth/steam/return",
+  passport.authenticate("steam", { failureRedirect: "/" }),
+  function (req, res) {
+    res.redirect("/");
+  }
+);
 
 const storage = multer.diskStorage({
   destination: "uploads/video",

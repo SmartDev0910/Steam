@@ -99,7 +99,10 @@ export default function App() {
         return getRoutes(route.collapse);
       }
       if (route.route) {
-        if (route.route !== "/authentication/sign-in") {
+        if (
+          route.route !== "/authentication/sign-in" &&
+          route.route !== "/authentication/sign-up"
+        ) {
           return (
             <Route exact path="/" element={<PrivateRoute />} key={route.key}>
               <Route exact path={route.route} element={route.component} />
@@ -146,7 +149,7 @@ export default function App() {
             <Sidenav
               color={sidenavColor}
               brand={brand}
-              brandName="Steam Admin"
+              brandName="Steam Application Team"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
