@@ -35,7 +35,7 @@ import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
 
 // Data
-import { MembersWhiteList } from "actions/membersAction";
+import { MembersWhiteList, AuthSteam } from "actions/membersAction";
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -61,7 +61,15 @@ function Home() {
   const [isDiscordConnected, setIsDiscordConnected] = useState(false);
 
   const handleConnectSteam = async () => {
-    setIsSteamConnected(true);
+    setLoading(true);
+    const response = await AuthSteam();
+    if (response?.status === 200) {
+      console.log("------------", response?.data);
+      setIsSteamConnected(true);
+    } else {
+      toast.error("API Failed");
+    }
+    setLoading(false);
   };
 
   const handleConnectDiscord = async () => {
@@ -74,7 +82,7 @@ function Home() {
     if (response?.status === 200) {
       setIsWhiteListed(response?.data);
     } else {
-      toast.error("Error");
+      toast.error("API Failed");
     }
 
     if (JSON.parse(localStorage.getItem("currentUser"))?.steam64) setIsSteamConnected(true);

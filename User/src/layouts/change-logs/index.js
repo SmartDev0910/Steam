@@ -64,7 +64,7 @@ function ChangeLogs() {
     if (response?.status === 200) {
       setIsWhiteListed(response?.data);
     } else {
-      toast.error("Error");
+      toast.error("API Failed");
     }
 
     setLoading(false);
