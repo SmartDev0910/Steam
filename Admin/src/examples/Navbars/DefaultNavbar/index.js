@@ -104,7 +104,7 @@ function DefaultNavbar({ transparent, light, action }) {
           />
           &nbsp;
           <SoftTypography variant="button" fontWeight="bold" color={light ? "white" : "dark"}>
-            Steam
+            Steam Admin
           </SoftTypography>
         </SoftBox>
         <SoftBox

@@ -22,13 +22,24 @@ exports.SignIn = (req, res, next) => {
 
 // members -> create
 exports.CreateMember = (req, res, next) => {
+  let ipAddress =
+    req.headers["x-forwarded-for"] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    (req.connection.socket ? req.connection.socket.remoteAddress : null);
+
+  // If IP address is in IPv6 format, extract the IPv4 part
+  if (ipAddress.includes("::ffff:")) {
+    ipAddress = ipAddress.split("::ffff:")[1];
+  }
+
   const newMember = new Member({
-    email: req.body.email,
-    steam64: req.body.steam64,
-    isWhiteListed: req.body.isWhiteListed,
-    isBanned: req.body.isBanned,
-    ipAddress: req.body.ipAddress,
-    password: md5("123456"),
+    email: req.body.email ? req.body.email : "",
+    steam64: req.body.steam64 ? req.body.steam64 : "",
+    isWhiteListed: req.body.isWhiteListed ? req.body.isWhiteListed : false,
+    isBanned: req.body.isBanned ? req.body.isBanned : false,
+    ipAddress: ipAddress,
+    password: req.body.password ? md5(req.body.password) : "",
   });
   Member.findOne({ email: req.body.email })
     .then((result) => {
@@ -65,6 +76,39 @@ exports.DetailMember = (req, res, next) => {
   Member.findOne({ steam64 })
     .then((resMember) => {
       res.status(200).send(resMember);
+    })
+    .catch((err) => res.status(400).send(err));
+};
+
+// members -> whitelist -> :id
+exports.GetWhiteListedById = (req, res, next) => {
+  const { id } = req.params;
+  Member.findById(id)
+    .then((resMember) => {
+      if (resMember) {
+        res.status(200).send(resMember.isWhiteListed);
+      } else {
+        res.status(404).send("Not Found");
+      }
+    })
+    .catch((err) => res.status(400).send(err));
+};
+
+// members -> whitelist -> :id
+exports.SetWhiteListedById = (req, res, next) => {
+  const { id } = req.params;
+  Member.findById(id)
+    .then((resMember) => {
+      if (resMember) {
+        resMember.isWhiteListed = true;
+
+        resMember
+          .save()
+          .then((editMember) => res.status(200).send(editMember))
+          .catch((err) => res.status(400).send(err));
+      } else {
+        res.status(404).send("Not Found");
+      }
     })
     .catch((err) => res.status(400).send(err));
 };
@@ -121,21 +165,21 @@ exports.SetBannedBySteam64 = (req, res, next) => {
     .catch((err) => res.status(400).send(err));
 };
 
-// members -> update -> steam64
+// members -> update -> id
 exports.UpdateMember = (req, res, next) => {
-  const { steam64 } = req.params;
-  Member.findOne({ steam64 })
+  const { id } = req.params;
+  Member.findById(id)
     .then((resMember) => {
       resMember.email = req.body.email;
       resMember.steam64 = req.body.steam64;
       resMember.isWhiteListed = req.body.isWhiteListed;
       resMember.isBanned = req.body.isBanned;
       resMember.ipAddress = req.body.ipAddress;
-      resMember.password = md5("123456");
+      resMember.password = req.body.password;
 
       resMember
         .save()
-        .then((editMember) => res.status(200).send(editMember))
+        .then((updatedMember) => res.status(200).send(updatedMember))
         .catch((err) => res.status(400).send(err));
     })
     .catch((err) => res.status(400).send(err));

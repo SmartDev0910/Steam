@@ -31,7 +31,7 @@ import SoftButton from "components/SoftButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
 // Images
-import curved9 from "assets/images/curved-images/curved14.jpg";
+import curved9 from "assets/images/curved-images/curved1.jpg";
 
 // Actions
 import { MembersSignIn } from "actions/membersAction";
@@ -54,7 +54,7 @@ function SignIn() {
     if (response?.status === 200) {
       toast.success("Success");
       setAuthentication(dispatch, JSON.stringify(response?.data));
-      window.location.pathname = "/members";
+      window.location.pathname = "/home";
     } else toast.error(response.data);
   };
 
@@ -93,9 +93,25 @@ function SignIn() {
         </SoftBox>
 
         <SoftBox mt={4} mb={1}>
-          <SoftButton variant="gradient" color="info" fullWidth onClick={handleSignIn}>
+          <SoftButton variant="gradient" color="success" fullWidth onClick={handleSignIn}>
             sign in
           </SoftButton>
+        </SoftBox>
+
+        <SoftBox mt={3} textAlign="center">
+          <SoftTypography variant="button" color="text" fontWeight="regular">
+            Don&apos;t have an account?{" "}
+            <SoftTypography
+              component={Link}
+              to="/authentication/sign-up"
+              variant="button"
+              color="info"
+              fontWeight="medium"
+              textGradient
+            >
+              Sign up
+            </SoftTypography>
+          </SoftTypography>
         </SoftBox>
       </SoftBox>
     </CoverLayout>
