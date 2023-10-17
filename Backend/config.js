@@ -5,7 +5,7 @@ const Config = {
   DB_URL:
     "mongodb+srv://wolfdev0910:Window0910!@steamcluster.dmp5kzq.mongodb.net/Steam?retryWrites=true&w=majority",
   PORT: "8080",
-  STEAM_API_KEY: "FCF0B627594D82CBAD69671DC22F956F",
+  STEAM_API_KEY: "E20177646FC26CD4E9AE98BDFD33FBD3",
 };
 
 module.exports = Config;

@@ -18,15 +18,6 @@ export const MembersCreate = async (member) => {
   }
 };
 
-export const AuthSteam = async () => {
-  try {
-    const response = await axios.get("/api/auth/steam");
-    return response;
-  } catch (error) {
-    return error;
-  }
-};
-
 export const MembersAll = async () => {
   try {
     const response = await axios.get("/members/all");
