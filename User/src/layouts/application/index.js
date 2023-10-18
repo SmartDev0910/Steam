@@ -62,6 +62,8 @@ function FansEditDetail() {
   const handleSubmit = async () => {
     if (JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "") {
       toast.error("Please Connect Steam Account");
+    } else if (firstName === "" || lastName === "" || age === "") {
+      toast.error("Please Input All Fields");
     } else {
       const applicationData = {
         firstName: firstName,
@@ -98,13 +100,36 @@ function FansEditDetail() {
                   Application
                 </SoftTypography>
               </Grid>
+              {JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "" ? (
+                <Grid item lg={12}>
+                  <SoftBox
+                    sx={{
+                      width: "66%",
+                      height: "56px",
+                      borderRadius: "8px",
+                      display: "flex",
+                      alignItems: "center",
+                      backgroundColor: "#ffebf5",
+                      marginTop: "20px",
+                      paddingLeft: "20px",
+                    }}
+                  >
+                    <SoftTypography sx={{ fontSize: 18, color: "#EC4899" }}>
+                      You does not yet connect the steam account!
+                    </SoftTypography>
+                  </SoftBox>
+                </Grid>
+              ) : (
+                ""
+              )}
+
               <Grid
                 xs={12}
                 md={12}
                 lg={12}
                 container
                 spacing={2}
-                sx={{ marginTop: 2, fontSize: "12px" }}
+                sx={{ marginTop: "10px", fontSize: "12px" }}
               >
                 <Grid item xs={12} md={4} lg={4} sx={{ marginBottom: 2 }}>
                   <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>

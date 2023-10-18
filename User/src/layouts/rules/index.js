@@ -31,57 +31,10 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-import { toast } from "react-toastify";
-import { Rings } from "react-loader-spinner";
-
-// Data
-import { MembersWhiteList } from "actions/membersAction";
-
-const useStyles = makeStyles({
-  loadingOverlay: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: "100%",
-    height: "100%",
-    transform: "translate(-50%, -50%)",
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    zIndex: "100",
-  },
-});
-
 function Rules() {
-  const classes = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [isWhiteListed, setIsWhiteListed] = useState(false);
-
-  const getInitData = async () => {
-    setLoading(true);
-    const response = await MembersWhiteList(JSON.parse(localStorage.getItem("currentUser"))?._id);
-    if (response?.status === 200) {
-      setIsWhiteListed(response?.data);
-    } else {
-      toast.error("API Failed");
-    }
-
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getInitData();
-  }, []);
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      {loading && (
-        <div className={classes.loadingOverlay}>
-          <Rings color="#4FC0AE" height={240} width={240} />
-        </div>
-      )}
       <Card
         sx={{
           backdropFilter: `saturate(200%) blur(30px)`,
@@ -96,7 +49,7 @@ function Rules() {
         }}
       >
         <SoftBox sx={{ width: "100%" }}>
-          <SoftTypography sx={{ color: "#000", fontWeight: "700", fontSize: "36px" }}>
+          <SoftTypography sx={{ color: "#5a5c63", fontWeight: "700", fontSize: "36px" }}>
             Rules
           </SoftTypography>
           <SoftTypography sx={{ mt: "20px" }}>

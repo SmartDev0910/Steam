@@ -11,7 +11,13 @@ const passportSteam = require("passport-steam");
 const SteamStrategy = passportSteam.Strategy;
 const multer = require("multer");
 const path = require("path");
-const { DB_URL, SESSION_SECRET, PORT, STEAM_API_KEY } = require("./config");
+const {
+  DB_URL,
+  SESSION_SECRET,
+  PORT,
+  STEAM_API_KEY,
+  FRONT_END_URL,
+} = require("./config");
 
 const memberRoutes = require("./routes/memberRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
@@ -107,7 +113,7 @@ app.get(
   "/api/auth/steam/return",
   passport.authenticate("steam", { failureRedirect: "/" }),
   function (req, res) {
-    res.send(req.user);
+    res.redirect(`${FRONT_END_URL}/home?steam64=${req.user._json.steamid}`);
   }
 );
 

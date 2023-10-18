@@ -31,57 +31,10 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-import { toast } from "react-toastify";
-import { Rings } from "react-loader-spinner";
-
-// Data
-import { MembersWhiteList } from "actions/membersAction";
-
-const useStyles = makeStyles({
-  loadingOverlay: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: "100%",
-    height: "100%",
-    transform: "translate(-50%, -50%)",
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    zIndex: "100",
-  },
-});
-
 function MyAccount() {
-  const classes = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [isWhiteListed, setIsWhiteListed] = useState(false);
-
-  const getInitData = async () => {
-    setLoading(true);
-    const response = await MembersWhiteList(JSON.parse(localStorage.getItem("currentUser"))?._id);
-    if (response?.status === 200) {
-      setIsWhiteListed(response?.data);
-    } else {
-      toast.error("API Failed");
-    }
-
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getInitData();
-  }, []);
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      {loading && (
-        <div className={classes.loadingOverlay}>
-          <Rings color="#4FC0AE" height={240} width={240} />
-        </div>
-      )}
       <Card
         sx={{
           backdropFilter: `saturate(200%) blur(30px)`,
@@ -91,11 +44,39 @@ function MyAccount() {
           overflow: "visible",
           zIndex: 2,
           mt: 0,
-          py: 2,
-          px: 2,
+          py: 4,
+          px: 4,
         }}
       >
-        MyAccount
+        <SoftBox sx={{ width: "100%" }}>
+          <SoftTypography sx={{ color: "#5a5c63", fontWeight: "700", fontSize: "36px" }}>
+            My Account
+          </SoftTypography>
+          <SoftBox sx={{ mt: "20px" }}>
+            <SoftBox sx={{ display: "flex" }}>
+              <SoftTypography sx={{ color: "#000", marginRight: "10px" }}>Email:</SoftTypography>
+              <SoftTypography sx={{ color: "#858585" }}>
+                {JSON.parse(localStorage.getItem("currentUser"))?.email}
+              </SoftTypography>
+            </SoftBox>
+            <SoftBox sx={{ display: "flex", marginTop: "10px" }}>
+              <SoftTypography sx={{ color: "#000", marginRight: "10px" }}>Steam64:</SoftTypography>
+              <SoftTypography sx={{ color: "#858585" }}>
+                {JSON.parse(localStorage.getItem("currentUser"))?.steam64
+                  ? JSON.parse(localStorage.getItem("currentUser"))?.steam64
+                  : "Not connected the steam account"}
+              </SoftTypography>
+            </SoftBox>
+            <SoftBox sx={{ display: "flex", marginTop: "10px" }}>
+              <SoftTypography sx={{ color: "#000", marginRight: "10px" }}>
+                IP Address:
+              </SoftTypography>
+              <SoftTypography sx={{ color: "#858585" }}>
+                {JSON.parse(localStorage.getItem("currentUser"))?.ipAddress}
+              </SoftTypography>
+            </SoftBox>
+          </SoftBox>
+        </SoftBox>
       </Card>
       <Footer />
     </DashboardLayout>
