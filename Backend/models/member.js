@@ -9,6 +9,10 @@ const memberSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  discordId: {
+    type: String,
+    trim: true,
+  },
   isWhiteListed: {
     type: Boolean,
     default: false,
