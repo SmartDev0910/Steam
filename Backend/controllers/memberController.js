@@ -81,39 +81,6 @@ exports.DetailMember = (req, res, next) => {
     .catch((err) => res.status(400).send(err));
 };
 
-// members -> whitelist -> :id
-exports.GetWhiteListedById = (req, res, next) => {
-  const { id } = req.params;
-  Member.findById(id)
-    .then((resMember) => {
-      if (resMember) {
-        res.status(200).send(resMember.isWhiteListed);
-      } else {
-        res.status(404).send("Not Found");
-      }
-    })
-    .catch((err) => res.status(400).send(err));
-};
-
-// members -> whitelist -> :id
-exports.SetWhiteListedById = (req, res, next) => {
-  const { id } = req.params;
-  Member.findById(id)
-    .then((resMember) => {
-      if (resMember) {
-        resMember.isWhiteListed = true;
-
-        resMember
-          .save()
-          .then((editMember) => res.status(200).send(editMember))
-          .catch((err) => res.status(400).send(err));
-      } else {
-        res.status(404).send("Not Found");
-      }
-    })
-    .catch((err) => res.status(400).send(err));
-};
-
 // members -> whitelist -> :steam64
 exports.GetWhiteListedBySteam64 = (req, res, next) => {
   const { steam64 } = req.params;
