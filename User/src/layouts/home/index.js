@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -36,8 +36,9 @@ import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
 
 // Data
-import { MembersWhiteList, AuthSteam } from "actions/membersAction";
+import { MembersUpdate } from "actions/membersAction";
 import { REACT_APP_SERVER_IP } from "actions/config";
+import { useClubAdminController, setAuthentication } from "context";
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -58,13 +59,22 @@ const useStyles = makeStyles({
 function Home() {
   const classes = useStyles();
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const steam64 = queryParams.get("steam64");
+
+  const [controller, dispatch] = useClubAdminController();
   const [loading, setLoading] = useState(false);
   const [isWhiteListed, setIsWhiteListed] = useState(false);
   const [isSteamConnected, setIsSteamConnected] = useState(false);
   const [isDiscordConnected, setIsDiscordConnected] = useState(false);
 
   const handleConnectSteam = () => {
-    window.open(`${REACT_APP_SERVER_IP}api/auth/steam`, "_self");
+    if (isSteamConnected) {
+      toast.info("Already Connected");
+    } else {
+      window.open(`${REACT_APP_SERVER_IP}api/auth/steam`, "_self");
+    }
   };
 
   const handleConnectDiscord = async () => {
@@ -73,14 +83,31 @@ function Home() {
 
   const getInitData = async () => {
     setLoading(true);
-    const response = await MembersWhiteList(JSON.parse(localStorage.getItem("currentUser"))?._id);
-    if (response?.status === 200) {
-      setIsWhiteListed(response?.data);
-    } else {
-      toast.error("API Failed");
-    }
 
     if (JSON.parse(localStorage.getItem("currentUser"))?.steam64) setIsSteamConnected(true);
+
+    if (steam64) {
+      const memberData = {
+        email: JSON.parse(localStorage.getItem("currentUser"))?.email,
+        ipAddress: JSON.parse(localStorage.getItem("currentUser"))?.ipAddress,
+        isBanned: JSON.parse(localStorage.getItem("currentUser"))?.isBanned,
+        isWhiteListed: JSON.parse(localStorage.getItem("currentUser"))?.isWhiteListed,
+        password: JSON.parse(localStorage.getItem("currentUser"))?.password,
+        steam64: steam64,
+      };
+      const resUser = await MembersUpdate(
+        JSON.parse(localStorage.getItem("currentUser"))?._id,
+        memberData
+      );
+      if (resUser?.status === 200) {
+        toast.success("Connected");
+        setAuthentication(dispatch, JSON.stringify(resUser?.data));
+        setIsSteamConnected(true);
+      } else {
+        toast.error("API Failed");
+      }
+      navigate("/home");
+    }
 
     setLoading(false);
   };
