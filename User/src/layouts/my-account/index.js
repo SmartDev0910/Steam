@@ -69,6 +69,16 @@ function MyAccount() {
             </SoftBox>
             <SoftBox sx={{ display: "flex", marginTop: "10px" }}>
               <SoftTypography sx={{ color: "#000", marginRight: "10px" }}>
+                Discord ID:
+              </SoftTypography>
+              <SoftTypography sx={{ color: "#858585" }}>
+                {JSON.parse(localStorage.getItem("currentUser"))?.discordId
+                  ? JSON.parse(localStorage.getItem("currentUser"))?.discordId
+                  : "Not connected the discord account"}
+              </SoftTypography>
+            </SoftBox>
+            <SoftBox sx={{ display: "flex", marginTop: "10px" }}>
+              <SoftTypography sx={{ color: "#000", marginRight: "10px" }}>
                 IP Address:
               </SoftTypography>
               <SoftTypography sx={{ color: "#858585" }}>

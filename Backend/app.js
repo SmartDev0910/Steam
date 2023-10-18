@@ -7,8 +7,8 @@ const MongoStore = require("connect-mongodb-session")(session);
 const flash = require("connect-flash");
 const cors = require("cors");
 const passport = require("passport");
-const passportSteam = require("passport-steam");
-const SteamStrategy = passportSteam.Strategy;
+const SteamStrategy = require("passport-steam").Strategy;
+const DiscordStrategy = require("passport-discord").Strategy;
 const multer = require("multer");
 const path = require("path");
 const {
@@ -17,6 +17,8 @@ const {
   PORT,
   STEAM_API_KEY,
   FRONT_END_URL,
+  DISCORD_CLIENT_ID,
+  DISCORD_CLIENT_SECRET,
 } = require("./config");
 
 const memberRoutes = require("./routes/memberRoutes");
@@ -75,6 +77,21 @@ passport.use(
   )
 );
 
+passport.use(
+  new DiscordStrategy(
+    {
+      clientID: DISCORD_CLIENT_ID,
+      clientSecret: DISCORD_CLIENT_SECRET,
+      callbackURL: "http://localhost:" + PORT + "/api/auth/discord/redirect",
+      scope: ["identify", "guilds"],
+    },
+    function (accessToken, refreshToken, profile, cb) {
+      console.log(profile); // Log full profile for now
+      return cb(null, profile);
+    }
+  )
+);
+
 app.use(
   session({
     //must be declared before passport session and initialize method
@@ -100,10 +117,10 @@ app.use((req, res, next) => {
 
 app.get("/test", (req, res) => res.send("Hello World!"));
 
-// Routes
+// Steam Routes
 app.get(
   "/api/auth/steam",
-  passport.authenticate("steam", { failureRedirect: "/" }),
+  passport.authenticate("steam", { failureRedirect: "/failed" }),
   function (req, res) {
     res.send(req.user);
   }
@@ -111,11 +128,25 @@ app.get(
 
 app.get(
   "/api/auth/steam/return",
-  passport.authenticate("steam", { failureRedirect: "/" }),
+  passport.authenticate("steam", { failureRedirect: "/failed" }),
   function (req, res) {
     res.redirect(`${FRONT_END_URL}/home?steam64=${req.user._json.steamid}`);
   }
 );
+
+// Discord Routes
+
+app.get("/api/auth/discord", passport.authenticate("discord"));
+
+app.get(
+  "/api/auth/discord/redirect",
+  passport.authenticate("discord", { failureRedirect: "/failed" }),
+  function (req, res) {
+    res.redirect(`${FRONT_END_URL}/home?discordId=${req.user.id}`); // Redirect to frontend after successful login
+  }
+);
+
+app.get("/failed", (req, res) => res.send("You failed to log in!"));
 
 const storage = multer.diskStorage({
   destination: "uploads/video",

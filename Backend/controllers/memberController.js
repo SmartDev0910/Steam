@@ -36,6 +36,7 @@ exports.CreateMember = (req, res, next) => {
   const newMember = new Member({
     email: req.body.email ? req.body.email : "",
     steam64: req.body.steam64 ? req.body.steam64 : "",
+    discordId: req.body.discordId ? req.body.discordId : "",
     isWhiteListed: req.body.isWhiteListed ? req.body.isWhiteListed : false,
     isBanned: req.body.isBanned ? req.body.isBanned : false,
     ipAddress: ipAddress,
@@ -172,6 +173,7 @@ exports.UpdateMember = (req, res, next) => {
     .then((resMember) => {
       resMember.email = req.body.email;
       resMember.steam64 = req.body.steam64;
+      resMember.discordId = req.body.discordId;
       resMember.isWhiteListed = req.body.isWhiteListed;
       resMember.isBanned = req.body.isBanned;
       resMember.ipAddress = req.body.ipAddress;

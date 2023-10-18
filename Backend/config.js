@@ -7,6 +7,8 @@ const Config = {
   PORT: "8080",
   STEAM_API_KEY: "E20177646FC26CD4E9AE98BDFD33FBD3",
   FRONT_END_URL: "http://localhost:3000",
+  DISCORD_CLIENT_ID: "1164097171902185472",
+  DISCORD_CLIENT_SECRET: "vt8r1wSmdTZh5IuADKrOJUxCSVVQibwc",
 };
 
 module.exports = Config;

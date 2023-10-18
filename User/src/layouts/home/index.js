@@ -27,6 +27,8 @@ import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
 
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
+
 // Soft UI Dashboard React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -62,6 +64,7 @@ function Home() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const steam64 = queryParams.get("steam64");
+  const discordId = queryParams.get("discordId");
 
   const [controller, dispatch] = useClubAdminController();
   const [loading, setLoading] = useState(false);
@@ -71,30 +74,35 @@ function Home() {
 
   const handleConnectSteam = () => {
     if (isSteamConnected) {
-      toast.info("Already Connected");
+      return;
     } else {
       window.open(`${REACT_APP_SERVER_IP}api/auth/steam`, "_self");
     }
   };
 
-  const handleConnectDiscord = async () => {
-    // setIsDiscordConnected(true);
+  const handleConnectDiscord = () => {
+    window.open(`${REACT_APP_SERVER_IP}api/auth/discord`, "_self");
   };
 
   const getInitData = async () => {
     setLoading(true);
 
+    let memberData = {
+      email: JSON.parse(localStorage.getItem("currentUser"))?.email,
+      ipAddress: JSON.parse(localStorage.getItem("currentUser"))?.ipAddress,
+      isBanned: JSON.parse(localStorage.getItem("currentUser"))?.isBanned,
+      isWhiteListed: JSON.parse(localStorage.getItem("currentUser"))?.isWhiteListed,
+      password: JSON.parse(localStorage.getItem("currentUser"))?.password,
+      steam64: JSON.parse(localStorage.getItem("currentUser"))?.steam64,
+      discordId: JSON.parse(localStorage.getItem("currentUser"))?.discordId,
+    };
+
     if (JSON.parse(localStorage.getItem("currentUser"))?.steam64) setIsSteamConnected(true);
+    if (JSON.parse(localStorage.getItem("currentUser"))?.discordId) setIsDiscordConnected(true);
 
     if (steam64) {
-      const memberData = {
-        email: JSON.parse(localStorage.getItem("currentUser"))?.email,
-        ipAddress: JSON.parse(localStorage.getItem("currentUser"))?.ipAddress,
-        isBanned: JSON.parse(localStorage.getItem("currentUser"))?.isBanned,
-        isWhiteListed: JSON.parse(localStorage.getItem("currentUser"))?.isWhiteListed,
-        password: JSON.parse(localStorage.getItem("currentUser"))?.password,
-        steam64: steam64,
-      };
+      memberData.steam64 = steam64;
+
       const resUser = await MembersUpdate(
         JSON.parse(localStorage.getItem("currentUser"))?._id,
         memberData
@@ -103,6 +111,23 @@ function Home() {
         toast.success("Connected");
         setAuthentication(dispatch, JSON.stringify(resUser?.data));
         setIsSteamConnected(true);
+      } else {
+        toast.error("API Failed");
+      }
+      navigate("/home");
+    }
+
+    if (discordId) {
+      memberData.discordId = discordId;
+
+      const resUser = await MembersUpdate(
+        JSON.parse(localStorage.getItem("currentUser"))?._id,
+        memberData
+      );
+      if (resUser?.status === 200) {
+        toast.success("Connected");
+        setAuthentication(dispatch, JSON.stringify(resUser?.data));
+        setIsDiscordConnected(true);
       } else {
         toast.error("API Failed");
       }
@@ -150,39 +175,53 @@ function Home() {
             <Grid item lg="12">
               <SoftBox
                 sx={{
-                  width: "300px",
+                  width: "500px",
                   height: "64px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                   border: isSteamConnected ? "none" : "1px solid #4FC0AE",
-                  backgroundColor: isSteamConnected ? "#4FC0AE" : "none",
+                  backgroundColor: isSteamConnected ? "#ebfffc" : "none",
                   borderRadius: "5px",
                   cursor: "pointer",
                 }}
                 onClick={handleConnectSteam}
               >
-                <SoftTypography sx={{ color: isSteamConnected ? "#fff" : "#4FC0AE" }}>
+                {isSteamConnected ? (
+                  <CheckCircleOutlinedIcon
+                    sx={{ color: "#4FC0AE", width: "32px", height: "32px", mr: "6px" }}
+                  />
+                ) : (
+                  ""
+                )}
+                <SoftTypography sx={{ color: "#4FC0AE" }}>
                   {isSteamConnected ? "Connected Steam Account" : "Connect to Steam Account"}
                 </SoftTypography>
               </SoftBox>
             </Grid>
-            <Grid item lg="12" mt="20px">
+            <Grid item lg="12" mt={"20px"}>
               <SoftBox
                 sx={{
-                  width: "300px",
+                  width: "500px",
                   height: "64px",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                   border: isDiscordConnected ? "none" : "1px solid #4FC0AE",
-                  backgroundColor: isDiscordConnected ? "#4FC0AE" : "none",
+                  backgroundColor: isDiscordConnected ? "#ebfffc" : "none",
                   borderRadius: "5px",
                   cursor: "pointer",
                 }}
                 onClick={handleConnectDiscord}
               >
-                <SoftTypography sx={{ color: isDiscordConnected ? "#fff" : "#4FC0AE" }}>
+                {isDiscordConnected ? (
+                  <CheckCircleOutlinedIcon
+                    sx={{ color: "#4FC0AE", width: "32px", height: "32px", mr: "6px" }}
+                  />
+                ) : (
+                  ""
+                )}
+                <SoftTypography sx={{ color: "#4FC0AE" }}>
                   {isDiscordConnected ? "Connected Discord Account" : "Connect to Discord Account"}
                 </SoftTypography>
               </SoftBox>
