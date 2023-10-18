@@ -88,6 +88,16 @@ function Members() {
     }
   };
 
+  const handleSetWhiteListed = async (steam64) => {
+    const response = await MembersWhiteList(steam64);
+    if (response?.status === 200) {
+      toast.success("Success");
+      getInitData();
+    } else {
+      toast.error("Error");
+    }
+  };
+
   const getInitData = async () => {
     setLoading(true);
     const members = await MembersAll();
@@ -120,6 +130,14 @@ function Members() {
                 size="xs"
                 container
               />
+            ) : member.steam64 ? (
+              <SoftBadge
+                variant="gradient"
+                badgeContent="Pending"
+                color="dark"
+                size="xs"
+                container
+              />
             ) : (
               ""
             ),
@@ -142,8 +160,20 @@ function Members() {
             ),
             action: (
               <>
+                {member.steam64 !== "" && !member.isWhiteListed ? (
+                  <SoftButton
+                    variant="outlined"
+                    color={"primary"}
+                    onClick={() => handleSetWhiteListed(member.steam64)}
+                  >
+                    Approve
+                  </SoftButton>
+                ) : (
+                  ""
+                )}
+                &nbsp;
                 <SoftButton
-                  variant="text"
+                  variant="outlined"
                   color={member.isBanned ? "success" : "error"}
                   onClick={() => handleSetBan(member.steam64, !member.isBanned)}
                 >
