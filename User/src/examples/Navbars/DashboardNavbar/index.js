@@ -159,14 +159,14 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </SoftBox>
         {isMini ? null : (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <SoftBox pr={1}>
+            {/* <SoftBox pr={1}>
               <SoftInput
                 placeholder="Type here..."
                 icon={{ component: "search", direction: "left" }}
               />
-            </SoftBox>
+            </SoftBox> */}
             <SoftBox color={light ? "white" : "inherit"} display="flex" alignItems="center">
-              <IconButton
+              {/* <IconButton
                 size="large"
                 color="inherit"
                 sx={navbarMobileMenu}
@@ -194,22 +194,27 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleOpenMenu}
               >
                 <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
-              </IconButton>
-              {renderMenu()}
+              </IconButton> */}
+              {/* {renderMenu()} */}
               <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
                 <SoftBox mr={2}>
                   <SoftAvatar src={burceMars} alt={"Admin"} size="sm" variant="rounded" />
                 </SoftBox>
                 <SoftBox display="flex" flexDirection="column">
-                  <SoftTypography variant="button" fontWeight="medium">
-                    {JSON.parse(localStorage.getItem("currentUser"))
-                      ? JSON.parse(localStorage.getItem("currentUser"))?.steam64.substring(0, 8) +
-                        "..." +
-                        JSON.parse(localStorage.getItem("currentUser"))?.steam64.substring(
-                          JSON.parse(localStorage.getItem("currentUser"))?.steam64.length - 3
-                        )
-                      : ""}
-                  </SoftTypography>
+                  {JSON.parse(localStorage.getItem("currentUser"))?.steam64 ? (
+                    <SoftTypography variant="button" fontWeight="medium">
+                      {JSON.parse(localStorage.getItem("currentUser"))
+                        ? JSON.parse(localStorage.getItem("currentUser"))?.steam64.substring(0, 8) +
+                          "..." +
+                          JSON.parse(localStorage.getItem("currentUser"))?.steam64.substring(
+                            JSON.parse(localStorage.getItem("currentUser"))?.steam64.length - 3
+                          )
+                        : ""}
+                    </SoftTypography>
+                  ) : (
+                    ""
+                  )}
+
                   <SoftTypography variant="caption" color="secondary">
                     {JSON.parse(localStorage.getItem("currentUser"))
                       ? JSON.parse(localStorage.getItem("currentUser"))?.email
