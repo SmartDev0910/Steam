@@ -167,7 +167,7 @@ function FansEditDetail() {
                     }}
                   >
                     <SoftTypography sx={{ fontSize: 18, color: "#EC4899" }}>
-                      You does not yet connect the steam account!
+                      Please connect your steam account first in order to apply!
                     </SoftTypography>
                   </SoftBox>
                 </Grid>
@@ -226,31 +226,29 @@ function FansEditDetail() {
             </Grid>
           </Grid>
         </Card>
-        <SoftBox mb={3} mt={2}>
-          <Card>
-            <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h5">My Applications</SoftTypography>
-            </SoftBox>
-            <SoftBox
-              sx={{
-                "& .MuiTableRow-root:not(:last-child)": {
-                  "& td": {
-                    borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                      `${borderWidth[1]} solid ${borderColor}`,
+        {rows.length ? (
+          <SoftBox mb={3} mt={2}>
+            <Card>
+              <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+                <SoftTypography variant="h5">My Applications</SoftTypography>
+              </SoftBox>
+              <SoftBox
+                sx={{
+                  "& .MuiTableRow-root:not(:last-child)": {
+                    "& td": {
+                      borderBottom: ({ borders: { borderWidth, borderColor } }) =>
+                        `${borderWidth[1]} solid ${borderColor}`,
+                    },
                   },
-                },
-              }}
-            >
-              {rows.length ? (
+                }}
+              >
                 <Table columns={columns} rows={rows} />
-              ) : (
-                <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-                  <SoftTypography variant="h5">No Data</SoftTypography>
-                </SoftBox>
-              )}
-            </SoftBox>
-          </Card>
-        </SoftBox>
+              </SoftBox>
+            </Card>
+          </SoftBox>
+        ) : (
+          ""
+        )}
       </SoftBox>
       <Footer />
     </DashboardLayout>
