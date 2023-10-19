@@ -29,11 +29,12 @@ import SoftInput from "components/SoftInput";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import Table from "examples/Tables/Table";
 
 import { Rings } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
-import { CreateApplication } from "actions/applicationAction";
+import { CreateApplication, GetApplicationBySteam64 } from "actions/applicationAction";
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -54,6 +55,14 @@ const useStyles = makeStyles({
 function FansEditDetail() {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+
+  const columns = [
+    { name: "first name", align: "center" },
+    { name: "last name", align: "center" },
+    { name: "age", align: "center" },
+  ];
+
+  const [rows, setRows] = useState([]);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -77,11 +86,54 @@ function FansEditDetail() {
       );
       if (response?.status === 200) {
         toast.success("Application Submitted!");
+        getInitData();
       } else {
         toast.error("API Failed");
       }
     }
   };
+
+  const getInitData = async () => {
+    setLoading(true);
+    const applications = await GetApplicationBySteam64(
+      JSON.parse(localStorage.getItem("currentUser"))?.steam64
+    );
+    if (applications?.status === 200) {
+      if (applications?.data?.length) {
+        let data = [];
+        applications?.data?.map((application) => {
+          data.push({
+            "first name": (
+              <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+                {application.firstName}
+              </SoftTypography>
+            ),
+            "last name": (
+              <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+                {application.lastName}
+              </SoftTypography>
+            ),
+            age: (
+              <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+                {application.age}
+              </SoftTypography>
+            ),
+          });
+        });
+        setRows(data);
+      } else {
+        setRows([]);
+      }
+    } else {
+      toast.error("Error");
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getInitData();
+  }, []);
 
   return (
     <DashboardLayout>
@@ -97,7 +149,7 @@ function FansEditDetail() {
             <Grid item container lg={12}>
               <Grid item lg={12}>
                 <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
-                  Application
+                  New Application
                 </SoftTypography>
               </Grid>
               {JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "" ? (
@@ -123,14 +175,7 @@ function FansEditDetail() {
                 ""
               )}
 
-              <Grid
-                xs={12}
-                md={12}
-                lg={12}
-                container
-                spacing={2}
-                sx={{ marginTop: "10px", fontSize: "12px" }}
-              >
+              <Grid xs={12} md={12} lg={12} container spacing={2} sx={{ fontSize: "12px", mt: 1 }}>
                 <Grid item xs={12} md={4} lg={4} sx={{ marginBottom: 2 }}>
                   <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
                     First Name
@@ -141,8 +186,6 @@ function FansEditDetail() {
                     onChange={(e) => setFirstName(e.target.value)}
                   />
                 </Grid>
-              </Grid>
-              <Grid xs={12} md={12} lg={12} container spacing={2} sx={{ fontSize: "12px" }}>
                 <Grid item xs={12} md={4} lg={4} sx={{ marginBottom: 2 }}>
                   <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
                     Last Name
@@ -172,7 +215,7 @@ function FansEditDetail() {
                   <SoftButton
                     rel="noreferrer"
                     variant="gradient"
-                    color="success"
+                    color="info"
                     sx={{ width: "40%" }}
                     onClick={handleSubmit}
                   >
@@ -183,6 +226,31 @@ function FansEditDetail() {
             </Grid>
           </Grid>
         </Card>
+        <SoftBox mb={3} mt={2}>
+          <Card>
+            <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+              <SoftTypography variant="h5">My Applications</SoftTypography>
+            </SoftBox>
+            <SoftBox
+              sx={{
+                "& .MuiTableRow-root:not(:last-child)": {
+                  "& td": {
+                    borderBottom: ({ borders: { borderWidth, borderColor } }) =>
+                      `${borderWidth[1]} solid ${borderColor}`,
+                  },
+                },
+              }}
+            >
+              {rows.length ? (
+                <Table columns={columns} rows={rows} />
+              ) : (
+                <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
+                  <SoftTypography variant="h5">No Data</SoftTypography>
+                </SoftBox>
+              )}
+            </SoftBox>
+          </Card>
+        </SoftBox>
       </SoftBox>
       <Footer />
     </DashboardLayout>

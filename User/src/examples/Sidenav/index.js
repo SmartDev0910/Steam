@@ -151,7 +151,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             <Icon sx={{ fontWeight: "bold" }}>close</Icon>
           </SoftTypography>
         </SoftBox>
-        <SoftBox component={NavLink} to="/dashboard" display="flex" alignItems="center">
+        <SoftBox component={NavLink} to="/home" display="flex" alignItems="center">
           {brand && <SoftBox component="img" src={brand} alt="Soft UI Logo" width="2rem" />}
           <SoftBox
             width={!brandName && "100%"}
@@ -165,7 +165,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       </SoftBox>
       <Divider />
       <List>{renderRoutes}</List>
-      <SoftBox pt={2} my={2} mx={2} mt="auto">
+      {/* <SoftBox pt={2} my={2} mx={2} mt="auto">
         <SoftBox mt={2}>
           <SoftButton
             rel="noreferrer"
@@ -174,10 +174,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             fullWidth
             onClick={handleLogOut}
           >
-            Log Out
+            My Account
           </SoftButton>
         </SoftBox>
-      </SoftBox>
+      </SoftBox> */}
     </SidenavRoot>
   );
 }

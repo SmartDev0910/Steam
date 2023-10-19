@@ -59,7 +59,7 @@ const isAuth = () => {
 };
 
 const PrivateRoute = () => {
-  return isAuth() ? <Outlet /> : <Navigate to="/authentication/sign-in" />;
+  return isAuth() ? <Outlet /> : <Navigate to="/home" />;
 };
 
 export default function App() {
@@ -100,6 +100,7 @@ export default function App() {
       }
       if (route.route) {
         if (
+          route.route !== "/home" &&
           route.route !== "/authentication/sign-in" &&
           route.route !== "/authentication/sign-up"
         ) {
@@ -149,7 +150,7 @@ export default function App() {
             <Sidenav
               color={sidenavColor}
               brand={brand}
-              brandName="Steam Application Team"
+              brandName="CircuitRP"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
@@ -159,7 +160,10 @@ export default function App() {
           </>
         )}
         {layout === "vr" && <Configurator />}
-        <Routes>{getRoutes(routes)}</Routes>
+        <Routes>
+          {getRoutes(routes)}
+          <Route path="*" element={<Navigate replace to="/home" />} />
+        </Routes>
         <ToastContainer />
       </LocalizationProvider>
     </ThemeProvider>

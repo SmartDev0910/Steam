@@ -71,7 +71,7 @@ function ClubAdminControllerProvider({ children }) {
   const initialState = {
     miniSidenav: false,
     transparentSidenav: true,
-    sidenavColor: "success",
+    sidenavColor: "info",
     transparentNavbar: true,
     fixedNavbar: true,
     openConfigurator: false,

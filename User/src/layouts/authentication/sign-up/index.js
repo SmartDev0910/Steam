@@ -87,7 +87,7 @@ function SignUp() {
               />
             </SoftBox>
             <SoftBox mt={4} mb={1}>
-              <SoftButton variant="gradient" color="success" fullWidth onClick={handleSignUp}>
+              <SoftButton variant="gradient" color="info" fullWidth onClick={handleSignUp}>
                 sign up
               </SoftButton>
             </SoftBox>
