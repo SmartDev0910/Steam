@@ -9,7 +9,7 @@ exports.test = (req, res, next) => {
 // application -> :steam64
 exports.GetApplicationBySteam64 = (req, res, next) => {
   const { steam64 } = req.params;
-  Application.findOne({ submittedBy: steam64 })
+  Application.find({ submittedBy: steam64 })
     .then((resApplication) => {
       if (resApplication) {
         res.status(200).send(resApplication);

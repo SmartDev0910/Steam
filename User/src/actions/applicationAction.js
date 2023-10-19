@@ -8,3 +8,12 @@ export const CreateApplication = async (steam64, application) => {
     return error;
   }
 };
+
+export const GetApplicationBySteam64 = async (steam64) => {
+  try {
+    const response = await axios.get(`/application/${steam64}`);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

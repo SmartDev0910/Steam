@@ -161,7 +161,7 @@ function MyAccount() {
         }}
       >
         <SoftBox sx={{ width: "100%" }}>
-          <SoftTypography sx={{ color: "#5a5c63", fontWeight: "700", fontSize: "28px" }}>
+          <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
             My Account
           </SoftTypography>
         </SoftBox>
@@ -170,7 +170,7 @@ function MyAccount() {
         <Grid container spacing={"20px"}>
           <Grid item lg={6}>
             <Card sx={{ py: 3, px: 4 }}>
-              <SoftBox sx={{ height: "calc(100vh - 320px)" }}>
+              <SoftBox sx={{ height: "calc(100vh - 330px)" }}>
                 <SoftBox sx={{ display: "flex" }}>
                   <SoftTypography sx={{ color: "#b1b1b1", fontWeight: "600", fontSize: "24px" }}>
                     Account Detail
@@ -220,7 +220,7 @@ function MyAccount() {
               <SoftBox
                 sx={{
                   width: "100%",
-                  height: "calc(100vh - 320px)",
+                  height: "calc(100vh - 330px)",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -235,8 +235,8 @@ function MyAccount() {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        border: isSteamConnected ? "none" : "1px solid #4FC0AE",
-                        backgroundColor: isSteamConnected ? "#ebfffc" : "none",
+                        border: isSteamConnected ? "none" : "1px solid #1383C3",
+                        backgroundColor: isSteamConnected ? "#f4fbff" : "none",
                         borderRadius: "5px",
                         cursor: "pointer",
                       }}
@@ -244,12 +244,12 @@ function MyAccount() {
                     >
                       {isSteamConnected ? (
                         <CheckCircleOutlinedIcon
-                          sx={{ color: "#4FC0AE", width: "32px", height: "32px", mr: "6px" }}
+                          sx={{ color: "#1383C3", width: "32px", height: "32px", mr: "6px" }}
                         />
                       ) : (
                         ""
                       )}
-                      <SoftTypography sx={{ color: "#4FC0AE" }}>
+                      <SoftTypography sx={{ color: "#1383C3" }}>
                         {isSteamConnected ? "Connected Steam Account" : "Connect to Steam Account"}
                       </SoftTypography>
                     </SoftBox>
@@ -262,8 +262,8 @@ function MyAccount() {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        border: isDiscordConnected ? "none" : "1px solid #4FC0AE",
-                        backgroundColor: isDiscordConnected ? "#ebfffc" : "none",
+                        border: isDiscordConnected ? "none" : "1px solid #1383C3",
+                        backgroundColor: isDiscordConnected ? "#f4fbff" : "none",
                         borderRadius: "5px",
                         cursor: "pointer",
                       }}
@@ -271,12 +271,12 @@ function MyAccount() {
                     >
                       {isDiscordConnected ? (
                         <CheckCircleOutlinedIcon
-                          sx={{ color: "#4FC0AE", width: "32px", height: "32px", mr: "6px" }}
+                          sx={{ color: "#1383C3", width: "32px", height: "32px", mr: "6px" }}
                         />
                       ) : (
                         ""
                       )}
-                      <SoftTypography sx={{ color: "#4FC0AE" }}>
+                      <SoftTypography sx={{ color: "#1383C3" }}>
                         {isDiscordConnected
                           ? "Connected Discord Account"
                           : "Connect to Discord Account"}

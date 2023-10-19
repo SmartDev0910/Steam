@@ -54,7 +54,7 @@ function SignIn() {
     if (response?.status === 200) {
       toast.success("Success");
       setAuthentication(dispatch, JSON.stringify(response?.data));
-      window.location.pathname = "/my-account";
+      window.location.pathname = "/application";
     } else toast.error(response.data);
   };
 

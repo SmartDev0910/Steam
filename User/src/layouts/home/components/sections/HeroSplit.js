@@ -77,13 +77,7 @@ const HeroSplit = ({
                 </ButtonGroup> */}
               </div>
               <div className="hero-figure split-item-image split-item-image-fill illustration-element-01 reveal-from-bottom">
-                <a
-                  data-video="https://player.vimeo.com/video/174002812"
-                  href="#0"
-                  aria-controls="video-modal"
-                >
-                  <Image src="https://picsum.photos/500/300" alt="Hero" width={528} height={396} />
-                </a>
+                <Image src="https://picsum.photos/528/396" alt="Hero" width={528} height={396} />
               </div>
             </div>
           </div>

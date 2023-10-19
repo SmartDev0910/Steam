@@ -63,15 +63,7 @@ const routes = [
     route: "/home",
     component: <Home />,
   },
-  {
-    type: "collapse",
-    name: "My Account",
-    key: "my-account",
-    route: "/my-account",
-    icon: <AccountCircleOutlinedIcon size="12px" />,
-    component: <MyAccount />,
-    noCollapse: true,
-  },
+
   {
     type: "collapse",
     name: "Application",
@@ -79,6 +71,15 @@ const routes = [
     route: "/application",
     icon: <WebAssetOutlinedIcon size="12px" />,
     component: <Application />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "My Account",
+    key: "my-account",
+    route: "/my-account",
+    icon: <AccountCircleOutlinedIcon size="12px" />,
+    component: <MyAccount />,
     noCollapse: true,
   },
 ];
