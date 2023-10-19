@@ -14,7 +14,6 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -27,128 +26,15 @@ import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
 
-import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
-
 // Soft UI Dashboard React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-import { toast } from "react-toastify";
-import { Rings } from "react-loader-spinner";
-
-// Data
-import { MembersUpdate } from "actions/membersAction";
-import { REACT_APP_SERVER_IP } from "actions/config";
-import { useClubAdminController, setAuthentication } from "context";
-
-const useStyles = makeStyles({
-  loadingOverlay: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: "100%",
-    height: "100%",
-    transform: "translate(-50%, -50%)",
-    justifyContent: "center",
-    alignItems: "center",
-    display: "flex",
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    zIndex: "100",
-  },
-});
-
 function Home() {
-  const classes = useStyles();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const steam64 = queryParams.get("steam64");
-  const discordId = queryParams.get("discordId");
-
-  const [controller, dispatch] = useClubAdminController();
-  const [loading, setLoading] = useState(false);
-  const [isWhiteListed, setIsWhiteListed] = useState(false);
-  const [isSteamConnected, setIsSteamConnected] = useState(false);
-  const [isDiscordConnected, setIsDiscordConnected] = useState(false);
-
-  const handleConnectSteam = () => {
-    if (isSteamConnected) {
-      return;
-    } else {
-      window.open(`${REACT_APP_SERVER_IP}api/auth/steam`, "_self");
-    }
-  };
-
-  const handleConnectDiscord = () => {
-    window.open(`${REACT_APP_SERVER_IP}api/auth/discord`, "_self");
-  };
-
-  const getInitData = async () => {
-    setLoading(true);
-
-    let memberData = {
-      email: JSON.parse(localStorage.getItem("currentUser"))?.email,
-      ipAddress: JSON.parse(localStorage.getItem("currentUser"))?.ipAddress,
-      isBanned: JSON.parse(localStorage.getItem("currentUser"))?.isBanned,
-      isWhiteListed: JSON.parse(localStorage.getItem("currentUser"))?.isWhiteListed,
-      password: JSON.parse(localStorage.getItem("currentUser"))?.password,
-      steam64: JSON.parse(localStorage.getItem("currentUser"))?.steam64,
-      discordId: JSON.parse(localStorage.getItem("currentUser"))?.discordId,
-    };
-
-    if (JSON.parse(localStorage.getItem("currentUser"))?.steam64) setIsSteamConnected(true);
-    if (JSON.parse(localStorage.getItem("currentUser"))?.discordId) setIsDiscordConnected(true);
-
-    if (steam64) {
-      memberData.steam64 = steam64;
-
-      const resUser = await MembersUpdate(
-        JSON.parse(localStorage.getItem("currentUser"))?._id,
-        memberData
-      );
-      if (resUser?.status === 200) {
-        toast.success("Connected");
-        setAuthentication(dispatch, JSON.stringify(resUser?.data));
-        setIsSteamConnected(true);
-      } else {
-        toast.error("API Failed");
-      }
-      navigate("/home");
-    }
-
-    if (discordId) {
-      memberData.discordId = discordId;
-
-      const resUser = await MembersUpdate(
-        JSON.parse(localStorage.getItem("currentUser"))?._id,
-        memberData
-      );
-      if (resUser?.status === 200) {
-        toast.success("Connected");
-        setAuthentication(dispatch, JSON.stringify(resUser?.data));
-        setIsDiscordConnected(true);
-      } else {
-        toast.error("API Failed");
-      }
-      navigate("/home");
-    }
-
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getInitData();
-  }, []);
-
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      {loading && (
-        <div className={classes.loadingOverlay}>
-          <Rings color="#4FC0AE" height={240} width={240} />
-        </div>
-      )}
       <Card
         sx={{
           backdropFilter: `saturate(200%) blur(30px)`,
@@ -162,71 +48,36 @@ function Home() {
           px: 4,
         }}
       >
-        <SoftBox
-          sx={{
-            width: "100%",
-            height: "calc(100vh - 190px)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Grid container direction="column" alignItems="center" justifyContent="center">
-            <Grid item lg="12">
-              <SoftBox
-                sx={{
-                  width: "500px",
-                  height: "64px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  border: isSteamConnected ? "none" : "1px solid #4FC0AE",
-                  backgroundColor: isSteamConnected ? "#ebfffc" : "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-                onClick={handleConnectSteam}
-              >
-                {isSteamConnected ? (
-                  <CheckCircleOutlinedIcon
-                    sx={{ color: "#4FC0AE", width: "32px", height: "32px", mr: "6px" }}
-                  />
-                ) : (
-                  ""
-                )}
-                <SoftTypography sx={{ color: "#4FC0AE" }}>
-                  {isSteamConnected ? "Connected Steam Account" : "Connect to Steam Account"}
-                </SoftTypography>
-              </SoftBox>
-            </Grid>
-            <Grid item lg="12" mt={"20px"}>
-              <SoftBox
-                sx={{
-                  width: "500px",
-                  height: "64px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  border: isDiscordConnected ? "none" : "1px solid #4FC0AE",
-                  backgroundColor: isDiscordConnected ? "#ebfffc" : "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-                onClick={handleConnectDiscord}
-              >
-                {isDiscordConnected ? (
-                  <CheckCircleOutlinedIcon
-                    sx={{ color: "#4FC0AE", width: "32px", height: "32px", mr: "6px" }}
-                  />
-                ) : (
-                  ""
-                )}
-                <SoftTypography sx={{ color: "#4FC0AE" }}>
-                  {isDiscordConnected ? "Connected Discord Account" : "Connect to Discord Account"}
-                </SoftTypography>
-              </SoftBox>
-            </Grid>
-          </Grid>
+        <SoftBox sx={{ width: "100%" }}>
+          <SoftTypography sx={{ color: "#5a5c63", fontWeight: "700", fontSize: "36px" }}>
+            Landing Page
+          </SoftTypography>
+
+          <SoftTypography sx={{ mt: "20px" }}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
+            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+            mollit anim id est laborum.
+          </SoftTypography>
+          <img
+            src="https://picsum.photos/500/300"
+            alt="Placeholder image"
+            style={{ margin: "20px" }}
+          />
+          <SoftTypography>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+            laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+            architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas
+            sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
+            voluptatem sequi nesciunt.
+          </SoftTypography>
+          <img
+            src="https://picsum.photos/500/300"
+            alt="Placeholder image"
+            style={{ margin: "20px" }}
+          />
         </SoftBox>
       </Card>
       <Footer />
