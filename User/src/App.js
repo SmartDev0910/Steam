@@ -59,7 +59,7 @@ const isAuth = () => {
 };
 
 const PrivateRoute = () => {
-  return isAuth() ? <Outlet /> : <Navigate to="/authentication/sign-in" />;
+  return isAuth() ? <Outlet /> : <Navigate to="/home" />;
 };
 
 export default function App() {
