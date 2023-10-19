@@ -100,6 +100,7 @@ export default function App() {
       }
       if (route.route) {
         if (
+          route.route !== "/home" &&
           route.route !== "/authentication/sign-in" &&
           route.route !== "/authentication/sign-up"
         ) {
@@ -159,7 +160,10 @@ export default function App() {
           </>
         )}
         {layout === "vr" && <Configurator />}
-        <Routes>{getRoutes(routes)}</Routes>
+        <Routes>
+          {getRoutes(routes)}
+          <Route path="*" element={<Navigate replace to="/home" />} />
+        </Routes>
         <ToastContainer />
       </LocalizationProvider>
     </ThemeProvider>

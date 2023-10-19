@@ -40,65 +40,28 @@ import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Home from "layouts/home";
 import Application from "layouts/application";
-import Rules from "layouts/rules";
-import ChangeLogs from "layouts/change-logs";
-import StarterGuide from "layouts/starter-guide";
 import MyAccount from "layouts/my-account";
 
 // Soft UI Dashboard React icons
 
-import CottageOutlinedIcon from "@mui/icons-material/CottageOutlined";
 import WebAssetOutlinedIcon from "@mui/icons-material/WebAssetOutlined";
-import RuleFolderOutlinedIcon from "@mui/icons-material/RuleFolderOutlined";
-import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
-import ContentPasteGoOutlinedIcon from "@mui/icons-material/ContentPasteGoOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 
 const routes = [
   {
-    type: "collapse",
-    name: "Home",
+    key: "sign-in",
+    route: "/authentication/sign-in",
+    component: <SignIn />,
+  },
+  {
+    key: "sign-up",
+    route: "/authentication/sign-up",
+    component: <SignUp />,
+  },
+  {
     key: "home",
     route: "/home",
-    icon: <CottageOutlinedIcon size="12px" />,
     component: <Home />,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Application",
-    key: "application",
-    route: "/application",
-    icon: <WebAssetOutlinedIcon size="12px" />,
-    component: <Application />,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Rules",
-    key: "rules",
-    route: "/rules",
-    icon: <RuleFolderOutlinedIcon size="12px" />,
-    component: <Rules />,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Change Logs",
-    key: "change-logs",
-    route: "/change-logs",
-    icon: <TextSnippetOutlinedIcon size="12px" />,
-    component: <ChangeLogs />,
-    noCollapse: true,
-  },
-  {
-    type: "collapse",
-    name: "Starter Guide",
-    key: "starter-guide",
-    route: "/starter-guide",
-    icon: <ContentPasteGoOutlinedIcon size="12px" />,
-    component: <StarterGuide />,
-    noCollapse: true,
   },
   {
     type: "collapse",
@@ -110,14 +73,13 @@ const routes = [
     noCollapse: true,
   },
   {
-    key: "sign-in",
-    route: "/authentication/sign-in",
-    component: <SignIn />,
-  },
-  {
-    key: "sign-up",
-    route: "/authentication/sign-up",
-    component: <SignUp />,
+    type: "collapse",
+    name: "Application",
+    key: "application",
+    route: "/application",
+    icon: <WebAssetOutlinedIcon size="12px" />,
+    component: <Application />,
+    noCollapse: true,
   },
 ];
 
