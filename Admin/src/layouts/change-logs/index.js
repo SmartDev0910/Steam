@@ -44,7 +44,7 @@ import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
 
 // Data
-import { MembersAll, MembersWhiteList, MembersBan } from "actions/membersAction";
+import { GetAllChangeLogs } from "actions/changelogAction";
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -62,15 +62,15 @@ const useStyles = makeStyles({
   },
 });
 
-function Members() {
+function ChangeLogs() {
   const classes = useStyles();
 
   const columns = [
-    { name: "email", align: "center" },
-    { name: "steam64", align: "center" },
-    { name: "ip address", align: "center" },
-    { name: "whitelist", align: "center" },
-    { name: "status", align: "center" },
+    { name: "title", align: "center" },
+    { name: "sub title", align: "center" },
+    { name: "sub description", align: "center" },
+    { name: "type", align: "center" },
+    { name: "log date", align: "center" },
     { name: "action", align: "center" },
   ];
 
@@ -78,106 +78,47 @@ function Members() {
   const [sortBy, setSortBy] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSetBan = async (steam64, isBanned) => {
-    const response = await MembersBan(steam64, isBanned);
-    if (response?.status === 200) {
-      toast.success("Success");
-      getInitData();
-    } else {
-      toast.error("Error");
-    }
-  };
-
-  const handleSetWhiteListed = async (steam64) => {
-    const response = await MembersWhiteList(steam64);
-    if (response?.status === 200) {
-      toast.success("Success");
-      getInitData();
-    } else {
-      toast.error("Error");
-    }
-  };
-
   const getInitData = async () => {
     setLoading(true);
-    const members = await MembersAll();
-    if (members?.status === 200) {
-      if (members?.data?.length) {
+    const response = await GetAllChangeLogs();
+    if (response?.status === 200) {
+      if (response?.data?.length) {
         let data = [];
-        members?.data?.map((member) => {
+        response?.data?.map((log) => {
           data.push({
-            email: (
+            title: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {member.email}
+                {log.title}
               </SoftTypography>
             ),
-            steam64: (
+            "sub title": (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {member.steam64}
+                {log.subTitle}
               </SoftTypography>
             ),
-            "ip address": (
+            "sub description": (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {member.ipAddress}
+                {log.subDescription.substring(0, 70)}...
               </SoftTypography>
             ),
-
-            whitelist: member.isWhiteListed ? (
+            type: (
               <SoftBadge
                 variant="gradient"
-                badgeContent="WhiteListed"
+                badgeContent={log.type}
                 color="info"
                 size="xs"
                 container
               />
-            ) : member.steam64 ? (
-              <SoftBadge
-                variant="gradient"
-                badgeContent="Pending"
-                color="dark"
-                size="xs"
-                container
-              />
-            ) : (
-              ""
             ),
-            status: member.isBanned ? (
-              <SoftBadge
-                variant="gradient"
-                badgeContent="Banned"
-                color="error"
-                size="xs"
-                container
-              />
-            ) : (
-              <SoftBadge
-                variant="gradient"
-                badgeContent="Allowed"
-                color="success"
-                size="xs"
-                container
-              />
+            "log date": (
+              <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+                {log.logDate}
+              </SoftTypography>
             ),
             action: (
               <>
-                {member.steam64 !== "" && !member.isWhiteListed ? (
-                  <SoftButton
-                    variant="text"
-                    color={"primary"}
-                    onClick={() => handleSetWhiteListed(member.steam64)}
-                  >
-                    Approve
-                  </SoftButton>
-                ) : (
-                  ""
-                )}
-                &nbsp;
-                <SoftButton
-                  variant="text"
-                  color={member.isBanned ? "success" : "error"}
-                  onClick={() => handleSetBan(member.steam64, !member.isBanned)}
-                >
-                  {member.isBanned ? "Allow" : "Ban"}
+                <SoftButton variant="text" color={"error"}>
+                  Delete
                 </SoftButton>
               </>
             ),
@@ -222,7 +163,7 @@ function Members() {
         <Grid container spacing={3} alignItems="center">
           <Grid item xs={12} md={6} lg={6}>
             <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
-              Members
+              Change Logs
             </SoftTypography>
           </Grid>
           <Grid
@@ -252,7 +193,7 @@ function Members() {
         <SoftBox mb={3}>
           <Card>
             <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-              <SoftTypography variant="h5">Members List</SoftTypography>
+              <SoftTypography variant="h5">Change Logs List</SoftTypography>
             </SoftBox>
             <SoftBox
               sx={{
@@ -280,4 +221,4 @@ function Members() {
   );
 }
 
-export default Members;
+export default ChangeLogs;
