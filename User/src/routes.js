@@ -35,17 +35,19 @@ Coded by www.creative-tim.com
   10. The `component` key is used to store the component of its route.
 */
 
+// Soft UI Dashboard React icons
+import WebAssetOutlinedIcon from "@mui/icons-material/WebAssetOutlined";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+
 // Soft UI Dashboard React layouts
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Home from "layouts/home";
+import Rules from "layouts/rules";
 import Application from "layouts/application";
 import MyAccount from "layouts/my-account";
-
-// Soft UI Dashboard React icons
-
-import WebAssetOutlinedIcon from "@mui/icons-material/WebAssetOutlined";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import StarterGuide from "layouts/starter-guide";
+import ChangeLogs from "layouts/change-logs";
 
 const routes = [
   {
@@ -63,7 +65,21 @@ const routes = [
     route: "/home",
     component: <Home />,
   },
-
+  {
+    key: "rules",
+    route: "/rules",
+    component: <Rules />,
+  },
+  {
+    key: "starter-guide",
+    route: "/starter-guide",
+    component: <StarterGuide />,
+  },
+  {
+    key: "change-logs",
+    route: "/change-logs",
+    component: <ChangeLogs />,
+  },
   {
     type: "collapse",
     name: "Application",

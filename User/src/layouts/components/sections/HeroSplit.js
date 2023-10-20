@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import classNames from "classnames";
-import { SectionSplitProps } from "../../utils/SectionProps";
-import ButtonGroup from "layouts/home/components/elements/ButtonGroup";
-import Button from "layouts/home/components/elements/Button";
-import Image from "layouts/home/components/elements/Image";
-import VideoPlaceHolderImage from "assets/images/video-placeholder.jpg";
+import { SectionSplitProps } from "layouts/utils/SectionProps";
+import Image from "layouts/components/elements/Image";
 
 const propTypes = {
   ...SectionSplitProps.types,

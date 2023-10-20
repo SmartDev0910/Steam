@@ -3,23 +3,25 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 import { SectionTilesProps } from "../../utils/SectionProps";
 import SectionHeader from "./partials/SectionHeader";
-import Switch from "../elements/Switch";
-import Button from "../elements/Button";
 
 const propTypes = {
   ...SectionTilesProps.types,
   pricingSwitcher: PropTypes.bool,
   pricingSlider: PropTypes.bool,
   className: PropTypes.string,
+  title: PropTypes.string,
+  paragraph: PropTypes.string,
 };
 
 const defaultProps = {
   ...SectionTilesProps.defaults,
   pricingSwitcher: false,
   pricingSlider: false,
+  titie: "",
+  paragraph: "",
 };
 
-class StarterGuide extends React.Component {
+class Widget extends React.Component {
   state = {
     priceChangerValue: "4",
     priceInput: {
@@ -33,41 +35,6 @@ class StarterGuide extends React.Component {
       7: "15,000",
       8: "50,000",
     },
-    priceOutput: {
-      plan1: {
-        0: ["$", "0", "/m"],
-        1: ["$", "13", "/m"],
-        2: ["$", "17", "/m"],
-        3: ["$", "21", "/m"],
-        4: ["$", "27", "/m"],
-        5: ["$", "42", "/m"],
-        6: ["$", "58", "/m"],
-        7: ["$", "117", "/m"],
-        8: ["$", "208", "/m"],
-      },
-      plan2: {
-        0: ["$", "13", "/m"],
-        1: ["$", "17", "/m"],
-        2: ["$", "21", "/m"],
-        3: ["$", "25", "/m"],
-        4: ["$", "47", "/m"],
-        5: ["$", "58", "/m"],
-        6: ["$", "117", "/m"],
-        7: ["$", "208", "/m"],
-        8: ["$", "299", "/m"],
-      },
-      plan3: {
-        0: ["$", "17", "/m"],
-        1: ["$", "21", "/m"],
-        2: ["$", "25", "/m"],
-        3: ["$", "42", "/m"],
-        4: ["$", "67", "/m"],
-        5: ["$", "117", "/m"],
-        6: ["$", "208", "/m"],
-        7: ["$", "299", "/m"],
-        8: ["$", "499", "/m"],
-      },
-    },
   };
 
   slider = React.createRef();
@@ -75,11 +42,11 @@ class StarterGuide extends React.Component {
 
   componentDidMount() {}
 
-  handleStarterGuideSwitch = (e) => {
+  handleWidgetSwitch = (e) => {
     this.setState({ priceChangerValue: e.target.checked ? "1" : "0" });
   };
 
-  handleStarterGuideSlide = (e) => {
+  handleWidgetSlide = (e) => {
     this.setState({ priceChangerValue: e.target.value });
     this.handleSliderValuePosition(e.target);
   };
@@ -92,7 +59,7 @@ class StarterGuide extends React.Component {
       input.clientWidth * multiplier - thumbOffset + priceInputOffset + "px";
   };
 
-  getStarterGuideData = (values, set) => {
+  getWidgetData = (values, set) => {
     return set !== undefined
       ? values[this.state.priceChangerValue][set]
       : values[this.state.priceChangerValue];
@@ -110,6 +77,8 @@ class StarterGuide extends React.Component {
       pushLeft,
       pricingSwitcher,
       pricingSlider,
+      title,
+      paragraph,
       ...props
     } = this.props;
 
@@ -128,10 +97,8 @@ class StarterGuide extends React.Component {
       bottomDivider && "has-bottom-divider"
     );
 
-    const tilesClasses = classNames("tiles-wrap", pushLeft && "push-left");
-
     const sectionHeader = {
-      title: "Starter Guide",
+      title: title,
       paragraph: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`,
     };
 
@@ -147,7 +114,7 @@ class StarterGuide extends React.Component {
   }
 }
 
-StarterGuide.propTypes = propTypes;
-StarterGuide.defaultProps = defaultProps;
+Widget.propTypes = propTypes;
+Widget.defaultProps = defaultProps;
 
-export default StarterGuide;
+export default Widget;

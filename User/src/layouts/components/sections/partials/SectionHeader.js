@@ -33,7 +33,7 @@ class SectionHeader extends React.Component {
             <div className="container-xs">
               {children}
               {data.title && (
-                <Component className={classNames("mt-0", data.paragraph ? "mb-16" : "mb-0")}>
+                <Component className={classNames("mt-0", data.paragraph ? "mb-64" : "mb-0")}>
                   {data.title}
                 </Component>
               )}

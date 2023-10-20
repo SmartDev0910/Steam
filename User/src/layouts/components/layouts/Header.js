@@ -144,13 +144,13 @@ class Header extends React.Component {
                         <Link to="/home">Home</Link>
                       </li>
                       <li>
-                        <a href="#rules">Rules</a>
+                        <Link to="/rules">Rules</Link>
                       </li>
                       <li>
-                        <a href="#starter-guide">Starter Guide</a>
+                        <Link to="/starter-guide">Starter Guide</Link>
                       </li>
                       <li>
-                        <a href="#change-logs">Change Logs</a>
+                        <Link to="/change-logs">Change Logs</Link>
                       </li>
                     </ul>
                     {!hideSignin && (

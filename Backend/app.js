@@ -23,6 +23,7 @@ const {
 
 const memberRoutes = require("./routes/memberRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
+const changelogRoutes = require("./routes/changelogRoutes");
 
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 
@@ -173,6 +174,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 //Routes
 app.use(memberRoutes);
 app.use(applicationRoutes);
+app.use(changelogRoutes);
 
 const port = PORT || 8080;
 
