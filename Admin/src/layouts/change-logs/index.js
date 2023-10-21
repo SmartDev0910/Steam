@@ -20,6 +20,7 @@ import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 
 import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -30,6 +31,12 @@ import SoftBadge from "components/SoftBadge";
 
 import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 
@@ -42,9 +49,19 @@ import Table from "examples/Tables/Table";
 import Select from "react-select";
 import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
+import { format } from "date-fns";
 
 // Data
-import { GetAllChangeLogs } from "actions/changelogAction";
+import { GetAllChangeLogs, CreateChangeLog, DeleteChangeLog } from "actions/changelogAction";
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialogContent-root": {
+    padding: theme.spacing(2),
+  },
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
+  },
+}));
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -75,8 +92,55 @@ function ChangeLogs() {
   ];
 
   const [rows, setRows] = useState([]);
+  const [open, setOpen] = useState(false);
   const [sortBy, setSortBy] = useState("");
   const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState("");
+  const [subTitle, setSubTitle] = useState("");
+  const [subDescription, setSubDescription] = useState("");
+  const [type, setType] = useState("");
+  const [logDate, setLogDate] = useState(null);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleDelete = async (id) => {
+    const response = await DeleteChangeLog(id);
+    if (response.status === 200) {
+      toast.success("Removed.");
+      getInitData();
+    } else {
+      toast.error("Error");
+    }
+  };
+
+  const handleCreateChangeLog = async () => {
+    await setLoading(true);
+
+    const formattedDate = format(logDate, "MMMM d, yyyy h:mm aa");
+
+    const newChangeLog = {
+      title: title,
+      subTitle: subTitle,
+      subDescription: subDescription,
+      type: type,
+      logDate: formattedDate,
+    };
+    const response = await CreateChangeLog(newChangeLog);
+
+    if (response?.status === 200) {
+      toast.success("Success");
+      setOpen(false);
+      getInitData();
+    } else toast.error(response?.data);
+
+    await setLoading(false);
+  };
 
   const getInitData = async () => {
     setLoading(true);
@@ -117,7 +181,7 @@ function ChangeLogs() {
             ),
             action: (
               <>
-                <SoftButton variant="text" color={"error"}>
+                <SoftButton variant="text" color={"error"} onClick={() => handleDelete(log._id)}>
                   Delete
                 </SoftButton>
               </>
@@ -186,6 +250,15 @@ function ChangeLogs() {
                 ]}
               />
             </SoftTypography>
+            <SoftButton
+              sx={{ marginLeft: "12px" }}
+              rel="noreferrer"
+              variant="gradient"
+              color="success"
+              onClick={handleClickOpen}
+            >
+              Create Change Log
+            </SoftButton>
           </Grid>
         </Grid>
       </Card>
@@ -217,6 +290,92 @@ function ChangeLogs() {
         </SoftBox>
       </SoftBox>
       <Footer />
+      <BootstrapDialog
+        onClose={handleClose}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+        // sx={{
+        //   "& .css-lzee2o-MuiPaper-root-MuiDialog-paper": { maxWidth: "50%" },
+        // }}
+      >
+        <DialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">
+          <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
+            Create Change Log
+          </SoftTypography>
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 16,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <DialogContent dividers>
+          {loading && (
+            <div className={classes.loadingOverlay}>
+              <Rings color="#4FC0AE" height={120} width={120} />
+            </div>
+          )}
+          <Grid container spacing={3} alignItems="center" sx={{ padding: "10px" }}>
+            <Grid item lg={12}>
+              <SoftTypography variant="h6" color={"dark"}>
+                Title
+              </SoftTypography>
+              <SoftInput value={title} onChange={(e) => setTitle(e.target.value)} />
+            </Grid>
+
+            <Grid item lg={12}>
+              <SoftTypography variant="h6" color={"dark"}>
+                Sub Title
+              </SoftTypography>
+              <SoftInput value={subTitle} onChange={(e) => setSubTitle(e.target.value)} />
+            </Grid>
+
+            <Grid item lg={12}>
+              <SoftTypography variant="h6" color={"dark"}>
+                Sub description
+              </SoftTypography>
+              <SoftInput
+                value={subDescription}
+                multiline
+                rows={5}
+                onChange={(e) => setSubDescription(e.target.value)}
+              />
+            </Grid>
+
+            <Grid item lg={6}>
+              <SoftTypography variant="h6" color={"dark"}>
+                Type
+              </SoftTypography>
+              <SoftInput value={type} onChange={(e) => setType(e.target.value)} />
+            </Grid>
+
+            <Grid item lg={6}>
+              <SoftTypography variant="h6" color={"dark"}>
+                Log Date
+              </SoftTypography>
+              <SoftTypography variant="h6" color={"dark"}>
+                <DatePicker onChange={(date) => setLogDate(date)} />
+              </SoftTypography>
+            </Grid>
+
+            <Grid
+              item
+              lg={12}
+              sx={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}
+            >
+              <SoftButton variant="gradient" color="success" onClick={handleCreateChangeLog}>
+                Add Change Log
+              </SoftButton>
+            </Grid>
+          </Grid>
+        </DialogContent>
+      </BootstrapDialog>
     </DashboardLayout>
   );
 }

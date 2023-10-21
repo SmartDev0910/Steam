@@ -156,7 +156,11 @@ export default function App() {
           </>
         )}
         {layout === "vr" && <Configurator />}
-        <Routes>{getRoutes(routes)}</Routes>
+        <Routes>
+          {getRoutes(routes)}
+          <Route path="*" element={<Navigate replace to="/authentication/sign-in" />} />
+        </Routes>
+
         <ToastContainer />
       </LocalizationProvider>
     </ThemeProvider>
