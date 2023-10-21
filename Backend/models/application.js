@@ -13,6 +13,10 @@ const applicationSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  audioUrl: {
+    type: String,
+    trim: true,
+  },
   submittedBy: {
     type: String,
     trim: true,

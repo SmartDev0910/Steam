@@ -26,6 +26,7 @@ exports.CreateApplication = (req, res, next) => {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     age: req.body.age,
+    audioUrl: req.body.audioUrl,
     submittedBy: req.params.steam64,
   });
   newApplication
