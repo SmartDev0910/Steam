@@ -23,6 +23,7 @@ const {
 
 const memberRoutes = require("./routes/memberRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
+const changelogRoutes = require("./routes/changelogRoutes");
 
 if (process.env.NODE_ENV !== "production") require("dotenv").config();
 
@@ -151,9 +152,9 @@ app.get(
 app.get("/failed", (req, res) => res.send("You failed to log in!"));
 
 const storage = multer.diskStorage({
-  destination: "uploads/video",
+  destination: "uploads/audio",
   filename: function (req, file, cb) {
-    cb(null, Date.now() + ".mp4");
+    cb(null, Date.now() + ".wav");
   },
 });
 
@@ -167,12 +168,13 @@ app.post("/upload", upload.single("file"), (req, res) => {
   const file = req.file;
 
   // Send a response back to the client
-  res.status(200).send({ status: 200, data: file });
+  res.status(200).send(file);
 });
 
 //Routes
 app.use(memberRoutes);
 app.use(applicationRoutes);
+app.use(changelogRoutes);
 
 const port = PORT || 8080;
 

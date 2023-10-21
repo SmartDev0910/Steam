@@ -38,10 +38,11 @@ Coded by www.creative-tim.com
 // Soft UI Dashboard React layouts
 import SignIn from "layouts/authentication/sign-in";
 import Members from "layouts/members";
+import ChangeLogs from "layouts/change-logs";
 
 // Soft UI Dashboard React icons
-
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
+import WebStoriesOutlinedIcon from "@mui/icons-material/WebStoriesOutlined";
 
 const routes = [
   {
@@ -51,6 +52,15 @@ const routes = [
     route: "/members",
     icon: <ManageAccountsOutlinedIcon size="12px" />,
     component: <Members />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "ChangeLogs",
+    key: "change-logs",
+    route: "/change-logs",
+    icon: <WebStoriesOutlinedIcon size="12px" />,
+    component: <ChangeLogs />,
     noCollapse: true,
   },
   {

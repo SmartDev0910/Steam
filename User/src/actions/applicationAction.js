@@ -17,3 +17,15 @@ export const GetApplicationBySteam64 = async (steam64) => {
     return error;
   }
 };
+
+export const fileUpload = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await axios.post("/upload", formData);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};

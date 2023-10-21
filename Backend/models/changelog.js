@@ -1,26 +1,26 @@
 const mongoose = require("mongoose");
 
-const applicationSchema = new mongoose.Schema({
-  firstName: {
+const changelogSchema = new mongoose.Schema({
+  title: {
     type: String,
     trim: true,
   },
-  lastName: {
+  subTitle: {
     type: String,
     trim: true,
   },
-  age: {
+  subDescription: {
     type: String,
     trim: true,
   },
-  audioUrl: {
+  type: {
     type: String,
     trim: true,
   },
-  submittedBy: {
+  logDate: {
     type: String,
     trim: true,
   },
 });
 
-module.exports = mongoose.model("Application", applicationSchema);
+module.exports = mongoose.model("ChangeLog", changelogSchema);

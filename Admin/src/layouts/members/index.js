@@ -162,7 +162,7 @@ function Members() {
               <>
                 {member.steam64 !== "" && !member.isWhiteListed ? (
                   <SoftButton
-                    variant="outlined"
+                    variant="text"
                     color={"primary"}
                     onClick={() => handleSetWhiteListed(member.steam64)}
                   >
@@ -173,7 +173,7 @@ function Members() {
                 )}
                 &nbsp;
                 <SoftButton
-                  variant="outlined"
+                  variant="text"
                   color={member.isBanned ? "success" : "error"}
                   onClick={() => handleSetBan(member.steam64, !member.isBanned)}
                 >
