@@ -45,11 +45,11 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import Table from "examples/Tables/Table";
+import moment from "moment";
 
 import Select from "react-select";
 import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
-import { format } from "date-fns";
 
 // Data
 import { GetAllChangeLogs, CreateChangeLog, DeleteChangeLog } from "actions/changelogAction";
@@ -122,7 +122,7 @@ function ChangeLogs() {
   const handleCreateChangeLog = async () => {
     await setLoading(true);
 
-    const formattedDate = format(logDate, "MMMM d, yyyy h:mm aa");
+    const formattedDate = moment(logDate).format("MMMM D, YYYY h:mm A");
 
     const newChangeLog = {
       title: title,
@@ -162,7 +162,9 @@ function ChangeLogs() {
             ),
             "sub description": (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {log.subDescription.substring(0, 70)}...
+                {log.subDescription.length > 70
+                  ? log.subDescription.substring(0, 70) + "..."
+                  : log.subDescription}
               </SoftTypography>
             ),
             type: (
