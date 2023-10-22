@@ -79,14 +79,14 @@ const useStyles = makeStyles({
   },
 });
 
+let log_id = 0;
+
 function ChangeLogs() {
   const classes = useStyles();
 
   const columns = [
     { name: "title", align: "center" },
-    { name: "sub title", align: "center" },
-    { name: "sub description", align: "center" },
-    { name: "type", align: "center" },
+    { name: "sub logs", align: "center" },
     { name: "log date", align: "center" },
     { name: "action", align: "center" },
   ];
@@ -96,10 +96,8 @@ function ChangeLogs() {
   const [sortBy, setSortBy] = useState("");
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
-  const [subTitle, setSubTitle] = useState("");
-  const [subDescription, setSubDescription] = useState("");
-  const [type, setType] = useState("");
   const [logDate, setLogDate] = useState(null);
+  const [subLogs, setSubLogs] = useState([{ log_id: log_id++ }]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -119,6 +117,23 @@ function ChangeLogs() {
     }
   };
 
+  const handleAddSubLog = () => {
+    let tmp = [
+      ...subLogs,
+      {
+        log_id: log_id++,
+        subTitle: "",
+        subDescription: "",
+        type: "",
+      },
+    ];
+    setSubLogs([...tmp]);
+  };
+
+  const handleRemoveSubLog = (logId) => {
+    setSubLogs([...subLogs.filter((item) => item.log_id !== logId)]);
+  };
+
   const handleCreateChangeLog = async () => {
     await setLoading(true);
 
@@ -126,9 +141,7 @@ function ChangeLogs() {
 
     const newChangeLog = {
       title: title,
-      subTitle: subTitle,
-      subDescription: subDescription,
-      type: type,
+      subLogs: JSON.stringify(subLogs),
       logDate: formattedDate,
     };
     const response = await CreateChangeLog(newChangeLog);
@@ -155,26 +168,34 @@ function ChangeLogs() {
                 {log.title}
               </SoftTypography>
             ),
-            "sub title": (
-              <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {log.subTitle}
-              </SoftTypography>
-            ),
-            "sub description": (
-              <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {log.subDescription.length > 70
-                  ? log.subDescription.substring(0, 70) + "..."
-                  : log.subDescription}
-              </SoftTypography>
-            ),
-            type: (
-              <SoftBadge
-                variant="gradient"
-                badgeContent={log.type}
-                color="info"
-                size="xs"
-                container
-              />
+            "sub logs": log?.subLogs ? (
+              <Grid container spacing={1}>
+                {JSON.parse(log?.subLogs).map((sublog, index) => {
+                  return (
+                    <Grid lg={12} item key={index}>
+                      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+                        {sublog.subTitle}
+                      </SoftTypography>
+                      &nbsp;
+                      <SoftBadge
+                        variant="gradient"
+                        badgeContent={sublog.type}
+                        color="info"
+                        size="xs"
+                        container
+                      />
+                      &nbsp;
+                      <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+                        {sublog?.subDescription.length > 70
+                          ? sublog?.subDescription.substring(0, 70) + "..."
+                          : sublog?.subDescription}
+                      </SoftTypography>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            ) : (
+              ""
             ),
             "log date": (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
@@ -331,32 +352,101 @@ function ChangeLogs() {
               <SoftInput value={title} onChange={(e) => setTitle(e.target.value)} />
             </Grid>
 
-            <Grid item lg={12}>
-              <SoftTypography variant="h6" color={"dark"}>
-                Sub Title
-              </SoftTypography>
-              <SoftInput value={subTitle} onChange={(e) => setSubTitle(e.target.value)} />
-            </Grid>
+            {subLogs &&
+              subLogs.map((item, index) => {
+                return (
+                  <Grid item lg={12} key={index}>
+                    <SoftBox
+                      sx={{ border: "1px solid #e2e2e2", borderRadius: "10px", padding: "10px" }}
+                    >
+                      <Grid container spacing={1}>
+                        <Grid item lg={8}>
+                          <SoftTypography variant="h6" color={"dark"}>
+                            Sub Title
+                          </SoftTypography>
+                          <SoftInput
+                            value={item.subTitle}
+                            onChange={(event) => {
+                              setSubLogs(
+                                subLogs.map((it) =>
+                                  it.log_id !== item.log_id
+                                    ? it
+                                    : {
+                                        ...it,
+                                        subTitle: event.target.value,
+                                      }
+                                )
+                              );
+                            }}
+                          />
+                        </Grid>
 
-            <Grid item lg={12}>
-              <SoftTypography variant="h6" color={"dark"}>
-                Sub description
-              </SoftTypography>
-              <SoftInput
-                value={subDescription}
-                multiline
-                rows={5}
-                onChange={(e) => setSubDescription(e.target.value)}
-              />
-            </Grid>
+                        <Grid item lg={4}>
+                          <SoftTypography variant="h6" color={"dark"}>
+                            Type
+                          </SoftTypography>
+                          <SoftInput
+                            value={item.type}
+                            onChange={(event) => {
+                              setSubLogs(
+                                subLogs.map((it) =>
+                                  it.log_id !== item.log_id
+                                    ? it
+                                    : {
+                                        ...it,
+                                        type: event.target.value,
+                                      }
+                                )
+                              );
+                            }}
+                          />
+                        </Grid>
 
-            <Grid item lg={6}>
-              <SoftTypography variant="h6" color={"dark"}>
-                Type
-              </SoftTypography>
-              <SoftInput value={type} onChange={(e) => setType(e.target.value)} />
+                        <Grid item lg={12}>
+                          <SoftTypography variant="h6" color={"dark"}>
+                            Sub description
+                          </SoftTypography>
+                          <SoftInput
+                            multiline
+                            rows={5}
+                            value={item.subDescription}
+                            onChange={(event) => {
+                              setSubLogs(
+                                subLogs.map((it) =>
+                                  it.log_id !== item.log_id
+                                    ? it
+                                    : {
+                                        ...it,
+                                        subDescription: event.target.value,
+                                      }
+                                )
+                              );
+                            }}
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          lg={12}
+                          sx={{ display: "flex", justifyContent: "flex-end", marginBottom: "20px" }}
+                        >
+                          <SoftButton
+                            variant="text"
+                            color="error"
+                            onClick={() => handleRemoveSubLog(item.log_id)}
+                          >
+                            Remove Sub Log
+                          </SoftButton>
+                        </Grid>
+                      </Grid>
+                    </SoftBox>
+                  </Grid>
+                );
+              })}
+            <Grid item lg={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <SoftButton variant="gradient" color="dark" onClick={handleAddSubLog}>
+                Add Sub Log
+              </SoftButton>
             </Grid>
-
             <Grid item lg={6}>
               <SoftTypography variant="h6" color={"dark"}>
                 Log Date
