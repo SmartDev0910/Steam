@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import { Link } from "react-router-dom";
-import LogoImage from "assets/images/steam.svg";
+import LogoImage from "assets/images/logo-ct.png";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";

@@ -20,7 +20,6 @@ const ChangeLogs = (props) => {
     hasBgColor,
     invertColor,
     pushLeft,
-    ...otherProps
   } = props;
 
   const [data, setData] = useState([]);
@@ -85,56 +84,68 @@ const ChangeLogs = (props) => {
                   >
                     {`${log?.title} (${log?.logDate})`}
                   </SoftTypography>
-                  <SoftBox
-                    sx={{
-                      mt: "30px",
-                      backgroundColor: "#0f1c2b",
-                      px: "20px",
-                      py: "20px",
-                      borderRadius: "20px",
-                    }}
-                  >
-                    <SoftBox sx={{ display: "flex", alignItems: "center" }}>
-                      <SoftTypography
-                        sx={{
-                          color: "#95a4b4",
-                          fontSize: "22px",
-                          fontWeight: "600",
-                          lineHeight: "36px",
-                        }}
-                      >
-                        {log?.subTitle}
-                      </SoftTypography>
-                      <SoftBox
-                        sx={{
-                          width: "80px",
-                          height: "28px",
-                          backgroundColor: "#405165",
-                          borderRadius: "20px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          ml: "10px",
-                        }}
-                      >
-                        <SoftTypography
-                          sx={{
-                            color: "#fff",
-                            fontSize: "20px",
-                            fontWeight: "600",
-                            lineHeight: "32px",
-                          }}
-                        >
-                          {log?.type}
-                        </SoftTypography>
-                      </SoftBox>
-                    </SoftBox>
-                    <SoftTypography
-                      sx={{ color: "#95a4b4", fontSize: "20px", fontWeight: "600", mt: "10px" }}
-                    >
-                      {log?.subDescription}
-                    </SoftTypography>
-                  </SoftBox>
+                  {log?.subLogs
+                    ? JSON.parse(log?.subLogs).map((sublog, index) => {
+                        return (
+                          <SoftBox
+                            sx={{
+                              mt: "30px",
+                              backgroundColor: "#0f1c2b",
+                              px: "20px",
+                              py: "20px",
+                              borderRadius: "20px",
+                            }}
+                            key={index}
+                          >
+                            <SoftBox sx={{ display: "flex", alignItems: "center" }}>
+                              <SoftTypography
+                                sx={{
+                                  color: "#95a4b4",
+                                  fontSize: "22px",
+                                  fontWeight: "600",
+                                  lineHeight: "36px",
+                                }}
+                              >
+                                {sublog?.subTitle}
+                              </SoftTypography>
+                              <SoftBox
+                                sx={{
+                                  width: "80px",
+                                  height: "28px",
+                                  backgroundColor: "#405165",
+                                  borderRadius: "20px",
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  ml: "10px",
+                                }}
+                              >
+                                <SoftTypography
+                                  sx={{
+                                    color: "#fff",
+                                    fontSize: "20px",
+                                    fontWeight: "600",
+                                    lineHeight: "32px",
+                                  }}
+                                >
+                                  {sublog?.type}
+                                </SoftTypography>
+                              </SoftBox>
+                            </SoftBox>
+                            <SoftTypography
+                              sx={{
+                                color: "#95a4b4",
+                                fontSize: "20px",
+                                fontWeight: "600",
+                                mt: "10px",
+                              }}
+                            >
+                              {sublog?.subDescription}
+                            </SoftTypography>
+                          </SoftBox>
+                        );
+                      })
+                    : ""}
                 </Card>
               ))}
           </SoftBox>

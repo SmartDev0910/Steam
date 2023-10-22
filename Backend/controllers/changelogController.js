@@ -19,9 +19,7 @@ exports.GetAllChangeLogs = (req, res, next) => {
 exports.CreateChangeLog = (req, res, next) => {
   const newChangeLog = new ChangeLog({
     title: req.body.title,
-    subTitle: req.body.subTitle,
-    subDescription: req.body.subDescription,
-    type: req.body.type,
+    subLogs: req.body.subLogs,
     logDate: req.body.logDate,
   });
   newChangeLog

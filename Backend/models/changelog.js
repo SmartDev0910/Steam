@@ -5,15 +5,7 @@ const changelogSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  subTitle: {
-    type: String,
-    trim: true,
-  },
-  subDescription: {
-    type: String,
-    trim: true,
-  },
-  type: {
+  subLogs: {
     type: String,
     trim: true,
   },
