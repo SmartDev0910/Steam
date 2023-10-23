@@ -5,6 +5,7 @@ import { SectionTilesProps } from "layouts/utils/SectionProps";
 import SectionHeader from "./partials/SectionHeader";
 
 import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography/index";
 
@@ -84,68 +85,70 @@ const ChangeLogs = (props) => {
                   >
                     {`${log?.title} (${log?.logDate})`}
                   </SoftTypography>
-                  {log?.subLogs
-                    ? JSON.parse(log?.subLogs).map((sublog, index) => {
-                        return (
-                          <SoftBox
-                            sx={{
-                              mt: "30px",
-                              backgroundColor: "#0f1c2b",
-                              px: "20px",
-                              py: "20px",
-                              borderRadius: "20px",
-                            }}
-                            key={index}
-                          >
-                            <SoftBox sx={{ display: "flex", alignItems: "center" }}>
-                              <SoftTypography
-                                sx={{
-                                  color: "#95a4b4",
-                                  fontSize: "22px",
-                                  fontWeight: "600",
-                                  lineHeight: "36px",
-                                }}
-                              >
-                                {sublog?.subTitle}
-                              </SoftTypography>
+                  <Grid container sx={{ mt: "30px", width: "100%" }} spacing={2}>
+                    {log?.subLogs
+                      ? JSON.parse(log?.subLogs).map((sublog, index) => {
+                          return (
+                            <Grid item lg="4" key={index}>
                               <SoftBox
                                 sx={{
-                                  width: "80px",
-                                  height: "28px",
-                                  backgroundColor: "#405165",
+                                  backgroundColor: "#0f1c2b",
+                                  px: "20px",
+                                  py: "20px",
                                   borderRadius: "20px",
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  alignItems: "center",
-                                  ml: "10px",
                                 }}
                               >
+                                <SoftBox sx={{ display: "flex", alignItems: "center" }}>
+                                  <SoftTypography
+                                    sx={{
+                                      color: "#95a4b4",
+                                      fontSize: "22px",
+                                      fontWeight: "600",
+                                      lineHeight: "36px",
+                                    }}
+                                  >
+                                    {sublog?.subTitle}
+                                  </SoftTypography>
+                                  <SoftBox
+                                    sx={{
+                                      width: "80px",
+                                      height: "28px",
+                                      backgroundColor: "#405165",
+                                      borderRadius: "20px",
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                      ml: "10px",
+                                    }}
+                                  >
+                                    <SoftTypography
+                                      sx={{
+                                        color: "#fff",
+                                        fontSize: "20px",
+                                        fontWeight: "600",
+                                        lineHeight: "32px",
+                                      }}
+                                    >
+                                      {sublog?.type}
+                                    </SoftTypography>
+                                  </SoftBox>
+                                </SoftBox>
                                 <SoftTypography
                                   sx={{
-                                    color: "#fff",
+                                    color: "#95a4b4",
                                     fontSize: "20px",
                                     fontWeight: "600",
-                                    lineHeight: "32px",
+                                    mt: "10px",
                                   }}
                                 >
-                                  {sublog?.type}
+                                  {sublog?.subDescription}
                                 </SoftTypography>
                               </SoftBox>
-                            </SoftBox>
-                            <SoftTypography
-                              sx={{
-                                color: "#95a4b4",
-                                fontSize: "20px",
-                                fontWeight: "600",
-                                mt: "10px",
-                              }}
-                            >
-                              {sublog?.subDescription}
-                            </SoftTypography>
-                          </SoftBox>
-                        );
-                      })
-                    : ""}
+                            </Grid>
+                          );
+                        })
+                      : ""}
+                  </Grid>
                 </Card>
               ))}
           </SoftBox>
