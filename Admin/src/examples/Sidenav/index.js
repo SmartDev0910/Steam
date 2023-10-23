@@ -54,11 +54,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
-  const handleLogOut = () => {
-    toast.success("Log Out");
-    localStorage.removeItem("currentUser");
-    navigate("/authentication/sign-in");
-  };
+  // const handleLogOut = () => {
+  //   toast.success("Log Out");
+  //   localStorage.removeItem("currentUser");
+  //   navigate("/authentication/sign-in");
+  // };
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -165,7 +165,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       </SoftBox>
       <Divider />
       <List>{renderRoutes}</List>
-      <SoftBox pt={2} my={2} mx={2} mt="auto">
+      {/* <SoftBox pt={2} my={2} mx={2} mt="auto">
         <SoftBox mt={2}>
           <SoftButton
             rel="noreferrer"
@@ -177,7 +177,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             Log Out
           </SoftButton>
         </SoftBox>
-      </SoftBox>
+      </SoftBox> */}
     </SidenavRoot>
   );
 }

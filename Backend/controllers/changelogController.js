@@ -15,13 +15,25 @@ exports.GetAllChangeLogs = (req, res, next) => {
     .catch((err) => res.status(400).send(err));
 };
 
+// change-log -> detail -> id
+exports.GetChangeLogById = (req, res, next) => {
+  const { id } = req.params;
+  ChangeLog.findById(id)
+    .then((resChangeLog) => {
+      if (resChangeLog) {
+        res.status(200).send(resChangeLog);
+      } else {
+        res.status(404).send("Not Found");
+      }
+    })
+    .catch((err) => res.status(400).send(err));
+};
+
 // change-log -> create
 exports.CreateChangeLog = (req, res, next) => {
   const newChangeLog = new ChangeLog({
     title: req.body.title,
-    subTitle: req.body.subTitle,
-    subDescription: req.body.subDescription,
-    type: req.body.type,
+    subLogs: req.body.subLogs,
     logDate: req.body.logDate,
   });
   newChangeLog

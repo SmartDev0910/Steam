@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect } from "react";
 
 // react-router components
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
@@ -33,6 +33,7 @@ import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftInput from "components/SoftInput";
 import SoftAvatar from "components/SoftAvatar";
+import SoftButton from "components/SoftButton";
 
 // Soft UI Dashboard React examples
 import Breadcrumbs from "examples/Breadcrumbs";
@@ -55,17 +56,25 @@ import {
   setOpenConfigurator,
 } from "context";
 
+import { toast } from "react-toastify";
 // Images
 import burceMars from "assets/images/bruce-mars.jpg";
 import team2 from "assets/images/team-2.jpg";
 import logoSpotify from "assets/images/small-logos/logo-spotify.svg";
 
 function DashboardNavbar({ absolute, light, isMini }) {
+  const navigate = useNavigate();
   const [navbarType, setNavbarType] = useState();
   const [controller, dispatch] = useClubAdminController();
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const route = useLocation().pathname.split("/").slice(1);
+
+  const handleLogOut = () => {
+    toast.success("Log Out");
+    localStorage.removeItem("currentUser");
+    navigate("/home");
+  };
 
   useEffect(() => {
     // Setting the navbar type
@@ -149,12 +158,12 @@ function DashboardNavbar({ absolute, light, isMini }) {
         </SoftBox>
         {isMini ? null : (
           <SoftBox sx={(theme) => navbarRow(theme, { isMini })}>
-            <SoftBox pr={1}>
+            {/* <SoftBox pr={1}>
               <SoftInput
                 placeholder="Type here..."
                 icon={{ component: "search", direction: "left" }}
               />
-            </SoftBox>
+            </SoftBox> */}
             <SoftBox color={light ? "white" : "inherit"} display="flex" alignItems="center">
               <IconButton
                 size="large"
@@ -166,7 +175,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                   {miniSidenav ? "menu_open" : "menu"}
                 </Icon>
               </IconButton>
-              <IconButton
+              {/* <IconButton
                 size="large"
                 color="inherit"
                 sx={navbarIconButton}
@@ -184,7 +193,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 onClick={handleOpenMenu}
               >
                 <Icon className={light ? "text-white" : "text-dark"}>notifications</Icon>
-              </IconButton>
+              </IconButton> */}
               {renderMenu()}
               <SoftBox display="flex" alignItems="center" px={1} py={0.5}>
                 <SoftBox mr={2}>
@@ -205,6 +214,19 @@ function DashboardNavbar({ absolute, light, isMini }) {
                       ? JSON.parse(localStorage.getItem("currentUser"))?.email
                       : ""}
                   </SoftTypography>
+                </SoftBox>
+              </SoftBox>
+              <SoftBox pt={2} my={2} mx={2} mt="auto">
+                <SoftBox>
+                  <SoftButton
+                    rel="noreferrer"
+                    variant="text"
+                    color={"info"}
+                    fullWidth
+                    onClick={handleLogOut}
+                  >
+                    Log Out
+                  </SoftButton>
                 </SoftBox>
               </SoftBox>
             </SoftBox>

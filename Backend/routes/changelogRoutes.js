@@ -9,6 +9,7 @@ const changelogController = require("../controllers/changelogController");
 router.get("/change-log/test", changelogController.test);
 
 router.get("/change-log/all", changelogController.GetAllChangeLogs);
+router.get("/change-log/detail/:id", changelogController.GetChangeLogById);
 
 router.post("/change-log/create", changelogController.CreateChangeLog);
 
