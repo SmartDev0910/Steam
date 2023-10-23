@@ -9,6 +9,15 @@ export const GetAllChangeLogs = async () => {
   }
 };
 
+export const GetChangeLogById = async (id) => {
+  try {
+    const response = await axios.get(`/change-log/detail/${id}`);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const CreateChangeLog = async (changelog) => {
   try {
     const response = await axios.post(`/change-log/create`, changelog);

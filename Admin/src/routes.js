@@ -39,6 +39,7 @@ Coded by www.creative-tim.com
 import SignIn from "layouts/authentication/sign-in";
 import Members from "layouts/members";
 import ChangeLogs from "layouts/change-logs";
+import ChangeLogDetail from "layouts/change-logs/detail";
 
 // Soft UI Dashboard React icons
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
@@ -62,6 +63,12 @@ const routes = [
     icon: <WebStoriesOutlinedIcon size="12px" />,
     component: <ChangeLogs />,
     noCollapse: true,
+  },
+  {
+    name: "ChangeLogs/detail",
+    key: "change-logs/detail",
+    route: "/change-logs/detail/:id",
+    component: <ChangeLogDetail />,
   },
   {
     key: "sign-in",
