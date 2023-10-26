@@ -55,7 +55,7 @@ const useStyles = makeStyles({
   },
 });
 
-function FansEditDetail() {
+function NewApplication() {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
 
@@ -189,7 +189,7 @@ function FansEditDetail() {
           <Rings color="#4FC0AE" height={120} width={120} />
         </div>
       )}
-      <SoftBox py={3}>
+      <SoftBox py={3} mx="24px">
         <Card sx={{ padding: "20px", marginTop: "20px" }}>
           <Grid container spacing={3} alignItems="center" sx={{ padding: "10px" }}>
             <Grid item container lg={12}>
@@ -315,4 +315,4 @@ function FansEditDetail() {
   );
 }
 
-export default FansEditDetail;
+export default NewApplication;

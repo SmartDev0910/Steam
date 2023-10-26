@@ -24,27 +24,13 @@ function navbar(theme, ownerState) {
   return {
     boxShadow: transparentNavbar || absolute ? "none" : navbarBoxShadow,
     backdropFilter: transparentNavbar || absolute ? "none" : `saturate(200%) blur(${pxToRem(30)})`,
-    backgroundColor:
-      transparentNavbar || absolute ? `${transparent.main} !important` : rgba(white.main, 0.8),
+    backgroundColor: "#222225",
 
-    color: () => {
-      let color;
-
-      if (light) {
-        color = white.main;
-      } else if (transparentNavbar) {
-        color = text.main;
-      } else {
-        color = dark.main;
-      }
-
-      return color;
-    },
-    top: absolute ? 0 : pxToRem(12),
+    mb: "20px",
+    color: "#fff",
     minHeight: pxToRem(75),
     display: "grid",
     alignItems: "center",
-    borderRadius: borderRadius.xl,
     paddingTop: pxToRem(8),
     paddingBottom: pxToRem(8),
     paddingRight: absolute ? pxToRem(8) : 0,
@@ -64,7 +50,6 @@ function navbar(theme, ownerState) {
 
       [breakpoints.up("sm")]: {
         minHeight: "auto",
-        padding: `${pxToRem(4)} ${pxToRem(16)}`,
       },
     },
   };
