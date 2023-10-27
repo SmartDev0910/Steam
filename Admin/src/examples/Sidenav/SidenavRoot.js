@@ -21,7 +21,6 @@ export default styled(Drawer)(({ theme, ownerState }) => {
   const { palette, boxShadows, transitions, breakpoints, functions } = theme;
   const { transparentSidenav, miniSidenav } = ownerState;
 
-  const sidebarWidth = 250;
   const { white, transparent } = palette;
   const { xxl } = boxShadows;
   const { pxToRem } = functions;
@@ -35,11 +34,10 @@ export default styled(Drawer)(({ theme, ownerState }) => {
     }),
 
     [breakpoints.up("xl")]: {
-      backgroundColor: transparentSidenav ? transparent.main : white.main,
+      backgroundColor: "#030A1C",
       boxShadow: transparentSidenav ? "none" : xxl,
       marginBottom: transparentSidenav ? 0 : "inherit",
       left: "0",
-      width: sidebarWidth,
       transform: "translateX(0)",
       transition: transitions.create(["width", "background-color"], {
         easing: transitions.easing.sharp,
@@ -77,6 +75,11 @@ export default styled(Drawer)(({ theme, ownerState }) => {
       border: "none",
 
       ...(miniSidenav ? drawerCloseStyles() : drawerOpenStyles()),
+    },
+    "& .css-u0k6ft-MuiPaper-root-MuiDrawer-paper": {
+      height: "100% !important",
+      margin: "0px",
+      borderRadius: "0px",
     },
   };
 });

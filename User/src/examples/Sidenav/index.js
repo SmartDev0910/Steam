@@ -56,12 +56,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
 
-  const handleLogOut = () => {
-    toast.success("Log Out");
-    localStorage.removeItem("currentUser");
-    navigate("/authentication/sign-in");
-  };
-
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
     function handleMiniSidenav() {
@@ -175,20 +169,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             alignItems: "center",
           }}
         >
-          <SoftButton
-            rel="noreferrer"
-            variant="gradient"
-            color={color}
-            icon={<AccountCircleOutlinedIcon />}
-            fullWidth
-            onClick={() => navigate("/profile-settings")}
-          >
-            Profile Settings
-          </SoftButton>
-          <SoftTypography sx={{ color: "grey", fontSize: "18px", mt: "10px" }}>
+          <SoftTypography sx={{ color: "grey", fontSize: "15px", mt: "10px" }}>
             © 2015 - 2023 CircuitRP Inc.
           </SoftTypography>
-          <SoftTypography sx={{ color: "grey", fontSize: "18px" }}>
+          <SoftTypography sx={{ color: "grey", fontSize: "15px" }}>
             All Rights Reserved
           </SoftTypography>
         </SoftBox>

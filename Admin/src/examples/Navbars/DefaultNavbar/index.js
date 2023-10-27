@@ -15,15 +15,13 @@ Coded by www.creative-tim.com
 
 import { useState, useEffect } from "react";
 
-// react-router components
-import { Link } from "react-router-dom";
-
 // prop-types is a library for typechecking of props.
 import PropTypes from "prop-types";
 
 // @mui material components
 import Container from "@mui/material/Container";
 import Icon from "@mui/material/Icon";
+import Link from "@mui/material/Link";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -95,17 +93,24 @@ function DefaultNavbar({ transparent, light, action }) {
         })}
       >
         <SoftBox py={transparent ? 1.5 : 0.75} lineHeight={1} alignItems="center">
-          <SoftBox
-            component="img"
-            src={brand}
-            alt="Soft UI Logo"
-            width="2rem"
-            style={{ verticalAlign: "middle", display: "inline-block" }}
-          />
-          &nbsp;
-          <SoftTypography variant="button" fontWeight="bold" color={light ? "white" : "dark"}>
-            CircuitRP Admin
-          </SoftTypography>
+          <Link href="/home">
+            <SoftBox
+              component="img"
+              src={brand}
+              alt="Soft UI Logo"
+              width="2rem"
+              sx={{ verticalAlign: "middle", display: "inline-block", cursor: "pointer" }}
+            />
+            &nbsp;
+            <SoftTypography
+              variant="button"
+              fontWeight="bold"
+              color={light ? "white" : "dark"}
+              sx={{ cursor: "pointer" }}
+            >
+              CircuitRP
+            </SoftTypography>
+          </Link>
         </SoftBox>
         <SoftBox
           display={{ xs: "inline-block", lg: "none" }}

@@ -22,13 +22,13 @@ function collapseItem(theme, ownerState) {
   const { pxToRem } = functions;
 
   return {
-    background: active ? dark.main : "#000",
+    background: active ? dark.main : "none",
     color: active ? white.main : white.main,
     display: "flex",
     alignItems: "center",
     width: "100%",
     padding: `${pxToRem(10.8)} ${pxToRem(12.8)} ${pxToRem(10.8)} ${pxToRem(16)}`,
-    margin: `0 ${pxToRem(16)}`,
+    margin: `5px ${pxToRem(16)}`,
     borderRadius: borderRadius.md,
     cursor: "pointer",
     userSelect: "none",

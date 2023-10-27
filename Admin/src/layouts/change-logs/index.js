@@ -182,7 +182,7 @@ function ChangeLogs() {
                   },
                   cursor: "pointer",
                 }}
-                onClick={() => navigate(`/change-logs/detail/${log._id}`)}
+                onClick={() => navigate(`/change-logs/${log._id}`)}
               >
                 {log.title}
               </SoftTypography>
@@ -235,6 +235,7 @@ function ChangeLogs() {
           mt: 0,
           py: 2,
           px: 2,
+          mx: "20px",
         }}
       >
         <Grid container spacing={3} alignItems="center">
@@ -264,7 +265,7 @@ function ChangeLogs() {
           </Grid>
         </Grid>
       </Card>
-      <SoftBox py={3}>
+      <SoftBox py={3} mx="20px">
         <Card>
           <SoftBox
             sx={{
