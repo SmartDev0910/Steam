@@ -244,13 +244,13 @@ function ProfileSettings() {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            border: isSteamConnected ? "1px solid grey" : "1px solid #1383C3",
+                            border: isSteamConnected ? "none" : "1px solid #1383C3",
                             borderRadius: "5px",
                             cursor: "pointer",
                           }}
                           onClick={handleConnectSteam}
                         >
-                          <SoftTypography sx={{ color: "#000" }}>
+                          <SoftTypography>
                             {isSteamConnected
                               ? "Connected Steam Account"
                               : "Connect to Steam Account"}
@@ -276,13 +276,13 @@ function ProfileSettings() {
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            border: isDiscordConnected ? "1px solid grey" : "1px solid #1383C3",
+                            border: isDiscordConnected ? "none" : "1px solid #1383C3",
                             borderRadius: "5px",
                             cursor: "pointer",
                           }}
                           onClick={handleConnectDiscord}
                         >
-                          <SoftTypography sx={{ color: "#000" }}>
+                          <SoftTypography>
                             {isDiscordConnected
                               ? "Connected Discord Account"
                               : "Connect to Discord Account"}
@@ -314,44 +314,58 @@ function ProfileSettings() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <SoftTypography>Your Name and Email</SoftTypography>
+                <SoftBox sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+                  <SoftTypography>Your Name and Email</SoftTypography>
+                  <SoftTypography color={"info"} mr="20px">
+                    Edit
+                  </SoftTypography>
+                </SoftBox>
               </AccordionSummary>
               <AccordionDetails>
                 <SoftBox
                   sx={{
                     width: "100%",
+                    py: "20px",
                   }}
                 >
-                  <Grid
-                    container
-                    alignItems="center"
+                  <SoftBox
                     sx={{
                       width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "row",
                     }}
-                    spacing={2}
                   >
-                    <Grid item lg="4">
-                      Full Name
+                    <Grid container>
+                      <Grid item lg={2}></Grid>
+                      <Grid item lg={3}>
+                        <SoftBox
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <SoftTypography ml="30px">Full Name</SoftTypography>
+                          <SoftTypography ml="30px">Email</SoftTypography>
+                        </SoftBox>
+                      </Grid>
+                      <Grid item lg={1}></Grid>
+                      <Grid item lg={6}>
+                        <SoftBox
+                          sx={{
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <SoftTypography ml="30px">John Doe</SoftTypography>
+                          <SoftTypography ml="30px">JohnDoe@gmail.com</SoftTypography>
+                        </SoftBox>
+                      </Grid>
                     </Grid>
-                    <Grid item lg="8">
-                      John Doe
-                    </Grid>
-                  </Grid>
-                  <Grid
-                    container
-                    alignItems="center"
-                    sx={{
-                      width: "100%",
-                    }}
-                    spacing={2}
-                  >
-                    <Grid item lg="4">
-                      Full Name
-                    </Grid>
-                    <Grid item lg="8">
-                      John Doe
-                    </Grid>
-                  </Grid>
+                  </SoftBox>
                 </SoftBox>
               </AccordionDetails>
             </Accordion>
@@ -368,7 +382,12 @@ function ProfileSettings() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <SoftTypography>Your Password</SoftTypography>
+                <SoftBox sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+                  <SoftTypography>Your Password</SoftTypography>
+                  <SoftTypography color={"info"} mr="20px">
+                    Change
+                  </SoftTypography>
+                </SoftBox>
               </AccordionSummary>
               <AccordionDetails>
                 <SoftBox
@@ -377,12 +396,31 @@ function ProfileSettings() {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    py: "20px",
                   }}
                 >
-                  <Grid container direction="column" alignItems="center" justifyContent="center">
-                    <Grid item lg="12">
-                      <SoftBox sx={{ display: "flex" }}>
-                        <SoftTypography ml="30px">Last Changed:</SoftTypography>
+                  <Grid container>
+                    <Grid item lg={2}></Grid>
+                    <Grid item lg={3}>
+                      <SoftBox
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          flexDirection: "column",
+                        }}
+                      >
+                        <SoftTypography ml="30px">Last Changed</SoftTypography>
+                      </SoftBox>
+                    </Grid>
+                    <Grid item lg={1}></Grid>
+                    <Grid item lg={6}>
+                      <SoftBox
+                        sx={{
+                          display: "flex",
+                          justifyContent: "flex-start",
+                          flexDirection: "column",
+                        }}
+                      >
                         <SoftTypography ml="30px">18 sep, 2023</SoftTypography>
                       </SoftBox>
                     </Grid>
@@ -403,7 +441,12 @@ function ProfileSettings() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <SoftTypography>Two-Step Verification</SoftTypography>
+                <SoftBox sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+                  <SoftTypography>Two-Step Verification</SoftTypography>
+                  <SoftTypography color={"info"} mr="20px">
+                    Turn On
+                  </SoftTypography>
+                </SoftBox>
               </AccordionSummary>
               <AccordionDetails>
                 <SoftBox
@@ -413,6 +456,7 @@ function ProfileSettings() {
                     justifyContent: "center",
                     alignItems: "center",
                     px: "20px",
+                    py: "20px",
                   }}
                 >
                   <Grid container direction="column">
