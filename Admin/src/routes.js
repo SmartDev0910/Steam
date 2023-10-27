@@ -40,10 +40,13 @@ import SignIn from "layouts/authentication/sign-in";
 import Members from "layouts/members";
 import ChangeLogs from "layouts/change-logs";
 import ChangeLogDetail from "layouts/change-logs/detail";
+import ApplicationPortal from "layouts/application-portal";
 
 // Soft UI Dashboard React icons
-import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
-import WebStoriesOutlinedIcon from "@mui/icons-material/WebStoriesOutlined";
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
+import AutoStoriesOutlinedIcon from "@mui/icons-material/AutoStoriesOutlined";
+import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
 
 const routes = [
   {
@@ -51,23 +54,40 @@ const routes = [
     name: "Members",
     key: "members",
     route: "/members",
-    icon: <ManageAccountsOutlinedIcon size="12px" />,
+    icon: <PeopleAltOutlinedIcon size="12px" />,
     component: <Members />,
-    noCollapse: true,
+    noCollapse: false,
   },
   {
     type: "collapse",
     name: "ChangeLogs",
     key: "change-logs",
     route: "/change-logs",
-    icon: <WebStoriesOutlinedIcon size="12px" />,
+    icon: <TextSnippetOutlinedIcon size="12px" />,
     component: <ChangeLogs />,
     noCollapse: true,
   },
   {
-    name: "ChangeLogs/detail",
-    key: "change-logs/detail",
-    route: "/change-logs/detail/:id",
+    type: "collapse",
+    name: "Starter Guide",
+    key: "starter-guide",
+    route: "/starter-guide",
+    icon: <AutoStoriesOutlinedIcon size="12px" />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Application Portal",
+    key: "application-portal",
+    route: "/application-portal",
+    icon: <TaskOutlinedIcon size="12px" />,
+    component: <ApplicationPortal />,
+    noCollapse: true,
+  },
+  {
+    name: "ChangeLogs/:id",
+    key: "change-logs/:id",
+    route: "/change-logs/:id",
     component: <ChangeLogDetail />,
   },
   {

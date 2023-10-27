@@ -40,7 +40,7 @@ import theme from "assets/theme";
 import routes from "routes";
 
 // Soft UI Dashboard React contexts
-import { useClubAdminController, setMiniSidenav, setOpenConfigurator } from "context";
+import { useClubAdminController, setMiniSidenav } from "context";
 
 // Images
 import brand from "assets/images/logo-ct.png";
@@ -64,7 +64,7 @@ const PrivateRoute = () => {
 
 export default function App() {
   const [controller, dispatch] = useClubAdminController();
-  const { miniSidenav, layout, openConfigurator, sidenavColor } = controller;
+  const { miniSidenav, layout, sidenavColor } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const { pathname } = useLocation();
 
@@ -83,9 +83,6 @@ export default function App() {
       setOnMouseEnter(false);
     }
   };
-
-  // Change the openConfigurator state
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
 
   // Setting page scroll to 0 when changing the route
   useEffect(() => {
@@ -120,48 +117,27 @@ export default function App() {
     });
   };
 
-  const configsButton = (
-    <SoftBox
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      width="3.5rem"
-      height="3.5rem"
-      bgColor="white"
-      shadow="sm"
-      borderRadius="50%"
-      position="fixed"
-      right="2rem"
-      bottom="2rem"
-      zIndex={99}
-      color="dark"
-      sx={{ cursor: "pointer" }}
-      onClick={handleConfiguratorOpen}
-    >
-      <Icon fontSize="default" color="inherit">
-        settings
-      </Icon>
-    </SoftBox>
-  );
-
   return (
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
-        {layout === "dashboard" && isAuth() && (
-          <>
-            <Sidenav
-              color={sidenavColor}
-              brand={brand}
-              brandName="CircuitRP"
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            />
-            <Configurator />
-            {configsButton}
-          </>
-        )}
+        {layout === "dashboard" &&
+          isAuth() &&
+          !pathname.includes("home") &&
+          !pathname.includes("rules") &&
+          !pathname.includes("starter-guide") &&
+          !pathname.includes("change-logs") && (
+            <>
+              <Sidenav
+                color={sidenavColor}
+                brand={brand}
+                brandName="CircuitRP"
+                routes={routes}
+                onMouseEnter={handleOnMouseEnter}
+                onMouseLeave={handleOnMouseLeave}
+              />
+            </>
+          )}
         {layout === "vr" && <Configurator />}
         <Routes>
           {getRoutes(routes)}

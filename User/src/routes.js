@@ -36,16 +36,17 @@ Coded by www.creative-tim.com
 */
 
 // Soft UI Dashboard React icons
-import WebAssetOutlinedIcon from "@mui/icons-material/WebAssetOutlined";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
+import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
 
 // Soft UI Dashboard React layouts
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Home from "layouts/home";
 import Rules from "layouts/rules";
-import Application from "layouts/application";
-import MyAccount from "layouts/my-account";
+import ApplicationCenter from "layouts/application-center";
+import NewApplication from "layouts/application-center/new";
+import ProfileSettings from "layouts/profile-settings";
 import StarterGuide from "layouts/starter-guide";
 import ChangeLogs from "layouts/change-logs";
 
@@ -82,21 +83,30 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Application",
-    key: "application",
-    route: "/application",
-    icon: <WebAssetOutlinedIcon size="12px" />,
-    component: <Application />,
+    name: "Application Center",
+    key: "application-center",
+    route: "/application-center",
+    icon: <TaskOutlinedIcon size="12px" />,
+    component: <ApplicationCenter />,
     noCollapse: true,
   },
   {
     type: "collapse",
-    name: "My Account",
-    key: "my-account",
-    route: "/my-account",
-    icon: <AccountCircleOutlinedIcon size="12px" />,
-    component: <MyAccount />,
+    name: "Starter Guide",
+    key: "starter-guide",
+    route: "/starter-guide",
+    icon: <SummarizeOutlinedIcon size="12px" />,
     noCollapse: true,
+  },
+  {
+    key: "application-center/:id",
+    route: "/application-center/:id",
+    component: <NewApplication />,
+  },
+  {
+    key: "profile-settings",
+    route: "/profile-settings",
+    component: <ProfileSettings />,
   },
 ];
 

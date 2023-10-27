@@ -42,6 +42,7 @@ import { useClubAdminController, setAuthentication } from "context";
 
 function SignIn() {
   const [rememberMe, setRememberMe] = useState(true);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [controller, dispatch] = useClubAdminController();
@@ -54,7 +55,7 @@ function SignIn() {
     if (response?.status === 200) {
       toast.success("Success");
       setAuthentication(dispatch, JSON.stringify(response?.data));
-      window.location.pathname = "/application";
+      window.location.pathname = "/application-center";
     } else toast.error(response.data);
   };
 
@@ -65,6 +66,19 @@ function SignIn() {
       image={curved9}
     >
       <SoftBox component="form" role="form">
+        <SoftBox mb={2}>
+          <SoftBox mb={1} ml={0.5}>
+            <SoftTypography component="label" variant="caption" fontWeight="bold">
+              Name
+            </SoftTypography>
+          </SoftBox>
+          <SoftInput
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </SoftBox>
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
             <SoftTypography component="label" variant="caption" fontWeight="bold">

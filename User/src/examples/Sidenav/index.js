@@ -43,6 +43,8 @@ import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
 import { useClubAdminController, setMiniSidenav } from "context";
 import { toast } from "react-toastify";
 
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useClubAdminController();
   const { miniSidenav, transparentSidenav } = controller;
@@ -53,12 +55,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const collapseName = pathname.split("/").slice(1)[0];
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
-
-  const handleLogOut = () => {
-    toast.success("Log Out");
-    localStorage.removeItem("currentUser");
-    navigate("/authentication/sign-in");
-  };
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -143,7 +139,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           position="absolute"
           top={0}
           right={0}
-          p={1.625}
           onClick={closeSidenav}
           sx={{ cursor: "pointer" }}
         >
@@ -157,27 +152,40 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            <SoftTypography component="h6" variant="button" fontWeight="medium">
+            <SoftTypography component="h6" variant="button" fontWeight="medium" color="white">
               {brandName}
             </SoftTypography>
           </SoftBox>
         </SoftBox>
       </SoftBox>
-      <Divider />
+      <Divider sx={{ backgroundColor: "#fff" }} />
       <List>{renderRoutes}</List>
-      {/* <SoftBox pt={2} my={2} mx={2} mt="auto">
-        <SoftBox mt={2}>
+      <SoftBox pt={2} my={2} mx={2} mt="auto">
+        <SoftBox
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <SoftButton
             rel="noreferrer"
             variant="gradient"
             color={color}
             fullWidth
-            onClick={handleLogOut}
+            onClick={() => navigate("/profile-settings")}
           >
-            My Account
+            profile settings
           </SoftButton>
+          <SoftTypography sx={{ color: "grey", fontSize: "15px", mt: "10px" }}>
+            © 2015 - 2023 CircuitRP Inc.
+          </SoftTypography>
+          <SoftTypography sx={{ color: "grey", fontSize: "15px" }}>
+            All Rights Reserved
+          </SoftTypography>
         </SoftBox>
-      </SoftBox> */}
+      </SoftBox>
     </SidenavRoot>
   );
 }

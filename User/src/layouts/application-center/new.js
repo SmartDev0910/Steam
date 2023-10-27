@@ -34,10 +34,14 @@ import Table from "examples/Tables/Table";
 import { Rings } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
+import SoftAvatar from "components/SoftAvatar";
+
 import AudioReactRecorder, { RecordState } from "audio-react-recorder";
 
 import { CreateApplication, GetApplicationBySteam64, fileUpload } from "actions/applicationAction";
 import { REACT_APP_SERVER_IP } from "actions/config";
+
+import RecIcon from "assets/images/rec.png";
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -55,7 +59,7 @@ const useStyles = makeStyles({
   },
 });
 
-function FansEditDetail() {
+function NewApplication() {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
 
@@ -189,13 +193,13 @@ function FansEditDetail() {
           <Rings color="#4FC0AE" height={120} width={120} />
         </div>
       )}
-      <SoftBox py={3}>
+      <SoftBox py={3} mx="24px">
         <Card sx={{ padding: "20px", marginTop: "20px" }}>
           <Grid container spacing={3} alignItems="center" sx={{ padding: "10px" }}>
             <Grid item container lg={12}>
               <Grid item lg={12}>
                 <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
-                  New Application
+                  Whitelist Application
                 </SoftTypography>
               </Grid>
               {JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "" ? (
@@ -222,7 +226,7 @@ function FansEditDetail() {
               )}
               <Grid item container lg={12} spacing={6} mt={1} alignItems="flex-start">
                 <Grid lg={6} item container sx={{ fontSize: "12px" }}>
-                  <Grid item lg={12}>
+                  <Grid item lg={10}>
                     <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
                       First Name
                     </SoftTypography>
@@ -232,7 +236,7 @@ function FansEditDetail() {
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                   </Grid>
-                  <Grid item lg={12}>
+                  <Grid item lg={10} mt={"20px"}>
                     <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
                       Last Name
                     </SoftTypography>
@@ -242,7 +246,7 @@ function FansEditDetail() {
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </Grid>
-                  <Grid item lg={12}>
+                  <Grid item lg={10} mt={"20px"}>
                     <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
                       Age
                     </SoftTypography>
@@ -251,15 +255,32 @@ function FansEditDetail() {
                 </Grid>
                 <Grid item lg={6}>
                   <SoftTypography variant="h6" color={"dark"} mb={2}>
-                    Record Voice
+                    Record Audio
                   </SoftTypography>
-                  <AudioReactRecorder state={recordState} onStop={onRecordStop} />
-                  <SoftButton variant="text" color="info" onClick={handleRecordStart}>
-                    Record Start
-                  </SoftButton>
-                  <SoftButton variant="text" color="info" onClick={handleRecordStop}>
-                    Record Stop
-                  </SoftButton>
+                  <SoftBox
+                    sx={{
+                      display: "flex",
+                      height: "260px",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <SoftTypography sx={{ fontSize: "70px" }}>00:00</SoftTypography>
+                    <SoftAvatar
+                      src={RecIcon}
+                      sx={{ width: "90px", height: "90px", cursor: "pointer" }}
+                    ></SoftAvatar>
+                  </SoftBox>
+                  <SoftBox sx={{ display: "none" }}>
+                    <AudioReactRecorder state={recordState} onStop={onRecordStop} />
+                    <SoftButton variant="text" color="info" onClick={handleRecordStart}>
+                      Record Start
+                    </SoftButton>
+                    <SoftButton variant="text" color="info" onClick={handleRecordStop}>
+                      Record Stop
+                    </SoftButton>
+                  </SoftBox>
                 </Grid>
               </Grid>
 
@@ -269,7 +290,7 @@ function FansEditDetail() {
                 lg={12}
                 container
                 spacing={2}
-                sx={{ fontSize: "12px", marginTop: "1px" }}
+                sx={{ fontSize: "12px", marginTop: "20px" }}
               >
                 <Grid item xs={12} md={4} lg={4}>
                   <SoftButton
@@ -286,7 +307,7 @@ function FansEditDetail() {
             </Grid>
           </Grid>
         </Card>
-        {rows.length ? (
+        {/* {rows.length ? (
           <SoftBox mb={3} mt={2}>
             <Card>
               <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
@@ -308,11 +329,11 @@ function FansEditDetail() {
           </SoftBox>
         ) : (
           ""
-        )}
+        )} */}
       </SoftBox>
       <Footer />
     </DashboardLayout>
   );
 }
 
-export default FansEditDetail;
+export default NewApplication;
