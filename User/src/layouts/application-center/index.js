@@ -23,6 +23,7 @@ import Grid from "@mui/material/Grid";
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
+import SoftAvatar from "components/SoftAvatar";
 import SoftButton from "components/SoftButton";
 import SoftInput from "components/SoftInput";
 
@@ -34,8 +35,8 @@ import Footer from "examples/Footer";
 import { Rings } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
-import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
-import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
+import DevIcon from "assets/images/dev-icon.png";
+import WhitelistIcon from "assets/images/whitelist-icon.png";
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -93,7 +94,7 @@ function ApplicationCenter() {
               }}
               onClick={() => navigate("/application-center/whitelist-application")}
             >
-              <TaskOutlinedIcon sx={{ width: "70px", height: "90px" }} />
+              <SoftAvatar src={WhitelistIcon} sx={{ width: "70px", height: "90px" }} />
               <SoftTypography sx={{ mt: "10px" }}>Whitelist Application</SoftTypography>
             </Card>
           </Grid>
@@ -112,7 +113,7 @@ function ApplicationCenter() {
                 float: "left",
               }}
             >
-              <CodeOutlinedIcon sx={{ width: "70px", height: "90px" }} />
+              <SoftAvatar src={DevIcon} sx={{ width: "70px", height: "90px" }} />
               <SoftTypography sx={{ mt: "10px" }}>Dev Application</SoftTypography>
             </Card>
           </Grid>
@@ -132,7 +133,7 @@ function ApplicationCenter() {
               }}
               onClick={() => navigate("/application-center/whitelist-application")}
             >
-              <TaskOutlinedIcon sx={{ width: "70px", height: "90px" }} />
+              <SoftAvatar src={WhitelistIcon} sx={{ width: "70px", height: "90px" }} />
               <SoftTypography sx={{ mt: "10px" }}>Application 3</SoftTypography>
             </Card>
           </Grid>
@@ -151,7 +152,7 @@ function ApplicationCenter() {
                 float: "left",
               }}
             >
-              <TaskOutlinedIcon sx={{ width: "70px", height: "90px" }} />
+              <SoftAvatar src={WhitelistIcon} sx={{ width: "70px", height: "90px" }} />
               <SoftTypography sx={{ mt: "10px" }}>Application 4</SoftTypography>
             </Card>
           </Grid>

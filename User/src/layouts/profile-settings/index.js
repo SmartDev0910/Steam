@@ -322,18 +322,34 @@ function ProfileSettings() {
                     width: "100%",
                   }}
                 >
-                  <Grid container direction="column" alignItems="center">
-                    <Grid item lg="12">
-                      <SoftBox sx={{ display: "flex" }}>
-                        <SoftTypography ml="30px">Full Name:</SoftTypography>
-                        <SoftTypography ml="30px">John Doe</SoftTypography>
-                      </SoftBox>
+                  <Grid
+                    container
+                    alignItems="center"
+                    sx={{
+                      width: "100%",
+                    }}
+                    spacing={2}
+                  >
+                    <Grid item lg="4">
+                      Full Name
                     </Grid>
-                    <Grid item lg="12" mt={"20px"}>
-                      <SoftBox sx={{ display: "flex" }}>
-                        <SoftTypography ml="30px">Email:</SoftTypography>
-                        <SoftTypography ml="30px">JohnDoe@gmail.com</SoftTypography>
-                      </SoftBox>
+                    <Grid item lg="8">
+                      John Doe
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    alignItems="center"
+                    sx={{
+                      width: "100%",
+                    }}
+                    spacing={2}
+                  >
+                    <Grid item lg="4">
+                      Full Name
+                    </Grid>
+                    <Grid item lg="8">
+                      John Doe
                     </Grid>
                   </Grid>
                 </SoftBox>
