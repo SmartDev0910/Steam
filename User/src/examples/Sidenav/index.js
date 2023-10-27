@@ -169,6 +169,15 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             alignItems: "center",
           }}
         >
+          <SoftButton
+            rel="noreferrer"
+            variant="gradient"
+            color={color}
+            fullWidth
+            onClick={() => navigate("/profile-settings")}
+          >
+            profile settings
+          </SoftButton>
           <SoftTypography sx={{ color: "grey", fontSize: "15px", mt: "10px" }}>
             © 2015 - 2023 CircuitRP Inc.
           </SoftTypography>

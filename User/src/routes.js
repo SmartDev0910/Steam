@@ -36,7 +36,7 @@ Coded by www.creative-tim.com
 */
 
 // Soft UI Dashboard React icons
-import WebAssetOutlinedIcon from "@mui/icons-material/WebAssetOutlined";
+import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
 import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
 
 // Soft UI Dashboard React layouts
@@ -88,6 +88,14 @@ const routes = [
     route: "/application-center",
     icon: <TaskOutlinedIcon size="12px" />,
     component: <ApplicationCenter />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Starter Guide",
+    key: "starter-guide",
+    route: "/starter-guide",
+    icon: <SummarizeOutlinedIcon size="12px" />,
     noCollapse: true,
   },
   {
