@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
+import Tooltip from "@mui/material/Tooltip";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -41,7 +42,10 @@ import AudioReactRecorder, { RecordState } from "audio-react-recorder";
 import { CreateApplication, GetApplicationBySteam64, fileUpload } from "actions/applicationAction";
 import { REACT_APP_SERVER_IP } from "actions/config";
 
-import RecIcon from "assets/images/rec.png";
+import { formatTime, blobToBase64 } from "layouts/utils";
+
+import StopIcon from "assets/images/stop.png";
+import RecordIcon from "assets/images/record.png";
 
 const useStyles = makeStyles({
   loadingOverlay: {
@@ -59,6 +63,8 @@ const useStyles = makeStyles({
   },
 });
 
+var myInterval;
+
 function NewApplication() {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
@@ -75,6 +81,8 @@ function NewApplication() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [age, setAge] = useState("");
+  const [recordCounter, setRecordCounter] = useState("00:00");
+  const [recordAudioStatus, setRecordAudioStatus] = useState("initiate");
   const [audioData, setAudioData] = useState(null);
 
   const [recordState, setRecordState] = useState(null);
@@ -83,6 +91,13 @@ function NewApplication() {
     if (JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "") {
       toast.error("Please Connect Steam Account");
     } else {
+      let count = 0;
+      myInterval = setInterval(function () {
+        count++;
+        setRecordCounter(formatTime(count));
+      }, 1000);
+
+      setRecordAudioStatus("start recording");
       setRecordState(RecordState.START);
     }
   };
@@ -91,14 +106,18 @@ function NewApplication() {
     if (JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "") {
       toast.error("Please Connect Steam Account");
     } else {
+      clearInterval(myInterval);
+      setRecordCounter("00:00");
+      setRecordAudioStatus("finish recording");
       setRecordState(RecordState.STOP);
     }
   };
 
   //audioData contains blob and blobUrl
-  const onRecordStop = (audioData) => {
-    console.log("audioData", audioData, audioData.url);
-    setAudioData(audioData);
+  const onRecordStop = async (audioData) => {
+    const base64AudioMessage = await blobToBase64(audioData.blob);
+    console.log(base64AudioMessage);
+    setAudioData(base64AudioMessage);
   };
 
   const handleSubmit = async () => {
@@ -108,30 +127,25 @@ function NewApplication() {
       toast.error("Please Input All Fields");
     } else {
       setLoading(true);
-      let audioFile = new File([audioData.blob], "recorded_audio.wav");
-      const responseFile = await fileUpload(audioFile);
 
-      if (responseFile?.status === 200) {
-        const applicationData = {
-          firstName: firstName,
-          lastName: lastName,
-          age: age,
-          audioUrl: responseFile?.data?.filename,
-        };
+      const applicationData = {
+        firstName: firstName,
+        lastName: lastName,
+        age: age,
+        audioUrl: JSON.stringify(audioData),
+      };
 
-        const response = await CreateApplication(
-          JSON.parse(localStorage.getItem("currentUser"))?.steam64,
-          applicationData
-        );
-        if (response?.status === 200) {
-          toast.success("Application Submitted!");
-          getInitData();
-        } else {
-          toast.error("API Failed");
-        }
+      const response = await CreateApplication(
+        JSON.parse(localStorage.getItem("currentUser"))?.steam64,
+        applicationData
+      );
+      if (response?.status === 200) {
+        toast.success("Application Submitted!");
+        getInitData();
       } else {
-        toast.error("Upload Fail");
+        toast.error("API Failed");
       }
+
       setLoading(false);
     }
   };
@@ -224,7 +238,7 @@ function NewApplication() {
               ) : (
                 ""
               )}
-              <Grid item container lg={12} spacing={6} mt={1} alignItems="flex-start">
+              <Grid item container lg={12} rowSpacing={6} mt={1} alignItems="flex-start">
                 <Grid lg={6} item container sx={{ fontSize: "12px" }}>
                   <Grid item lg={10}>
                     <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
@@ -236,7 +250,7 @@ function NewApplication() {
                       onChange={(e) => setFirstName(e.target.value)}
                     />
                   </Grid>
-                  <Grid item lg={10} mt={"20px"}>
+                  <Grid item lg={10} mt={"10px"}>
                     <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
                       Last Name
                     </SoftTypography>
@@ -246,7 +260,7 @@ function NewApplication() {
                       onChange={(e) => setLastName(e.target.value)}
                     />
                   </Grid>
-                  <Grid item lg={10} mt={"20px"}>
+                  <Grid item lg={10} mt={"10px"}>
                     <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
                       Age
                     </SoftTypography>
@@ -266,20 +280,67 @@ function NewApplication() {
                       alignItems: "center",
                     }}
                   >
-                    <SoftTypography sx={{ fontSize: "70px" }}>00:00</SoftTypography>
-                    <SoftAvatar
-                      src={RecIcon}
-                      sx={{ width: "90px", height: "90px", cursor: "pointer" }}
-                    ></SoftAvatar>
+                    {recordAudioStatus === "start recording" ? (
+                      <SoftTypography sx={{ fontSize: "70px" }}>{recordCounter}</SoftTypography>
+                    ) : (
+                      ""
+                    )}
+                    {recordAudioStatus === "initiate" ? (
+                      <Tooltip disableFocusListener title="Record">
+                        <SoftAvatar
+                          src={RecordIcon}
+                          sx={{
+                            width: "120px",
+                            height: "120px",
+                            cursor: "pointer",
+                            marginRight: "10px",
+                          }}
+                          onClick={handleRecordStart}
+                        ></SoftAvatar>
+                      </Tooltip>
+                    ) : (
+                      ""
+                    )}
+
+                    {recordAudioStatus === "start recording" ? (
+                      <SoftAvatar
+                        src={StopIcon}
+                        sx={{
+                          width: "90px",
+                          height: "90px",
+                          cursor: "pointer",
+                          marginRight: "10px",
+                        }}
+                        onClick={handleRecordStop}
+                      ></SoftAvatar>
+                    ) : (
+                      ""
+                    )}
+
+                    {recordAudioStatus === "finish recording" ? (
+                      <SoftBox
+                        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                      >
+                        <audio controls src={audioData} />
+                        <Tooltip disableFocusListener title="Restart recording">
+                          <SoftAvatar
+                            src={RecordIcon}
+                            sx={{
+                              width: "40px",
+                              height: "40px",
+                              cursor: "pointer",
+                              marginLeft: "20px",
+                            }}
+                            onClick={() => setRecordAudioStatus("initiate")}
+                          ></SoftAvatar>
+                        </Tooltip>
+                      </SoftBox>
+                    ) : (
+                      ""
+                    )}
                   </SoftBox>
                   <SoftBox sx={{ display: "none" }}>
                     <AudioReactRecorder state={recordState} onStop={onRecordStop} />
-                    <SoftButton variant="text" color="info" onClick={handleRecordStart}>
-                      Record Start
-                    </SoftButton>
-                    <SoftButton variant="text" color="info" onClick={handleRecordStop}>
-                      Record Stop
-                    </SoftButton>
                   </SoftBox>
                 </Grid>
               </Grid>
