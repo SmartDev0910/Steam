@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -45,7 +45,7 @@ import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
 
 // Data
-import { MembersUpdate } from "actions/membersAction";
+import { ChangePassword, MembersUpdate } from "actions/membersAction";
 import { REACT_APP_SERVER_IP } from "actions/config";
 import { useClubAdminController, setAuthentication } from "context";
 
@@ -109,8 +109,11 @@ function ProfileSettings() {
 
   const [controller, dispatch] = useClubAdminController();
   const [loading, setLoading] = useState(false);
+  const [fullNameOld, setFullNameOld] = useState("");
   const [fullName, setFullName] = useState("");
+  const [emailOld, setEmailOld] = useState("");
   const [email, setEmail] = useState("");
+  const [passwordLastChanged, setPasswordLastChanged] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [isSteamConnected, setIsSteamConnected] = useState(false);
@@ -139,33 +142,42 @@ function ProfileSettings() {
 
   const getInitData = async () => {
     setLoading(true);
-
     let memberData = {
+      name: JSON.parse(localStorage.getItem("currentUser"))?.name,
       email: JSON.parse(localStorage.getItem("currentUser"))?.email,
       ipAddress: JSON.parse(localStorage.getItem("currentUser"))?.ipAddress,
       isBanned: JSON.parse(localStorage.getItem("currentUser"))?.isBanned,
       isWhiteListed: JSON.parse(localStorage.getItem("currentUser"))?.isWhiteListed,
       password: JSON.parse(localStorage.getItem("currentUser"))?.password,
+      passwordLastChanged: JSON.parse(localStorage.getItem("currentUser"))?.passwordLastChanged,
       steam64: JSON.parse(localStorage.getItem("currentUser"))?.steam64,
       discordId: JSON.parse(localStorage.getItem("currentUser"))?.discordId,
     };
+    setFullName(memberData.name)
+    setFullNameOld(memberData.name)
+    setEmail(memberData.email)
+    setEmailOld(memberData.email)
+    setPasswordLastChanged(memberData.passwordLastChanged?.substring(0, 10))
 
-    if (JSON.parse(localStorage.getItem("currentUser"))?.steam64) setIsSteamConnected(true);
-    if (JSON.parse(localStorage.getItem("currentUser"))?.discordId) setIsDiscordConnected(true);
+    const mySteam64 = JSON.parse(localStorage.getItem("currentUser"))?.steam64
+    const myDiscord = JSON.parse(localStorage.getItem("currentUser"))?.discordId
+
+    if (mySteam64 && mySteam64.length > 0) setIsSteamConnected(true);
+    if (myDiscord && myDiscord.length > 0) setIsDiscordConnected(true);
 
     if (steam64) {
       memberData.steam64 = steam64;
 
       const resUser = await MembersUpdate(
         JSON.parse(localStorage.getItem("currentUser"))?._id,
-        memberData
+        {steam64}
       );
       if (resUser?.status === 200) {
         toast.success("Connected");
         setAuthentication(dispatch, JSON.stringify(resUser?.data));
         setIsSteamConnected(true);
       } else {
-        toast.error("API Failed");
+        toast.error("Technical error encountered");
       }
       navigate("/profile-settings");
     }
@@ -182,7 +194,7 @@ function ProfileSettings() {
         setAuthentication(dispatch, JSON.stringify(resUser?.data));
         setIsDiscordConnected(true);
       } else {
-        toast.error("API Failed");
+        toast.error("Technical error encountered");
       }
       navigate("/profile-settings");
     }
@@ -193,9 +205,60 @@ function ProfileSettings() {
   useEffect(() => {
     getInitData();
   }, []);
+
+  const handleSaveUserName = async () => {
+    setLoading(true);
+    const resUser = await MembersUpdate(
+      JSON.parse(localStorage.getItem("currentUser"))?._id,
+      { name: fullNameOld, emailOld }
+    );
+    if (resUser?.status === 200) {
+      toast.success("Successfully updated");
+
+      setFullName(fullNameOld)
+      setEmail(emailOld)
+
+      const memberData = JSON.parse(localStorage.getItem("currentUser"));
+      memberData.name = fullNameOld;
+      memberData.email = emailOld;
+      localStorage.setItem("currentUser", JSON.stringify(memberData))
+
+      setIsEditNameAndEmail(false);
+    } else {
+      toast.error("Technical error encountered");
+    }
+    setLoading(false);
+  };
+
+  const handleChangePassword = async () => {
+    setLoading(true);
+    const resUser = await ChangePassword(
+      JSON.parse(localStorage.getItem("currentUser"))?._id,
+      { currentPassword, newPassword }
+    );
+    if (resUser?.status === 200) {
+      toast.success("Successfully updated");
+      const memberData = JSON.parse(localStorage.getItem("currentUser"));
+      memberData.passwordLastChanged = resUser.data.passwordLastChanged.substring(0, 10)
+      localStorage.setItem("currentUser", JSON.stringify(memberData))
+
+      setIsChangePassword(false);
+    } else if (resUser?.status === 401) {
+      toast.error("Current password is incorrect")
+    } else {
+      toast.error("Technical error encountered")
+    }
+    setLoading(false);
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
+      {loading && (
+        <div className={classes.loadingOverlay}>
+          <Rings color="#1383C3" height={240} width={240} />
+        </div>
+      )}
       <Card
         sx={{
           backdropFilter: `saturate(200%) blur(30px)`,
@@ -388,13 +451,13 @@ function ProfileSettings() {
                           {isEditNameAndEmail ? (
                             <>
                               <SoftInput
-                                value={fullName}
-                                onChange={(e) => setFullName(e.target.value)}
+                                value={fullNameOld}
+                                onChange={(e) => setFullNameOld(e.target.value)}
                               />
                               <SoftInput
                                 sx={{ marginTop: "10px" }}
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={emailOld}
+                                onChange={(e) => setEmailOld(e.target.value)}
                               />
                             </>
                           ) : (
@@ -412,7 +475,7 @@ function ProfileSettings() {
                   </SoftBox>
                   {isEditNameAndEmail ? (
                     <SoftBox sx={{ display: "flex", justifyContent: "center" }} mt="30px">
-                      <SoftButton variant="gradient" color="info">
+                      <SoftButton variant="gradient" color="info" onClick={handleSaveUserName}>
                         Save
                       </SoftButton>
                       <SoftBox width="20px"></SoftBox>
@@ -421,7 +484,7 @@ function ProfileSettings() {
                         color="info"
                         onClick={() => {
                           setIsEditNameAndEmail(false);
-                          setIsOpenNamePane(false);
+                          // setIsOpenNamePane(false);
                         }}
                       >
                         Cancel
@@ -541,7 +604,7 @@ function ProfileSettings() {
                             flexDirection: "column",
                           }}
                         >
-                          <SoftTypography ml="30px">18 sep, 2023</SoftTypography>
+                          <SoftTypography ml="30px">{passwordLastChanged}</SoftTypography>
                         </SoftBox>
                       </Grid>
                     </Grid>
@@ -549,7 +612,7 @@ function ProfileSettings() {
                 </SoftBox>
                 {isChangePassword ? (
                   <SoftBox sx={{ display: "flex", justifyContent: "center" }} mt="30px">
-                    <SoftButton variant="gradient" color="info">
+                    <SoftButton variant="gradient" color="info" onClick={handleChangePassword}>
                       Change
                     </SoftButton>
                     <SoftBox width="20px"></SoftBox>
@@ -558,7 +621,7 @@ function ProfileSettings() {
                       color="info"
                       onClick={() => {
                         setIsChangePassword(false);
-                        setIsOpenPasswordPane(false);
+                        // setIsOpenPasswordPane(false);
                       }}
                     >
                       Cancel

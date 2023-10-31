@@ -143,7 +143,7 @@ function NewApplication() {
         toast.success("Application Submitted!");
         getInitData();
       } else {
-        toast.error("API Failed");
+        toast.error("Technical error encountered");
       }
 
       setLoading(false);
@@ -188,7 +188,7 @@ function NewApplication() {
           setRows([]);
         }
       } else {
-        toast.error("API Failed");
+        toast.error("Technical error encountered");
       }
     }
 

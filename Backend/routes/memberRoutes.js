@@ -9,6 +9,7 @@ router.get("/api/members/:_id", memberController.ListMemberById);
 
 router.post("/api/members/signin", memberController.SignIn);
 router.post("/api/members/signup", memberController.CreateMember);
+router.post("/api/members/:_id/change_password", memberController.ChangePassword);
 router.post("/api/members/:_id/apply", memberController.Apply);
 router.post("/api/members/:_id/review_application", memberController.ReviewApplication);
 

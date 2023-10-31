@@ -14,7 +14,8 @@ const memberSchema = new mongoose.Schema({
     trim: true,
   },
   passwordLastChanged: {
-    type : String,
+    type: Date,
+    default: Date.now,
   },
   steam64: {
     type: String,

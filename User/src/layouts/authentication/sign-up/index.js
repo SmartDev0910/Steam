@@ -41,11 +41,13 @@ import { MembersCreate } from "actions/membersAction";
 
 function SignUp() {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSignUp = async () => {
     const member = {
+      name: name,
       email: email,
       password: password,
     };
@@ -59,7 +61,7 @@ function SignUp() {
   return (
     <BasicLayout
       title="Welcome!"
-      description="Use these awesome forms to login or create new account in your project for free."
+      description="Create new CircuitRP account for free."
       image={curved6}
     >
       <Card>
@@ -70,6 +72,14 @@ function SignUp() {
         </SoftBox>
         <SoftBox pt={2} pb={3} px={3}>
           <SoftBox component="form" role="form">
+          <SoftBox mb={2}>
+              <SoftInput
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </SoftBox>
             <SoftBox mb={2}>
               <SoftInput
                 type="email"

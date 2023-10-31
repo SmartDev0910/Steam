@@ -136,6 +136,29 @@ exports.UpdateMemberById = (req, res, next) => {
     .catch((err) => res.status(400).send(err));
 };
 
+exports.ChangePassword = (req, res, next) => {
+  const { _id } = req.params;
+  Member.findOne({ _id })
+    .then((resMember) => {
+      if (resMember) {
+        if (resMember.password !== md5(req.body.currentPassword)) {
+          res.status(401).json({ message: "current password is incorrect" });
+          return
+        }
+        resMember.password = md5(req.body.newPassword)
+        resMember.passwordLastChanged = Date.now()
+
+        resMember
+          .save()
+          .then((editMember) => res.status(200).send(editMember))
+          .catch((err) => res.status(400).send(err));
+      } else {
+        res.status(404).send("Not Found");
+      }
+    })
+    .catch((err) => res.status(400).send(err));
+};
+
 exports.DeleteMemberById = (req, res, next) => {
   const { id } = req.params;
   Member.findByIdAndRemove(id)

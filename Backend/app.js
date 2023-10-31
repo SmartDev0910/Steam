@@ -126,7 +126,7 @@ app.get(
   passport.authenticate("steam", { failureRedirect: "/failed" }),
   function (req, res) {
     res.redirect(
-      `${FRONT_END_URL}/my-account?steam64=${req.user._json.steamid}`
+      `${FRONT_END_URL}/profile-settings?steam64=${req.user._json.steamid}`
     );
   }
 );
@@ -139,7 +139,7 @@ app.get(
   "/api/auth/discord/redirect",
   passport.authenticate("discord", { failureRedirect: "/failed" }),
   function (req, res) {
-    res.redirect(`${FRONT_END_URL}/my-account?discordId=${req.user.id}`); // Redirect to frontend after successful login
+    res.redirect(`${FRONT_END_URL}/profile-settings?discordId=${req.user.id}`); // Redirect to frontend after successful login
   }
 );
 

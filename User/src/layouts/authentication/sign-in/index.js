@@ -41,14 +41,9 @@ import { toast } from "react-toastify";
 import { useClubAdminController, setAuthentication } from "context";
 
 function SignIn() {
-  const [rememberMe, setRememberMe] = useState(true);
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [controller, dispatch] = useClubAdminController();
-  const navigate = useNavigate();
-
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const handleSignIn = async () => {
     const response = await MembersSignIn(email, password);
@@ -56,7 +51,13 @@ function SignIn() {
       toast.success("Success");
       setAuthentication(dispatch, JSON.stringify(response?.data));
       window.location.pathname = "/application-center";
-    } else toast.error(response.data);
+    } else if (response?.status === 401) {
+      toast.error("Incorrect email or password")
+    } else if (response?.status === 404) {
+      toast.error("Incorrect email or password")
+    } else {
+      toast.error("Technical error encountered")
+    }
   };
 
   return (
@@ -66,19 +67,6 @@ function SignIn() {
       image={curved9}
     >
       <SoftBox component="form" role="form">
-        <SoftBox mb={2}>
-          <SoftBox mb={1} ml={0.5}>
-            <SoftTypography component="label" variant="caption" fontWeight="bold">
-              Name
-            </SoftTypography>
-          </SoftBox>
-          <SoftInput
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </SoftBox>
         <SoftBox mb={2}>
           <SoftBox mb={1} ml={0.5}>
             <SoftTypography component="label" variant="caption" fontWeight="bold">
