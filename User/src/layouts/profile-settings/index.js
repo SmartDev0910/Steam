@@ -30,6 +30,7 @@ import { makeStyles } from "@mui/styles";
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
+import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
 
 // Soft UI Dashboard React examples
@@ -108,9 +109,17 @@ function ProfileSettings() {
 
   const [controller, dispatch] = useClubAdminController();
   const [loading, setLoading] = useState(false);
-  const [isWhiteListed, setIsWhiteListed] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [isSteamConnected, setIsSteamConnected] = useState(false);
   const [isDiscordConnected, setIsDiscordConnected] = useState(false);
+  const [isOpenNamePane, setIsOpenNamePane] = useState(false);
+  const [isOpenPasswordPane, setIsOpenPasswordPane] = useState(false);
+  const [isEditNameAndEmail, setIsEditNameAndEmail] = useState(false);
+  const [isChangePassword, setIsChangePassword] = useState(false);
+  const [isTwoStepVerification, setIsTwoSteamVerification] = useState(false);
 
   const handleConnectSteam = () => {
     if (isSteamConnected) {
@@ -158,7 +167,7 @@ function ProfileSettings() {
       } else {
         toast.error("API Failed");
       }
-      navigate("/my-account");
+      navigate("/profile-settings");
     }
 
     if (discordId) {
@@ -175,7 +184,7 @@ function ProfileSettings() {
       } else {
         toast.error("API Failed");
       }
-      navigate("/my-account");
+      navigate("/profile-settings");
     }
 
     setLoading(false);
@@ -308,7 +317,10 @@ function ProfileSettings() {
               mb: "20px",
             }}
           >
-            <Accordion>
+            <Accordion
+              expanded={isOpenNamePane}
+              onChange={() => setIsOpenNamePane(!isOpenNamePane)}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
@@ -316,9 +328,20 @@ function ProfileSettings() {
               >
                 <SoftBox sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
                   <SoftTypography>Your Name and Email</SoftTypography>
-                  <SoftTypography color={"info"} mr="20px">
-                    Edit
-                  </SoftTypography>
+                  {isEditNameAndEmail ? (
+                    ""
+                  ) : (
+                    <SoftTypography
+                      color={"info"}
+                      mr="20px"
+                      onClick={() => {
+                        setIsEditNameAndEmail(true);
+                        setIsOpenNamePane(true);
+                      }}
+                    >
+                      Edit
+                    </SoftTypography>
+                  )}
                 </SoftBox>
               </AccordionSummary>
               <AccordionDetails>
@@ -348,11 +371,13 @@ function ProfileSettings() {
                           }}
                         >
                           <SoftTypography ml="30px">Full Name</SoftTypography>
-                          <SoftTypography ml="30px">Email</SoftTypography>
+                          <SoftTypography ml="30px" sx={{ marginTop: "10px" }}>
+                            Email
+                          </SoftTypography>
                         </SoftBox>
                       </Grid>
                       <Grid item lg={1}></Grid>
-                      <Grid item lg={6}>
+                      <Grid item lg={4}>
                         <SoftBox
                           sx={{
                             display: "flex",
@@ -360,12 +385,51 @@ function ProfileSettings() {
                             flexDirection: "column",
                           }}
                         >
-                          <SoftTypography ml="30px">John Doe</SoftTypography>
-                          <SoftTypography ml="30px">JohnDoe@gmail.com</SoftTypography>
+                          {isEditNameAndEmail ? (
+                            <>
+                              <SoftInput
+                                value={fullName}
+                                onChange={(e) => setFullName(e.target.value)}
+                              />
+                              <SoftInput
+                                sx={{ marginTop: "10px" }}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <SoftTypography ml="30px">{fullName}</SoftTypography>
+                              <SoftTypography ml="30px" sx={{ marginTop: "10px" }}>
+                                {email}
+                              </SoftTypography>
+                            </>
+                          )}
                         </SoftBox>
                       </Grid>
+                      <Grid item lg={2}></Grid>
                     </Grid>
                   </SoftBox>
+                  {isEditNameAndEmail ? (
+                    <SoftBox sx={{ display: "flex", justifyContent: "center" }} mt="30px">
+                      <SoftButton variant="gradient" color="info">
+                        Save
+                      </SoftButton>
+                      <SoftBox width="20px"></SoftBox>
+                      <SoftButton
+                        variant="outlined"
+                        color="info"
+                        onClick={() => {
+                          setIsEditNameAndEmail(false);
+                          setIsOpenNamePane(false);
+                        }}
+                      >
+                        Cancel
+                      </SoftButton>
+                    </SoftBox>
+                  ) : (
+                    ""
+                  )}
                 </SoftBox>
               </AccordionDetails>
             </Accordion>
@@ -376,7 +440,10 @@ function ProfileSettings() {
               mb: "20px",
             }}
           >
-            <Accordion>
+            <Accordion
+              expanded={isOpenPasswordPane}
+              onChange={() => setIsOpenPasswordPane(!isOpenPasswordPane)}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
@@ -384,9 +451,20 @@ function ProfileSettings() {
               >
                 <SoftBox sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
                   <SoftTypography>Your Password</SoftTypography>
-                  <SoftTypography color={"info"} mr="20px">
-                    Change
-                  </SoftTypography>
+                  {isChangePassword ? (
+                    ""
+                  ) : (
+                    <SoftTypography
+                      color={"info"}
+                      mr="20px"
+                      onClick={() => {
+                        setIsChangePassword(true);
+                        setIsOpenPasswordPane(true);
+                      }}
+                    >
+                      Change
+                    </SoftTypography>
+                  )}
                 </SoftBox>
               </AccordionSummary>
               <AccordionDetails>
@@ -399,33 +477,96 @@ function ProfileSettings() {
                     py: "20px",
                   }}
                 >
-                  <Grid container>
-                    <Grid item lg={2}></Grid>
-                    <Grid item lg={3}>
-                      <SoftBox
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <SoftTypography ml="30px">Last Changed</SoftTypography>
-                      </SoftBox>
+                  {isChangePassword ? (
+                    <Grid container>
+                      <Grid item lg={2}></Grid>
+                      <Grid item lg={3}>
+                        <SoftBox
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <SoftTypography ml="30px">Current Password</SoftTypography>
+                          <SoftTypography ml="30px" sx={{ marginTop: "10px" }}>
+                            New Password
+                          </SoftTypography>
+                        </SoftBox>
+                      </Grid>
+                      <Grid item lg={1}></Grid>
+                      <Grid item lg={4}>
+                        <SoftBox
+                          sx={{
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <SoftInput
+                            type="password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                          />
+                          <SoftInput
+                            sx={{ marginTop: "10px" }}
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                          />
+                        </SoftBox>
+                      </Grid>
+                      <Grid item lg={2}></Grid>
                     </Grid>
-                    <Grid item lg={1}></Grid>
-                    <Grid item lg={6}>
-                      <SoftBox
-                        sx={{
-                          display: "flex",
-                          justifyContent: "flex-start",
-                          flexDirection: "column",
-                        }}
-                      >
-                        <SoftTypography ml="30px">18 sep, 2023</SoftTypography>
-                      </SoftBox>
+                  ) : (
+                    <Grid container>
+                      <Grid item lg={2}></Grid>
+                      <Grid item lg={3}>
+                        <SoftBox
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <SoftTypography ml="30px">Last Changed</SoftTypography>
+                        </SoftBox>
+                      </Grid>
+                      <Grid item lg={1}></Grid>
+                      <Grid item lg={6}>
+                        <SoftBox
+                          sx={{
+                            display: "flex",
+                            justifyContent: "flex-start",
+                            flexDirection: "column",
+                          }}
+                        >
+                          <SoftTypography ml="30px">18 sep, 2023</SoftTypography>
+                        </SoftBox>
+                      </Grid>
                     </Grid>
-                  </Grid>
+                  )}
                 </SoftBox>
+                {isChangePassword ? (
+                  <SoftBox sx={{ display: "flex", justifyContent: "center" }} mt="30px">
+                    <SoftButton variant="gradient" color="info">
+                      Change
+                    </SoftButton>
+                    <SoftBox width="20px"></SoftBox>
+                    <SoftButton
+                      variant="outlined"
+                      color="info"
+                      onClick={() => {
+                        setIsChangePassword(false);
+                        setIsOpenPasswordPane(false);
+                      }}
+                    >
+                      Cancel
+                    </SoftButton>
+                  </SoftBox>
+                ) : (
+                  ""
+                )}
               </AccordionDetails>
             </Accordion>
           </SoftBox>
