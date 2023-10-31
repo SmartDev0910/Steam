@@ -10,23 +10,25 @@ const passport = require("passport");
 const SteamStrategy = require("passport-steam").Strategy;
 const DiscordStrategy = require("passport-discord").Strategy;
 const multer = require("multer");
-const path = require("path");
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 const {
   DB_URL,
   SESSION_SECRET,
-  PORT,
+  BACKEND_PORT,
   STEAM_API_KEY,
   FRONT_END_URL,
   DISCORD_CLIENT_ID,
   DISCORD_CLIENT_SECRET,
+  BACKEND_ROOTURL,
 } = require("./config");
 
 const memberRoutes = require("./routes/memberRoutes");
-const applicationRoutes = require("./routes/applicationRoutes");
+const applicationTypeRoutes = require("./routes/applicationTypeRoutes");
 const changelogRoutes = require("./routes/changelogRoutes");
 
-if (process.env.NODE_ENV !== "production") require("dotenv").config();
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.static("./uploads"));
 
 app.use(cors());
@@ -65,8 +67,8 @@ passport.deserializeUser((user, done) => {
 passport.use(
   new SteamStrategy(
     {
-      returnURL: "http://localhost:" + PORT + "/api/auth/steam/return",
-      realm: "http://localhost:" + PORT + "/",
+      returnURL: BACKEND_ROOTURL + "/api/auth/steam/return",
+      realm: BACKEND_ROOTURL + "/",
       apiKey: STEAM_API_KEY,
     },
     function (identifier, profile, done) {
@@ -83,7 +85,7 @@ passport.use(
     {
       clientID: DISCORD_CLIENT_ID,
       clientSecret: DISCORD_CLIENT_SECRET,
-      callbackURL: "http://localhost:" + PORT + "/api/auth/discord/redirect",
+      callbackURL: BACKEND_ROOTURL + "/api/auth/discord/redirect",
       scope: ["identify", "guilds"],
     },
     function (accessToken, refreshToken, profile, cb) {
@@ -108,15 +110,7 @@ app.use(flash());
 app.use(passport.initialize()); //must declared before passport.session()
 app.use(passport.session());
 
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  res.locals.error = req.flash("error");
-  res.locals.success = req.flash("success");
-  res.locals.warning = req.flash("warning");
-  next();
-});
-
-app.get("/test", (req, res) => res.send("Hello World!"));
+app.get("/api/heartbeat", (req, res) => res.send("Hello World!"));
 
 // Steam Routes
 app.get(
@@ -163,7 +157,7 @@ const upload = multer({
   limits: { fileSize: 100 * 1024 * 1024 },
 });
 
-app.post("/upload", upload.single("file"), (req, res) => {
+app.post("/api/upload", upload.single("file"), (req, res) => {
   // Handle the uploaded file here
   const file = req.file;
 
@@ -173,11 +167,11 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
 //Routes
 app.use(memberRoutes);
-app.use(applicationRoutes);
+app.use(applicationTypeRoutes);
 app.use(changelogRoutes);
 
-const port = PORT || 8080;
+const port = BACKEND_PORT || 8080;
 
 app.listen(port, () =>
-  console.log(`STEAM BackEnd APP is running on port ${port}!`)
+  console.log(`CircuitRP service is running on port ${port}!`)
 );

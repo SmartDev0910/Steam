@@ -1,0 +1,486 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "CircuitRP",
+      "version": "1.0.0"
+    },
+    "schemes": [
+      "http",
+      "https"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "paths": {
+      "/api/members": {
+        "get": {
+          "summary": "List all the members",
+          "operationId": "list-members",
+          "responses": {
+            "200": {
+              "description": "",
+              "schema": {
+                "$ref": "#/definitions/Members"
+              }
+            }
+          },
+          "tags": [
+            "Member"
+          ]
+        }
+      },
+      "/api/members/{_id}": {
+        "get": {
+          "summary": "List a member by ID",
+          "operationId": "list-member-by-id",
+          "parameters": [
+            {
+                "name": "_id",
+                "in": "path",
+                "description": "member's ID",
+                "required": true,
+                "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "schema": {
+                "$ref": "#/definitions/Member"
+              }
+            }
+          },
+          "tags": [
+            "Member"
+          ]
+        },
+        "put": {
+          "summary": "Edit member's information by ID",
+          "operationId": "edit-member-by-id",
+          "parameters": [
+            {
+              "name": "_id",
+              "in": "path",
+              "description": "member's ID",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "name",
+              "in": "formData",
+              "description": "member's name",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "email",
+              "in": "formData",
+              "description": "member's email",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "description": "member's password",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "steam64",
+              "in": "formData",
+              "description": "member's steam64",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "discordID",
+              "in": "formData",
+              "description": "member's discordID",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "isBanned",
+              "in": "formData",
+              "description": "member's isBanned",
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "name": "mfaEnabled",
+              "in": "formData",
+              "description": "member's mfaEnabled",
+              "required": false,
+              "type": "boolean"
+            },
+            {
+              "name": "mfaPhoneNumber",
+              "in": "formData",
+              "description": "member's mfaPhoneNumber",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "role",
+              "in": "formData",
+              "description": "member's role",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "schema": {
+                "$ref": "#/definitions/Member"
+              }
+            }
+          },
+          "tags": [
+            "Member"
+          ]
+        }
+      },
+      "/api/members/signup": {
+        "post": {
+          "summary": "Sign up",
+          "operationId": "sign-up",
+          "parameters": [
+            {
+              "name": "name",
+              "in": "formData",
+              "description": "user's name",
+              "required": true,
+              "type": "string"
+            },
+            {
+                "name": "email",
+                "in": "formData",
+                "description": "email address of the user",
+                "required": true,
+                "type": "string"
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "description": "password",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/definitions/Member"
+              }
+            }
+          },
+          "tags": [
+            "Member"
+          ]
+        }
+      },
+      "/api/members/signin": {
+        "post": {
+          "summary": "Sign in",
+          "operationId": "sign-in",
+          "parameters": [
+            {
+                "name": "email",
+                "in": "formData",
+                "description": "email address of the user",
+                "required": true,
+                "type": "string"
+            },
+            {
+              "name": "password",
+              "in": "formData",
+              "description": "password",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/definitions/Member"
+              }
+            }
+          },
+          "tags": [
+            "Member"
+          ]
+        }
+      },
+      "/api/application_types": {
+        "get": {
+          "summary": "List all the application types",
+          "operationId": "list-application-types",
+          "responses": {
+            "200": {
+              "description": "",
+              "schema": {
+                "$ref": "#/definitions/ApplicationTypes"
+              }
+            }
+          },
+          "tags": [
+            "ApplicationType"
+          ]
+        }
+      },
+      "/api/application_types/{_id}": {
+        "get": {
+          "summary": "List application type by ID",
+          "operationId": "list-application-type-by-id",
+          "parameters": [
+            {
+                "name": "_id",
+                "in": "path",
+                "description": "application type's ID",
+                "required": true,
+                "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "schema": {
+                "$ref": "#/definitions/ApplicationType"
+              }
+            }
+          },
+          "tags": [
+            "ApplicationType"
+          ]
+        },
+        "put": {
+          "summary": "Edit application type by ID",
+          "operationId": "edit-application-type-by-id",
+          "parameters": [
+            {
+              "name": "_id",
+              "in": "path",
+              "description": "application type's ID",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "title",
+              "in": "formData",
+              "description": "application type's title",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "userGroup",
+              "in": "formData",
+              "description": "application type's user group",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "permission",
+              "in": "formData",
+              "description": "application type's permission",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "name": "logo",
+              "in": "formData",
+              "description": "application type's logo",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "schema": {
+                "$ref": "#/definitions/ApplicationType"
+              }
+            }
+          },
+          "tags": [
+            "ApplicationType"
+          ]
+        },
+        "delete": {
+          "summary": "Delete application type by ID",
+          "operationId": "delete-application-type-by-id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "query",
+              "description": "application type's ID",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "",
+              "schema": {
+                "$ref": "#/definitions/ApplicationType"
+              }
+            }
+          },
+          "tags": [
+            "ApplicationType"
+          ]
+        }
+      },
+      "/api/application_types/create": {
+        "post": {
+          "summary": "Create a new application type",
+          "operationId": "create-application-type",
+          "parameters": [
+            {
+              "name": "title",
+              "in": "formData",
+              "description": "application type's title",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "userGroup",
+              "in": "formData",
+              "description": "application type's user group",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "permission",
+              "in": "formData",
+              "description": "application type's permission",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "logo",
+              "in": "formData",
+              "description": "application type's logo",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/definitions/ApplicationType"
+              }
+            }
+          },
+          "tags": [
+            "ApplicationType"
+          ]
+        }
+      }
+    },
+    "definitions": {
+      "Member": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "passwordLastChanged": {
+            "type": "string"
+          },
+          "steam64": {
+            "type": "string"
+          },
+          "discordID": {
+            "type": "string"
+          },
+          "isBanned": {
+            "type": "boolean"
+          },
+          "mfaEnabled": {
+            "type": "boolean"
+          },
+          "mfaPhoneNumber": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "applications": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "applicationTypeId": {
+                  "type": "number"
+                },
+                "audio": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              },
+              "example": {
+                "applicationTypeId": 1,
+                "audio": "BINARY_FOR_AUDIO_HERE",
+                "status": "pending"
+              }
+            }
+          },
+          "ip": {
+            "type": "string",
+            "format": "string"
+          }
+        }
+      },
+      "Members": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Member"
+        }
+      },
+      "ApplicationType": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "userGroup": {
+            "type": "string"
+          },
+          "permission": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          }
+        }
+      },
+      "ApplicationTypes": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/ApplicationType"
+        }
+      }
+    }
+  }

@@ -2,27 +2,18 @@
 const express = require("express");
 const router = express.Router();
 
-// importing controller
 const memberController = require("../controllers/memberController");
 
-// user -> test
-router.get("/members/test", memberController.test);
-router.get("/members/all", memberController.GetAllMembers);
-router.get("/members/detail/:steam64", memberController.DetailMember);
-router.get(
-  "/members/whitelist/:steam64",
-  memberController.GetWhiteListedBySteam64
-);
+router.get("/api/members", memberController.ListMembers);
+router.get("/api/members/:_id", memberController.ListMemberById);
 
-router.post("/members/signin", memberController.SignIn);
-router.post("/members/create", memberController.CreateMember);
-router.post("/members/update/:id", memberController.UpdateMember);
-router.post(
-  "/members/whitelist/:steam64",
-  memberController.SetWhiteListedBySteam64
-);
-router.post("/members/ban/:steam64", memberController.SetBannedBySteam64);
+router.post("/api/members/signin", memberController.SignIn);
+router.post("/api/members/signup", memberController.CreateMember);
+router.post("/api/members/:_id/apply", memberController.Apply);
+router.post("/api/members/:_id/review_application", memberController.ReviewApplication);
 
-router.delete("/members/:id", memberController.DeleteMember);
+router.put("/api/members/:_id", memberController.UpdateMemberById);
+
+router.delete("/api/members/:id", memberController.DeleteMemberById);
 
 module.exports = router;
