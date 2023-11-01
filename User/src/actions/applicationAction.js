@@ -1,17 +1,26 @@
 import axios from "./axios";
 
-export const CreateApplication = async (steam64, application) => {
+export const ListApplicationTypes = async () => {
   try {
-    const response = await axios.post(`/application/create/${steam64}`, application);
+    const response = await axios.get(`/api/application_types`);
     return response;
   } catch (error) {
     return error;
   }
 };
 
-export const GetApplicationBySteam64 = async (steam64) => {
+export const ListApplicationTypeById = async (id) => {
   try {
-    const response = await axios.get(`/application/${steam64}`);
+    const response = await axios.get(`/api/application_types/${id}`);
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const Apply = async (memberID, applicationTypeId, audio) => {
+  try {
+    const response = await axios.post(`/api/members/${memberID}/apply`, {applicationTypeId, audio});
     return response;
   } catch (error) {
     return error;

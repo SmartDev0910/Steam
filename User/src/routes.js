@@ -72,11 +72,6 @@ const routes = [
     component: <Rules />,
   },
   {
-    key: "starter-guide",
-    route: "/starter-guide",
-    component: <StarterGuide />,
-  },
-  {
     key: "change-logs",
     route: "/change-logs",
     component: <ChangeLogs />,
@@ -96,11 +91,12 @@ const routes = [
     key: "starter-guide",
     route: "/starter-guide",
     icon: <SummarizeOutlinedIcon size="12px" />,
+    component: <StarterGuide />,
     noCollapse: true,
   },
   {
-    key: "application-center/:id",
-    route: "/application-center/:id",
+    key: "application-center/apply",
+    route: "/application-center/apply",
     component: <NewApplication />,
   },
   {

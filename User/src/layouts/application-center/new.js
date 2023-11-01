@@ -13,6 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // @mui material components
 import { makeStyles } from "@mui/styles";
@@ -39,7 +40,7 @@ import SoftAvatar from "components/SoftAvatar";
 
 import AudioReactRecorder, { RecordState } from "audio-react-recorder";
 
-import { CreateApplication, GetApplicationBySteam64, fileUpload } from "actions/applicationAction";
+import { ListApplicationTypeById, Apply, fileUpload } from "actions/applicationAction";
 import { REACT_APP_SERVER_IP } from "actions/config";
 
 import { formatTime, blobToBase64 } from "layouts/utils";
@@ -67,20 +68,13 @@ var myInterval;
 
 function NewApplication() {
   const classes = useStyles();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const applicationTypeID = searchParams.get('application_type_id');
 
-  const columns = [
-    { name: "first name", align: "center" },
-    { name: "last name", align: "center" },
-    { name: "age", align: "center" },
-    { name: "record voice", align: "center" },
-  ];
-
-  const [rows, setRows] = useState([]);
-
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [age, setAge] = useState("");
+  const [applicationTypeTitle, setApplicationTypeTitle] = useState("");
   const [recordCounter, setRecordCounter] = useState("00:00");
   const [recordAudioStatus, setRecordAudioStatus] = useState("initiate");
   const [audioData, setAudioData] = useState(null);
@@ -121,77 +115,27 @@ function NewApplication() {
   };
 
   const handleSubmit = async () => {
-    if (JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "") {
-      toast.error("Please Connect Steam Account");
-    } else if (firstName === "" || lastName === "" || age === "") {
-      toast.error("Please Input All Fields");
+    setLoading(true);
+    const memberID = JSON.parse(localStorage.getItem("currentUser"))?._id;
+    const audio = "AUDIO_BLOB_HERE";
+    const applyResponse = await Apply(memberID, applicationTypeID, audio);
+    if (applyResponse?.status === 200) {
+      navigate("/application-center");
+      toast.success("Successfully applied");
     } else {
-      setLoading(true);
-
-      const applicationData = {
-        firstName: firstName,
-        lastName: lastName,
-        age: age,
-        audioUrl: JSON.stringify(audioData),
-      };
-
-      const response = await CreateApplication(
-        JSON.parse(localStorage.getItem("currentUser"))?.steam64,
-        applicationData
-      );
-      if (response?.status === 200) {
-        toast.success("Application Submitted!");
-        getInitData();
-      } else {
-        toast.error("Technical error encountered");
-      }
-
-      setLoading(false);
+      toast.error("Technical error encountered");
     }
+    setLoading(false);
   };
 
   const getInitData = async () => {
     setLoading(true);
-    if (JSON.parse(localStorage.getItem("currentUser"))?.steam64) {
-      const applications = await GetApplicationBySteam64(
-        JSON.parse(localStorage.getItem("currentUser"))?.steam64
-      );
-      if (applications?.status === 200) {
-        if (applications?.data?.length) {
-          let data = [];
-          applications?.data?.map((application) => {
-            data.push({
-              "first name": (
-                <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                  {application.firstName}
-                </SoftTypography>
-              ),
-              "last name": (
-                <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                  {application.lastName}
-                </SoftTypography>
-              ),
-              age: (
-                <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                  {application.age}
-                </SoftTypography>
-              ),
-              "record voice": (
-                <>
-                  <audio src={`${REACT_APP_SERVER_IP}audio/${application.audioUrl}`} controls />
-                </>
-              ),
-            });
-          });
-          setRows(data);
-        } else {
-          setRows([]);
-        }
-      } else {
-        toast.error("Technical error encountered");
-      }
+    const myApplicationType = await ListApplicationTypeById(applicationTypeID);
+    if (myApplicationType?.status === 200) {
+      setApplicationTypeTitle(myApplicationType.data.title)
+    } else {
+      toast.error("Technical error encountered");
     }
-
     setLoading(false);
   };
 
@@ -213,7 +157,7 @@ function NewApplication() {
             <Grid item container lg={12}>
               <Grid item lg={12}>
                 <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
-                  Whitelist Application
+                  {applicationTypeTitle}
                 </SoftTypography>
               </Grid>
               {JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "" ? (
@@ -239,113 +183,83 @@ function NewApplication() {
                 ""
               )}
               <Grid item container lg={12} rowSpacing={6} mt={1} alignItems="flex-start">
-                <Grid lg={6} item container sx={{ fontSize: "12px" }}>
-                  <Grid item lg={10}>
-                    <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
-                      First Name
-                    </SoftTypography>
-                    <SoftInput
-                      icon={false}
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item lg={10} mt={"10px"}>
-                    <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
-                      Last Name
-                    </SoftTypography>
-                    <SoftInput
-                      icon={false}
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item lg={10} mt={"10px"}>
-                    <SoftTypography variant="h6" color={"dark"} sx={{ marginBottom: 1 }}>
-                      Age
-                    </SoftTypography>
-                    <SoftInput icon={false} value={age} onChange={(e) => setAge(e.target.value)} />
-                  </Grid>
-                </Grid>
-                <Grid item lg={6}>
-                  <SoftTypography variant="h6" color={"dark"} mb={2}>
-                    Record Audio
-                  </SoftTypography>
-                  <SoftBox
-                    sx={{
-                      display: "flex",
-                      height: "260px",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    {recordAudioStatus === "start recording" ? (
-                      <SoftTypography sx={{ fontSize: "70px" }}>{recordCounter}</SoftTypography>
-                    ) : (
-                      ""
-                    )}
-                    {recordAudioStatus === "initiate" ? (
-                      <Tooltip disableFocusListener title="Record">
-                        <SoftAvatar
-                          src={RecordIcon}
-                          sx={{
-                            width: "120px",
-                            height: "120px",
-                            cursor: "pointer",
-                            marginRight: "10px",
-                          }}
-                          onClick={handleRecordStart}
-                        ></SoftAvatar>
-                      </Tooltip>
-                    ) : (
-                      ""
-                    )}
-
-                    {recordAudioStatus === "start recording" ? (
+                <SoftTypography variant="h6" color={"dark"} mb={2}>
+                  Record Audio
+                </SoftTypography>
+                <SoftBox
+                  sx={{
+                    display: "flex",
+                    height: "260px",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {recordAudioStatus === "start recording" ? (
+                    <SoftTypography sx={{ fontSize: "70px" }}>{recordCounter}</SoftTypography>
+                  ) : (
+                    ""
+                  )}
+                  {recordAudioStatus === "initiate" ? (
+                    <Tooltip disableFocusListener title="Record">
                       <SoftAvatar
-                        src={StopIcon}
+                        src={RecordIcon}
                         sx={{
-                          width: "90px",
-                          height: "90px",
+                          width: "120px",
+                          height: "120px",
                           cursor: "pointer",
                           marginRight: "10px",
                         }}
-                        onClick={handleRecordStop}
+                        onClick={handleRecordStart}
                       ></SoftAvatar>
-                    ) : (
-                      ""
-                    )}
+                    </Tooltip>
+                  ) : (
+                    ""
+                  )}
 
-                    {recordAudioStatus === "finish recording" ? (
-                      <SoftBox
-                        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-                      >
-                        <audio controls src={audioData} />
-                        <Tooltip disableFocusListener title="Restart recording">
-                          <SoftAvatar
-                            src={RecordIcon}
-                            sx={{
-                              width: "40px",
-                              height: "40px",
-                              cursor: "pointer",
-                              marginLeft: "20px",
-                            }}
-                            onClick={() => setRecordAudioStatus("initiate")}
-                          ></SoftAvatar>
-                        </Tooltip>
-                      </SoftBox>
-                    ) : (
-                      ""
-                    )}
-                  </SoftBox>
-                  <SoftBox sx={{ display: "none" }}>
-                    <AudioReactRecorder state={recordState} onStop={onRecordStop} />
-                  </SoftBox>
-                </Grid>
+                  {recordAudioStatus === "start recording" ? (
+                    <SoftAvatar
+                      src={StopIcon}
+                      sx={{
+                        width: "90px",
+                        height: "90px",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                      }}
+                      onClick={handleRecordStop}
+                    ></SoftAvatar>
+                  ) : (
+                    ""
+                  )}
+
+                  {recordAudioStatus === "finish recording" ? (
+                    <SoftBox
+                      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                    >
+                      <audio controls src={audioData} />
+                      <Tooltip disableFocusListener title="Restart recording">
+                        <SoftAvatar
+                          src={RecordIcon}
+                          sx={{
+                            width: "40px",
+                            height: "40px",
+                            cursor: "pointer",
+                            marginLeft: "20px",
+                          }}
+                          onClick={() => setRecordAudioStatus("initiate")}
+                        ></SoftAvatar>
+                      </Tooltip>
+                    </SoftBox>
+                  ) : (
+                    ""
+                  )}
+                </SoftBox>
+                <SoftBox sx={{ display: "none" }}>
+                  <AudioReactRecorder state={recordState} onStop={onRecordStop} />
+                </SoftBox>
               </Grid>
 
-              <Grid
+              <Grid item
                 xs={12}
                 md={12}
                 lg={12}

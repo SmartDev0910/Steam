@@ -99,7 +99,6 @@ export default function App() {
         if (
           route.route !== "/home" &&
           route.route !== "/rules" &&
-          route.route !== "/starter-guide" &&
           route.route !== "/change-logs" &&
           route.route !== "/authentication/sign-in" &&
           route.route !== "/authentication/sign-up"
@@ -125,7 +124,6 @@ export default function App() {
           isAuth() &&
           !pathname.includes("home") &&
           !pathname.includes("rules") &&
-          !pathname.includes("starter-guide") &&
           !pathname.includes("change-logs") && (
             <>
               <Sidenav
