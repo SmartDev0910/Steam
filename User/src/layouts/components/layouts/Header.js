@@ -149,6 +149,9 @@ class Header extends React.Component {
                       <li>
                         <Link to="/change-logs">Change Logs</Link>
                       </li>
+                      <li>
+                        <Link to="/newsletter">NewsLetter</Link>
+                      </li>
                     </ul>
                     {!hideSignin && (
                       <ul className="list-reset header-nav-right">

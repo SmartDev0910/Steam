@@ -97,13 +97,9 @@ const routes = [
     noCollapse: true,
   },
   {
-    type: "collapse",
-    name: "Newsletter",
     key: "newsletter",
     route: "/newsletter",
-    icon: <NewspaperIcon size="12px" />,
     component: <NewsLetter />,
-    noCollapse: true,
   },
   {
     key: "application-center/apply",

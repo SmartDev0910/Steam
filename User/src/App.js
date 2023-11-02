@@ -100,6 +100,7 @@ export default function App() {
           route.route !== "/home" &&
           route.route !== "/rules" &&
           route.route !== "/change-logs" &&
+          route.route !== "/newsletter" &&
           route.route !== "/authentication/sign-in" &&
           route.route !== "/authentication/sign-up"
         ) {
