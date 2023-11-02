@@ -40,6 +40,8 @@ import WhitelistIcon from "assets/images/whitelist-icon.png";
 
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 
+import { ApplicationTypesAll } from "actions/applicationsAction";
+
 const useStyles = makeStyles({
   loadingOverlay: {
     position: "absolute",
@@ -60,11 +62,37 @@ function ApplicationPortal() {
   const classes = useStyles();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [myApplicationTypes, setMyApplicationTypes] = useState([]);
 
   const getInitData = async () => {
     setLoading(true);
+    await resetApplicationTypes();
     setLoading(false);
   };
+
+  const resetApplicationTypes = async () => {
+    const applicationTypesRes = await ApplicationTypesAll();
+    if (applicationTypesRes?.status === 200) {
+      if (applicationTypesRes?.data?.length) {
+        setMyApplicationTypes(applicationTypesRes?.data);
+      } else {
+        setMyApplicationTypes([]);
+      }
+    } else {
+      toast.error("Error");
+    }
+  }
+
+  const getApplicationLogo = (index) => {
+    switch (myApplicationTypes[index].permission) {
+      case "whitelist":
+        return WhitelistIcon;
+      case "developer":
+        return DevIcon;
+      default:
+        return WhitelistIcon;
+    }
+  }
 
   useEffect(() => {
     getInitData();
@@ -79,11 +107,60 @@ function ApplicationPortal() {
         </div>
       )}
       <SoftBox p={3}>
-        <Grid container spacing={3}>
-          <Grid item lg={6}>
+        <Grid container spacing={1}>
+          {parseInt(myApplicationTypes.length) === 0 ? (
+            <Grid item lg={12} sx={{display:"flex", justifyContent:"center"}}>
+              <Card
+                sx={{
+                  width: "90%",
+                  height: "100%",
+                  padding: "20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  border: "2px solid grey",
+                  float: "right",
+                }}
+                >
+                  No applications created
+              </Card>
+            </Grid>
+          ) : (
+          Array.from(
+              { length: parseInt(myApplicationTypes.length) },
+              (_, i) => 0 + i
+            ).map((index) => {
+              return (
+                <Grid item lg={6} key={index} sx={{display:"flex", justifyContent:"center"}}>
+                  <Card
+                    sx={{
+                      width: "80%",
+                      height: "240px",
+                      padding: "20px",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      border: "2px solid grey",
+                      float: "right",
+                    }}
+                    onClick={() => navigate(`/application-portal/list?application_type_id=${myApplicationTypes[index]._id}`)}
+                  >
+                    <SoftAvatar src={getApplicationLogo(index)} sx={{ width: "70px", height: "90px" }} />
+                    <SoftTypography sx={{ mt: "10px" }}>{myApplicationTypes[index].title}</SoftTypography>
+                  </Card>
+                </Grid>
+              )
+            })
+          )
+          }
+          <Grid item lg={6} sx={{display:"flex", justifyContent:"center"}}>
             <Card
               sx={{
-                width: "480px",
+                width: "80%",
                 height: "240px",
                 padding: "20px",
                 display: "flex",
@@ -94,45 +171,7 @@ function ApplicationPortal() {
                 border: "2px solid grey",
                 float: "right",
               }}
-              onClick={() => navigate("/application-center/whitelist-application")}
-            >
-              <SoftAvatar src={WhitelistIcon} sx={{ width: "70px", height: "90px" }} />
-              <SoftTypography sx={{ mt: "10px" }}>Whitelist Application</SoftTypography>
-            </Card>
-          </Grid>
-          <Grid item lg={6}>
-            <Card
-              sx={{
-                width: "480px",
-                height: "240px",
-                padding: "20px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "2px solid grey",
-                cursor: "pointer",
-                float: "left",
-              }}
-            >
-              <SoftAvatar src={DevIcon} sx={{ width: "70px", height: "90px" }} />
-              <SoftTypography sx={{ mt: "10px" }}>Dev Application</SoftTypography>
-            </Card>
-          </Grid>
-          <Grid item lg={6}>
-            <Card
-              sx={{
-                width: "480px",
-                height: "240px",
-                padding: "20px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                border: "2px solid grey",
-                float: "right",
-              }}
+              onClick={() => navigate(`/application-portal/create`)}
             >
               <AddCircleOutlineOutlinedIcon sx={{ width: "70px", height: "90px" }} />
               <SoftTypography sx={{ mt: "10px" }}>New Application</SoftTypography>

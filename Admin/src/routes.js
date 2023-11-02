@@ -39,6 +39,8 @@ Coded by www.creative-tim.com
 import SignIn from "layouts/authentication/sign-in";
 import Members from "layouts/members";
 import ChangeLogs from "layouts/change-logs";
+import StarterGuide from "layouts/starter-guide";
+import NewsLetter from "layouts/news-letter";
 import ChangeLogDetail from "layouts/change-logs/detail";
 import ApplicationPortal from "layouts/application-portal";
 
@@ -73,6 +75,16 @@ const routes = [
     key: "starter-guide",
     route: "/starter-guide",
     icon: <AutoStoriesOutlinedIcon size="12px" />,
+    component: <StarterGuide />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "News Letter",
+    key: "news-letter",
+    route: "/news-letter",
+    icon: <AutoStoriesOutlinedIcon size="12px" />,
+    component: <NewsLetter />,
     noCollapse: true,
   },
   {
