@@ -105,7 +105,7 @@ function ProfileSettings() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const steam64 = queryParams.get("steam64");
-  const discordId = queryParams.get("discordId");
+  const discordID = queryParams.get("discordID");
 
   const [controller, dispatch] = useClubAdminController();
   const [loading, setLoading] = useState(false);
@@ -153,8 +153,9 @@ function ProfileSettings() {
       password: JSON.parse(localStorage.getItem("currentUser"))?.password,
       passwordLastChanged: JSON.parse(localStorage.getItem("currentUser"))?.passwordLastChanged,
       steam64: JSON.parse(localStorage.getItem("currentUser"))?.steam64,
-      discordId: JSON.parse(localStorage.getItem("currentUser"))?.discordId,
+      discordID: JSON.parse(localStorage.getItem("currentUser"))?.discordID,
     };
+    console.log(memberData)
     setFullName(memberData.name)
     setFullNameOld(memberData.name)
     setEmail(memberData.email)
@@ -163,7 +164,7 @@ function ProfileSettings() {
     setPasswordLastChanged(memberData.passwordLastChanged?.substring(0, 10))
 
     const mySteam64 = JSON.parse(localStorage.getItem("currentUser"))?.steam64
-    const myDiscord = JSON.parse(localStorage.getItem("currentUser"))?.discordId
+    const myDiscord = JSON.parse(localStorage.getItem("currentUser"))?.discordID
 
     if (mySteam64 && mySteam64.length > 0) setIsSteamConnected(true);
     if (myDiscord && myDiscord.length > 0) setIsDiscordConnected(true);
@@ -185,12 +186,12 @@ function ProfileSettings() {
       navigate("/profile-settings");
     }
 
-    if (discordId) {
-      memberData.discordId = discordId;
+    if (discordID) {
+      memberData.discordID = discordID;
 
       const resUser = await MembersUpdate(
         JSON.parse(localStorage.getItem("currentUser"))?._id,
-        memberData
+        {discordID}
       );
       if (resUser?.status === 200) {
         toast.success("Connected");

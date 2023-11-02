@@ -108,7 +108,7 @@ function DefaultNavbar({ transparent, light, action }) {
               color={light ? "white" : "dark"}
               sx={{ cursor: "pointer" }}
             >
-              CircuitRP
+              CircuitRP Admin
             </SoftTypography>
           </Link>
         </SoftBox>

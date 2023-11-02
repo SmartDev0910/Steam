@@ -185,6 +185,7 @@ function Members() {
       if (members?.data?.length) {
         let data = [];
         members?.data?.map((member, index) => {
+          if (member.role === "superadmin") return;
           data.push({
             no: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">

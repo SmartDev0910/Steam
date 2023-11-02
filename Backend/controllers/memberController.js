@@ -33,7 +33,7 @@ exports.CreateMember = (req, res, next) => {
     email: req.body.email ? req.body.email : "",
     password: req.body.password ? md5(req.body.password) : "",
     steam64: req.body.steam64 ? req.body.steam64 : "",
-    discordId: req.body.discordId ? req.body.discordId : "",
+    discordID: req.body.discordID ? req.body.discordID : "",
     isBanned: req.body.isBanned ? req.body.isBanned : false,
     ip: ip,
     role: "ordinary", // default is ordinary member

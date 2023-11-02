@@ -139,7 +139,7 @@ app.get(
   "/api/auth/discord/redirect",
   passport.authenticate("discord", { failureRedirect: "/failed" }),
   function (req, res) {
-    res.redirect(`${FRONT_END_URL}/profile-settings?discordId=${req.user.id}`); // Redirect to frontend after successful login
+    res.redirect(`${FRONT_END_URL}/profile-settings?discordID=${req.user.id}`); // Redirect to frontend after successful login
   }
 );
 
