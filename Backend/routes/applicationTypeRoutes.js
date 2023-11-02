@@ -6,6 +6,7 @@ const applicationTypeontroller = require("../controllers/applicationTypeControll
 
 router.get("/api/application_types", applicationTypeontroller.ListApplicationTypes);
 router.get("/api/application_types/:_id", applicationTypeontroller.ListApplicationTypeById);
+router.get("/api/application_types/:_id/list", applicationTypeontroller.ListAppliedMembers);
 
 router.post("/api/application_types/create", applicationTypeontroller.CreateApplicationType);
 

@@ -12,44 +12,35 @@ Coded by www.creative-tim.com
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
-
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // @mui material components
+import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
+
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
-import Switch from '@mui/material/Switch';
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
 
-import { makeStyles } from "@mui/styles";
-import { styled } from "@mui/material/styles";
-
-// Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
 import SoftTypography from "components/SoftTypography";
 import SoftButton from "components/SoftButton";
-import SoftBadge from "components/SoftBadge";
 
 // Soft UI Dashboard React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
 import Table from "examples/Tables/Table";
+import Footer from "examples/Footer";
 
-import Select from "react-select";
-import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
+import { toast } from "react-toastify";
 
-// Data
-import { MembersAll, MembersUpdate } from "actions/membersAction";
+import { ApplicationList, ReviewApplication } from "actions/applicationsAction";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -76,10 +67,19 @@ const useStyles = makeStyles({
   },
 });
 
-function Members() {
+function ApplyList() {
   const classes = useStyles();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const applicationTypeId = searchParams.get('application_type_id');
 
-  const columnsMember = [
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [activeMember, setActiveMember] = useState(null);
+  const [rowsApplicationList, setRowsApplicationList] = useState([]);
+
+  const columnsApplicationList = [
     { name: "no", align: "center" },
     // { name: "email", align: "center" },
     { name: "steam64", align: "center" },
@@ -89,102 +89,12 @@ function Members() {
     { name: "action", align: "center" },
   ];
 
-  const columnsApplication = [
-    { name: "no", align: "center" },
-    { name: "type", align: "center" },
-    { name: "status", align: "center" },
-    { name: "appliedat", align: "center" },
-  ];
-
-  const [rowsMember, setRowsMember] = useState([]);
-  const [rowsApplication, setRowsApplication] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [activeMember, setActiveMember] = useState(null);
-
-  const [roleValue, setRoleValue] = useState('ordinary');
-
-  const handleRoleChange = async (event, memberID) => {
-    setRoleValue(event.target.value);
-    handleClose();
-    setLoading(true);
-    const members = await MembersUpdate(memberID, {role: event.target.value});
-    if (members?.status === 200) {
-      await resetMemberData();
-      toast.success("Successfully updated");
-    } else {
-      toast.error("Error");
-    }
-    setLoading(false);
-  };
-
-  const handleClickOpen = (member) => {
-    setActiveMember(member);
-    setOpen(true);
-    setRoleValue(member.role)
-
-    // prepare application table in modal
-    if (member.applications?.length) {
-      let data = [];
-      member.applications?.map((application, index) => {
-        data.push({
-          no: (
-            <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-              {index + 1}
-            </SoftTypography>
-          ),
-          type: (
-            <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-              {application.applicationTypeId}
-            </SoftTypography>
-          ),
-          status: (
-            <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-              {application.status}
-            </SoftTypography>
-          ),
-          appliedat: (
-            <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-              {application.appliedAt.substring(0, 10)}
-            </SoftTypography>
-          )
-        });
-      });
-      setRowsApplication(data);
-    } else {
-      setRowsApplication([]);
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const getInitData = async () => {
-    setLoading(true);
-    await resetMemberData();
-    setLoading(false);
-  };
-
-  const handleChangeBan = async (memberID, isBanned) => {
-    handleClose();
-    setLoading(true);
-    const members = await MembersUpdate(memberID, {isBanned: !isBanned});
-    if (members?.status === 200) {
-      await resetMemberData();
-      toast.success("Successfully updated");
-    } else {
-      toast.error("Error");
-    }
-    setLoading(false);
-  }
-
-  const resetMemberData = async () => {
-    const members = await MembersAll();
-    if (members?.status === 200) {
-      if (members?.data?.length) {
+  const resetApplicationList = async () => {
+    const applicationList = await ApplicationList(applicationTypeId);
+    if (applicationList?.status === 200) {
+      if (applicationList?.data?.length) {
         let data = [];
-        members?.data?.map((member, index) => {
+        applicationList?.data?.map((member, index) => {
           data.push({
             no: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
@@ -246,14 +156,42 @@ function Members() {
             ),
           });
         });
-        setRowsMember(data);
+        setRowsApplicationList(data);
       } else {
-        setRowsMember([]);
+        setRowsApplicationList([]);
       }
     } else {
-      toast.error("Error");
+      toast.error("Technical Error Encountered");
     }
   }
+
+  const handleReviewApplication = async (memberID, isApprove) => {
+    setLoading(true);
+    const reviewApplicationRes = await ReviewApplication(memberID, {applicationTypeId, isApprove});
+    if (reviewApplicationRes?.status === 200) {
+      handleClose();
+      await resetApplicationList();
+      toast.success("Successfully updated");
+    } else {
+      toast.error("Technical Error Encountered");
+    }
+    setLoading(false);
+  }
+
+  const handleClickOpen = (member) => {
+    setActiveMember(member);
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const getInitData = async () => {
+    setLoading(true);
+    await resetApplicationList();
+    setLoading(false);
+  };
 
   useEffect(() => {
     getInitData();
@@ -264,7 +202,7 @@ function Members() {
       <DashboardNavbar />
       {loading && (
         <div className={classes.loadingOverlay}>
-          <Rings color="#1383C3" height={240} width={240} />
+          <Rings color="#4FC0AE" height={120} width={120} />
         </div>
       )}
       <SoftBox py={3} mx="20px">
@@ -279,8 +217,8 @@ function Members() {
               },
             }}
           >
-            {rowsMember.length ? (
-              <Table columns={columnsMember} rows={rowsMember} />
+            {rowsApplicationList.length ? (
+              <Table columns={columnsApplicationList} rows={rowsApplicationList} />
             ) : (
               <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
                 <SoftTypography variant="h5">No Data</SoftTypography>
@@ -300,7 +238,7 @@ function Members() {
       >
         <DialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">
           <SoftTypography fontWeight="bold" color={"dark"}>
-            Member Detail
+            Application Detail
           </SoftTypography>
         </DialogTitle>
         <IconButton
@@ -392,24 +330,6 @@ function Members() {
                 </SoftTypography>
               </SoftBox>
             </Grid>
-            <Grid item lg={6}>
-              <SoftBox sx={{ display: "flex" }}>
-                <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
-                  Banned:
-                </SoftTypography>
-                <SoftTypography variant="h6" color={"dark"}>
-                  Off&nbsp;
-                </SoftTypography>
-                <Switch
-                  checked={activeMember?.isBanned ? true : false}
-                  onChange={() => handleChangeBan(activeMember._id, activeMember.isBanned)}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-                <SoftTypography variant="h6" color={"dark"}>
-                  &nbsp;On
-                </SoftTypography>
-              </SoftBox>
-            </Grid>
             <Grid item lg={12}>
               <SoftBox sx={{ display: "flex" }}>
                 <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
@@ -419,43 +339,20 @@ function Members() {
                   {activeMember?.role}
                 </SoftTypography>
               </SoftBox>
-              <SoftBox sx={{ display: "flex" }}>
-                <FormControl>
-                  <RadioGroup
-                    row
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="controlled-radio-buttons-group"
-                    value={roleValue}
-                    onChange={(e) => handleRoleChange(e, activeMember._id)}
-                  >
-                    <FormControlLabel value="ordinary" control={<Radio />} label="Ordinary" />
-                    <FormControlLabel value="app team" control={<Radio />} label="AppTeam" />
-                    <FormControlLabel value="moderator" control={<Radio />} label="Moderator" />
-                    <FormControlLabel value="administrator" control={<Radio />} label="Administrator" />
-                    <FormControlLabel value="superadmin" control={<Radio />} label="Superadmin" />
-                  </RadioGroup>
-                </FormControl>
-              </SoftBox>
-            </Grid>
-            <Grid item lg={12} mt={"20px"}>
-              <SoftTypography variant="h6" color={"dark"}>
-                Applications
-              </SoftTypography>
-              {rowsApplication.length ? (
-                <Table columns={columnsApplication} rows={rowsApplication} />
-              ) : (
-                <SoftBox display="flex" justifyContent="space-between" alignItems="center">
-                  <SoftTypography variant="h6">No application for this member</SoftTypography>
-                </SoftBox>
-              )}
             </Grid>
             <Grid item lg={12} sx={{ display: "flex", justifyContent: "flex-end", mt: "20px" }}>
               <SoftButton
                 variant="gradient"
                 color={"primary"}
-                onClick={() => handleClose()}
+                onClick={() => handleReviewApplication(activeMember._id, true)}
               >
-                Close
+                Approve
+              </SoftButton>
+              <SoftButton
+                variant="gradient"
+                onClick={() => handleReviewApplication(activeMember._id, false)}
+              >
+                Reject
               </SoftButton>
             </Grid>
           </Grid>
@@ -465,4 +362,4 @@ function Members() {
   );
 }
 
-export default Members;
+export default ApplyList;

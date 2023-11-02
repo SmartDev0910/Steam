@@ -1,5 +1,6 @@
 // importing models
 const ApplicationType = require("../models/applicationType");
+const Member = require("../models/member");
 
 exports.CreateApplicationType = (req, res, next) => {
 
@@ -33,6 +34,15 @@ exports.ListApplicationTypeById = (req, res, next) => {
   ApplicationType.findOne({ _id })
     .then((resApplicationType) => {
       res.status(200).send(resApplicationType);
+    })
+    .catch((err) => res.status(400).send(err));
+};
+
+exports.ListAppliedMembers = (req, res, next) => {
+  const { _id } = req.params;
+  Member.find({ applications: {$elemMatch: {applicationTypeId: _id, status: "pending"}} })
+    .then((resAppliedMembers) => {
+      res.status(200).send(resAppliedMembers);
     })
     .catch((err) => res.status(400).send(err));
 };

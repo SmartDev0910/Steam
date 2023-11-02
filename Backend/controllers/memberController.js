@@ -83,18 +83,21 @@ exports.Apply = (req, res, next) => {
 exports.ReviewApplication = (req, res, next) => {
   const { _id } = req.params;
   const applicationTypeId = req.body.applicationTypeId ? req.body.applicationTypeId : "";
+  const isApprove = req.body.isApprove ? req.body.isApprove : "";
   
   // TODO: check the role of the API caller
   
   Member.findOne({ _id })
     .then((resMember) => {
       const myApplications = resMember.applications;
-      const applied = myApplications.find(obj => obj.applicationTypeId === applicationTypeId)
-      if (!applied) {
+      const indexToUpdate = myApplications.findIndex(obj => obj.applicationTypeId === applicationTypeId);
+
+      if (indexToUpdate === -1) {
         res.status(400).send("Not applied yet, apply first");
         return;
       }
-      // resMember.applications.
+      resMember.applications[indexToUpdate].status = isApprove == true ? "approved": "rejected";
+
       resMember
           .save()
           .then((editMember) => res.status(200).send(editMember))

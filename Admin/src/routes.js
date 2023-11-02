@@ -43,12 +43,15 @@ import StarterGuide from "layouts/starter-guide";
 import NewsLetter from "layouts/news-letter";
 import ChangeLogDetail from "layouts/change-logs/detail";
 import ApplicationPortal from "layouts/application-portal";
+import NewApplication from "layouts/application-portal/new";
+import ApplyList from "layouts/application-portal/list";
 
 // Soft UI Dashboard React icons
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import AutoStoriesOutlinedIcon from "@mui/icons-material/AutoStoriesOutlined";
 import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 const routes = [
   {
@@ -83,7 +86,7 @@ const routes = [
     name: "News Letter",
     key: "news-letter",
     route: "/news-letter",
-    icon: <AutoStoriesOutlinedIcon size="12px" />,
+    icon: <NewspaperIcon size="12px" />,
     component: <NewsLetter />,
     noCollapse: true,
   },
@@ -95,6 +98,16 @@ const routes = [
     icon: <TaskOutlinedIcon size="12px" />,
     component: <ApplicationPortal />,
     noCollapse: true,
+  },
+  {
+    key: "application-portal/create",
+    route: "/application-portal/create",
+    component: <NewApplication />,
+  },
+  {
+    key: "application-portal/list?",
+    route: "/application-portal/list",
+    component: <ApplyList />,
   },
   {
     name: "ChangeLogs/:id",
