@@ -282,29 +282,6 @@ function NewApplication() {
             </Grid>
           </Grid>
         </Card>
-        {/* {rows.length ? (
-          <SoftBox mb={3} mt={2}>
-            <Card>
-              <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-                <SoftTypography variant="h5">My Applications</SoftTypography>
-              </SoftBox>
-              <SoftBox
-                sx={{
-                  "& .MuiTableRow-root:not(:last-child)": {
-                    "& td": {
-                      borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                        `${borderWidth[1]} solid ${borderColor}`,
-                    },
-                  },
-                }}
-              >
-                <Table columns={columns} rows={rows} />
-              </SoftBox>
-            </Card>
-          </SoftBox>
-        ) : (
-          ""
-        )} */}
       </SoftBox>
       <Footer />
     </DashboardLayout>

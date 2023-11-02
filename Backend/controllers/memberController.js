@@ -8,6 +8,8 @@ exports.SignIn = (req, res, next) => {
       if (result) {
         if (result.password !== md5(req.body.password))
           res.status(401).send("Password is incorrect");
+        else if (result.isBanned)
+        res.status(401).send("Your account is blocked");
         else res.status(200).send(result);
       } else res.status(404).send("Member is not registered");
     })

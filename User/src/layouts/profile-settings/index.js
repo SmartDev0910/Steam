@@ -116,6 +116,7 @@ function ProfileSettings() {
   const [passwordLastChanged, setPasswordLastChanged] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [role, setRole] = useState("");
   const [isSteamConnected, setIsSteamConnected] = useState(false);
   const [isDiscordConnected, setIsDiscordConnected] = useState(false);
   const [isOpenNamePane, setIsOpenNamePane] = useState(false);
@@ -145,6 +146,7 @@ function ProfileSettings() {
     let memberData = {
       name: JSON.parse(localStorage.getItem("currentUser"))?.name,
       email: JSON.parse(localStorage.getItem("currentUser"))?.email,
+      role: JSON.parse(localStorage.getItem("currentUser"))?.role,
       ipAddress: JSON.parse(localStorage.getItem("currentUser"))?.ipAddress,
       isBanned: JSON.parse(localStorage.getItem("currentUser"))?.isBanned,
       isWhiteListed: JSON.parse(localStorage.getItem("currentUser"))?.isWhiteListed,
@@ -157,6 +159,7 @@ function ProfileSettings() {
     setFullNameOld(memberData.name)
     setEmail(memberData.email)
     setEmailOld(memberData.email)
+    setRole(memberData.role)
     setPasswordLastChanged(memberData.passwordLastChanged?.substring(0, 10))
 
     const mySteam64 = JSON.parse(localStorage.getItem("currentUser"))?.steam64
@@ -293,7 +296,7 @@ function ProfileSettings() {
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
-                <SoftTypography>Connect your Account</SoftTypography>
+                <SoftTypography>Connect Your Account</SoftTypography>
               </AccordionSummary>
               <AccordionDetails>
                 <SoftBox
@@ -551,13 +554,12 @@ function ProfileSettings() {
                             flexDirection: "column",
                           }}
                         >
-                          <SoftTypography ml="30px">Current Password</SoftTypography>
-                          <SoftTypography ml="30px" sx={{ marginTop: "10px" }}>
+                          <SoftTypography ml="30px" sx={{ marginTop: "10px" }}>Current Password</SoftTypography>
+                          <SoftTypography ml="30px" sx={{ marginTop: "20px" }}>
                             New Password
                           </SoftTypography>
                         </SoftBox>
                       </Grid>
-                      <Grid item lg={1}></Grid>
                       <Grid item lg={4}>
                         <SoftBox
                           sx={{
@@ -630,6 +632,44 @@ function ProfileSettings() {
                 ) : (
                   ""
                 )}
+              </AccordionDetails>
+            </Accordion>
+          </SoftBox>
+          <SoftBox
+            sx={{
+              width: "100%",
+              mb: "20px",
+            }}
+          >
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <SoftBox sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+                  <SoftTypography>Your Role</SoftTypography>
+                </SoftBox>
+              </AccordionSummary>
+              <AccordionDetails>
+                <SoftBox
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    px: "20px",
+                    py: "20px",
+                  }}
+                >
+                  <Grid container direction="column">
+                    <Grid item lg="12" mt="10px">
+                      <SoftTypography>
+                        {role === "superadmin" ? "Super Admin" : role}
+                      </SoftTypography>
+                    </Grid>
+                  </Grid>
+                </SoftBox>
               </AccordionDetails>
             </Accordion>
           </SoftBox>

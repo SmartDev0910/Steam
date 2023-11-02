@@ -6,7 +6,7 @@ import SoftBox from "components/SoftBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
-const StarterGuide = () => {
+const NewsLetter = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -29,4 +29,4 @@ Nunc a viverra purus. Mauris rutrum condimentum dolor eu malesuada. Duis varius,
   );
 };
 
-export default StarterGuide;
+export default NewsLetter;

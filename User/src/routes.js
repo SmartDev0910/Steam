@@ -36,8 +36,9 @@ Coded by www.creative-tim.com
 */
 
 // Soft UI Dashboard React icons
-import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
-import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
+import NoteAltIcon from '@mui/icons-material/NoteAlt';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 // Soft UI Dashboard React layouts
 import SignIn from "layouts/authentication/sign-in";
@@ -48,6 +49,7 @@ import ApplicationCenter from "layouts/application-center";
 import NewApplication from "layouts/application-center/new";
 import ProfileSettings from "layouts/profile-settings";
 import StarterGuide from "layouts/starter-guide";
+import NewsLetter from "layouts/newsletter";
 import ChangeLogs from "layouts/change-logs";
 
 const routes = [
@@ -81,7 +83,7 @@ const routes = [
     name: "Application Center",
     key: "application-center",
     route: "/application-center",
-    icon: <TaskOutlinedIcon size="12px" />,
+    icon: <PeopleAltIcon size="12px" />,
     component: <ApplicationCenter />,
     noCollapse: true,
   },
@@ -90,8 +92,17 @@ const routes = [
     name: "Starter Guide",
     key: "starter-guide",
     route: "/starter-guide",
-    icon: <SummarizeOutlinedIcon size="12px" />,
+    icon: <NoteAltIcon size="12px" />,
     component: <StarterGuide />,
+    noCollapse: true,
+  },
+  {
+    type: "collapse",
+    name: "Newsletter",
+    key: "newsletter",
+    route: "/newsletter",
+    icon: <NewspaperIcon size="12px" />,
+    component: <NewsLetter />,
     noCollapse: true,
   },
   {

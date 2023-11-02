@@ -51,13 +51,7 @@ function SignIn() {
       toast.success("Success");
       setAuthentication(dispatch, JSON.stringify(response?.data));
       window.location.pathname = "/application-center";
-    } else if (response?.status === 401) {
-      toast.error("Incorrect email or password")
-    } else if (response?.status === 404) {
-      toast.error("Incorrect email or password")
-    } else {
-      toast.error("Technical error encountered")
-    }
+    } else toast.error(response.data);
   };
 
   return (

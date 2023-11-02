@@ -41,13 +41,10 @@ import { toast } from "react-toastify";
 import { useClubAdminController, setAuthentication } from "context";
 
 function SignIn() {
-  const [rememberMe, setRememberMe] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [controller, dispatch] = useClubAdminController();
   const navigate = useNavigate();
-
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const handleSignIn = async () => {
     const response = await MembersSignIn(email, password);

@@ -147,9 +147,6 @@ class Header extends React.Component {
                         <Link to="/rules">Rules</Link>
                       </li>
                       <li>
-                        <Link to="/starter-guide">Starter Guide</Link>
-                      </li>
-                      <li>
                         <Link to="/change-logs">Change Logs</Link>
                       </li>
                     </ul>

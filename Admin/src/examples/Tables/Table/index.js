@@ -119,7 +119,7 @@ function Table({ columns, rows }) {
             <SoftTypography
               variant="button"
               fontWeight="regular"
-              color="black"
+              // color="black"
               sx={{ display: "inline-block", width: "max-content" }}
             >
               {row[name]}

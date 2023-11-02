@@ -40,6 +40,7 @@ const memberSchema = new mongoose.Schema({
   role: {
     type: String,
     trim: true,
+    default: 'ordinary',
   },
   applications: [{
     applicationTypeId: {
@@ -53,7 +54,11 @@ const memberSchema = new mongoose.Schema({
       type: String,
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
-    }
+    },
+    appliedAt: {
+      type: Date,
+      default: Date.now,
+    },
   }],
   ip: {
     type: String,

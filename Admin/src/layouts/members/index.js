@@ -18,11 +18,17 @@ import { useState, useEffect } from "react";
 // @mui material components
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
+import Switch from '@mui/material/Switch';
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
 import { makeStyles } from "@mui/styles";
 import { styled } from "@mui/material/styles";
@@ -44,7 +50,7 @@ import { toast } from "react-toastify";
 import { Rings } from "react-loader-spinner";
 
 // Data
-import { MembersAll, MembersWhiteList, MembersBan } from "actions/membersAction";
+import { MembersAll, MembersUpdate } from "actions/membersAction";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -74,53 +80,107 @@ const useStyles = makeStyles({
 function Members() {
   const classes = useStyles();
 
-  const columns = [
+  const columnsMember = [
     { name: "no", align: "center" },
-    { name: "email", align: "center" },
+    // { name: "email", align: "center" },
     { name: "steam64", align: "center" },
-    { name: "ip address", align: "center" },
-    { name: "status", align: "center" },
+    { name: "discord", align: "center" },
+    { name: "role", align: "center" },
+    // { name: "ip address", align: "center" },
+    { name: "action", align: "center" },
   ];
 
-  const [rows, setRows] = useState([]);
-  const [sortBy, setSortBy] = useState("");
+  const columnsApplication = [
+    { name: "no", align: "center" },
+    { name: "type", align: "center" },
+    { name: "status", align: "center" },
+    { name: "appliedat", align: "center" },
+  ];
+
+  const [rowsMember, setRowsMember] = useState([]);
+  const [rowsApplication, setRowsApplication] = useState([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeMember, setActiveMember] = useState(null);
 
+  const [roleValue, setRoleValue] = useState('ordinary');
+
+  const handleRoleChange = async (event, memberID) => {
+    setRoleValue(event.target.value);
+    handleClose();
+    setLoading(true);
+    const members = await MembersUpdate(memberID, {role: event.target.value});
+    if (members?.status === 200) {
+      await resetMemberData();
+      toast.success("Successfully updated");
+    } else {
+      toast.error("Error");
+    }
+    setLoading(false);
+  };
+
   const handleClickOpen = (member) => {
     setActiveMember(member);
     setOpen(true);
+    setRoleValue(member.role)
+
+    // prepare application table in modal
+    if (member.applications?.length) {
+      let data = [];
+      member.applications?.map((application, index) => {
+        data.push({
+          no: (
+            <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+              {index + 1}
+            </SoftTypography>
+          ),
+          type: (
+            <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+              {application.applicationTypeId}
+            </SoftTypography>
+          ),
+          status: (
+            <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+              {application.status}
+            </SoftTypography>
+          ),
+          appliedat: (
+            <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+              {application.appliedAt.substring(0, 10)}
+            </SoftTypography>
+          )
+        });
+      });
+      setRowsApplication(data);
+    } else {
+      setRowsApplication([]);
+    }
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleSetBan = async (steam64, isBanned) => {
-    const response = await MembersBan(steam64, isBanned);
-    if (response?.status === 200) {
-      toast.success("Success");
-      setOpen(false);
-      getInitData();
-    } else {
-      toast.error("Error");
-    }
-  };
-
-  const handleSetWhiteListed = async (steam64) => {
-    const response = await MembersWhiteList(steam64);
-    if (response?.status === 200) {
-      toast.success("Success");
-      setOpen(false);
-      getInitData();
-    } else {
-      toast.error("Error");
-    }
-  };
-
   const getInitData = async () => {
     setLoading(true);
+    await resetMemberData();
+    setLoading(false);
+  };
+
+  const handleChangeBan = async (memberID, isBanned) => {
+    handleClose();
+    setLoading(true);
+    const members = await MembersUpdate(memberID, {isBanned: !isBanned});
+    if (members?.status === 200) {
+      await resetMemberData();
+      toast.success("Successfully updated");
+    } else {
+      toast.error("Error");
+    }
+    setLoading(false);
+  }
+
+  const resetMemberData = async () => {
     const members = await MembersAll();
     if (members?.status === 200) {
       if (members?.data?.length) {
@@ -153,52 +213,48 @@ function Members() {
             ),
             steam64: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {member.steam64}
+                {member.steam64 ? member.steam64 : "Not connected"}
               </SoftTypography>
             ),
-            "ip address": (
+            discord: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {member.ipAddress}
+                {member.discordID ? member.discordID : "Not connected"}
               </SoftTypography>
             ),
-
-            status: member.isWhiteListed ? (
-              <SoftBadge
-                variant="gradient"
-                badgeContent="WhiteListed"
-                color="info"
-                size="xs"
-                container
-              />
-            ) : member.steam64 ? (
-              <SoftBadge
-                variant="gradient"
-                badgeContent="Waiting for whitelist"
-                color="warning"
-                size="xs"
-                container
-              />
-            ) : (
-              <SoftBadge
-                variant="gradient"
-                badgeContent="Not applied"
-                color="error"
-                size="xs"
-                container
-              />
+            role: (
+              <SoftTypography variant="caption" color="secondary" fontWeight="medium">
+                {member.role}
+              </SoftTypography>
+            ),
+            action: (
+              <SoftTypography
+                variant="caption"
+                color="secondary"
+                fontWeight="medium"
+                sx={{
+                  color: "#00f",
+                  fontWeight: "medium",
+                  textDecoration: "none",
+                  "&:hover": {
+                    textDecoration: "underline",
+                  },
+                  cursor: "pointer",
+                }}
+                onClick={() => handleClickOpen(member)}
+              >
+                Detail
+              </SoftTypography>
             ),
           });
         });
-        setRows(data);
+        setRowsMember(data);
       } else {
-        setRows([]);
+        setRowsMember([]);
       }
     } else {
       toast.error("Error");
     }
-
-    setLoading(false);
-  };
+  }
 
   useEffect(() => {
     getInitData();
@@ -212,26 +268,6 @@ function Members() {
           <Rings color="#1383C3" height={240} width={240} />
         </div>
       )}
-      <Card
-        sx={{
-          backgroundColor: ({ functions: { rgba }, palette: { white } }) => rgba(white.main, 0.8),
-          position: "relative",
-          overflow: "visible",
-          zIndex: 2,
-          mt: 0,
-          py: 2,
-          px: 2,
-          mx: "20px",
-        }}
-      >
-        <Grid container spacing={3} alignItems="center">
-          <Grid item xs={12} md={6} lg={6}>
-            <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
-              Members
-            </SoftTypography>
-          </Grid>
-        </Grid>
-      </Card>
       <SoftBox py={3} mx="20px">
         <Card>
           <SoftBox
@@ -244,8 +280,8 @@ function Members() {
               },
             }}
           >
-            {rows.length ? (
-              <Table columns={columns} rows={rows} />
+            {rowsMember.length ? (
+              <Table columns={columnsMember} rows={rowsMember} />
             ) : (
               <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
                 <SoftTypography variant="h5">No Data</SoftTypography>
@@ -264,7 +300,7 @@ function Members() {
         // }}
       >
         <DialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">
-          <SoftTypography variant="h5" fontWeight="bold" color={"dark"}>
+          <SoftTypography fontWeight="bold" color={"dark"}>
             Member Detail
           </SoftTypography>
         </DialogTitle>
@@ -287,7 +323,17 @@ function Members() {
             </div>
           )}
           <Grid container spacing={1} alignItems="center" sx={{ padding: "10px" }}>
-            <Grid item lg={12}>
+          <Grid item lg={6}>
+              <SoftBox sx={{ display: "flex" }}>
+                <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
+                  Name:
+                </SoftTypography>
+                <SoftTypography variant="h6" color={"dark"}>
+                  {activeMember?.name}
+                </SoftTypography>
+              </SoftBox>
+            </Grid>
+            <Grid item lg={6}>
               <SoftBox sx={{ display: "flex" }}>
                 <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
                   Email:
@@ -297,7 +343,7 @@ function Members() {
                 </SoftTypography>
               </SoftBox>
             </Grid>
-            <Grid item lg={12}>
+            <Grid item lg={6}>
               <SoftBox sx={{ display: "flex" }}>
                 <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
                   Steam64:
@@ -307,87 +353,111 @@ function Members() {
                 </SoftTypography>
               </SoftBox>
             </Grid>
+            <Grid item lg={6}>
+              <SoftBox sx={{ display: "flex" }}>
+                <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
+                  Discord ID:
+                </SoftTypography>
+                <SoftTypography variant="h6" color={"dark"}>
+                  {activeMember?.steam64 ? activeMember?.discordID : "N/A"}
+                </SoftTypography>
+              </SoftBox>
+            </Grid>
+            <Grid item lg={6}>
+              <SoftBox sx={{ display: "flex" }}>
+                <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
+                  MFA Enabled:
+                </SoftTypography>
+                <SoftTypography variant="h6" color={"dark"}>
+                  {activeMember?.mfaEnabled ? "Enabled" : "Disabled"}
+                </SoftTypography>
+              </SoftBox>
+            </Grid>
+            <Grid item lg={6}>
+              <SoftBox sx={{ display: "flex" }}>
+                <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
+                  Phone:
+                </SoftTypography>
+                <SoftTypography variant="h6" color={"dark"}>
+                  {activeMember?.mfaPhoneNumber ? activeMember?.mfaPhoneNumber : "N/A"}
+                </SoftTypography>
+              </SoftBox>
+            </Grid>
+            <Grid item lg={6}>
+              <SoftBox sx={{ display: "flex" }}>
+                <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
+                  IP:
+                </SoftTypography>
+                <SoftTypography variant="h6" color={"dark"}>
+                  {activeMember?.ip === "::1" ? "localhost": activeMember?.ip}
+                </SoftTypography>
+              </SoftBox>
+            </Grid>
+            <Grid item lg={6}>
+              <SoftBox sx={{ display: "flex" }}>
+                <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
+                  Banned:
+                </SoftTypography>
+                <SoftTypography variant="h6" color={"dark"}>
+                  Off&nbsp;
+                </SoftTypography>
+                <Switch
+                  checked={activeMember?.isBanned ? true : false}
+                  onChange={() => handleChangeBan(activeMember._id, activeMember.isBanned)}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+                <SoftTypography variant="h6" color={"dark"}>
+                  &nbsp;On
+                </SoftTypography>
+              </SoftBox>
+            </Grid>
             <Grid item lg={12}>
               <SoftBox sx={{ display: "flex" }}>
                 <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
-                  Ip Address:
+                  Role:
                 </SoftTypography>
                 <SoftTypography variant="h6" color={"dark"}>
-                  {activeMember?.ipAddress}
+                  {activeMember?.role}
                 </SoftTypography>
+              </SoftBox>
+              <SoftBox sx={{ display: "flex" }}>
+                <FormControl>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-controlled-radio-buttons-group"
+                    name="controlled-radio-buttons-group"
+                    value={roleValue}
+                    onChange={(e) => handleRoleChange(e, activeMember._id)}
+                  >
+                    <FormControlLabel value="ordinary" control={<Radio />} label="Ordinary" />
+                    <FormControlLabel value="app team" control={<Radio />} label="AppTeam" />
+                    <FormControlLabel value="moderator" control={<Radio />} label="Moderator" />
+                    <FormControlLabel value="administrator" control={<Radio />} label="Administrator" />
+                    <FormControlLabel value="superadmin" control={<Radio />} label="Superadmin" />
+                  </RadioGroup>
+                </FormControl>
               </SoftBox>
             </Grid>
-            <Grid item lg={12}>
-              <SoftBox sx={{ display: "flex" }}>
-                {activeMember?.isBanned ? (
-                  <SoftTypography variant="h6" color={"dark"} mr={"10px"}>
-                    <SoftBadge
-                      variant="gradient"
-                      badgeContent={"Banned"}
-                      color={"error"}
-                      size="xs"
-                      container
-                    />
-                  </SoftTypography>
-                ) : (
-                  ""
-                )}
-
-                <SoftTypography variant="h6" color={"dark"}>
-                  {activeMember?.steam64 ? (
-                    activeMember?.isWhiteListed ? (
-                      <SoftBadge
-                        variant="gradient"
-                        badgeContent="Whitelisted"
-                        color="info"
-                        size="xs"
-                        container
-                      />
-                    ) : (
-                      <SoftBadge
-                        variant="gradient"
-                        badgeContent="Waiting for whitelist"
-                        color="warning"
-                        size="xs"
-                        container
-                      />
-                    )
-                  ) : (
-                    <SoftBadge
-                      variant="gradient"
-                      badgeContent="Not applied"
-                      color="error"
-                      size="xs"
-                      container
-                    />
-                  )}
-                </SoftTypography>
-              </SoftBox>
+            <Grid item lg={12} mt={"20px"}>
+              <SoftTypography variant="h6" color={"dark"}>
+                Applications
+              </SoftTypography>
+              {rowsApplication.length ? (
+                <Table columns={columnsApplication} rows={rowsApplication} />
+              ) : (
+                <SoftBox display="flex" justifyContent="space-between" alignItems="center">
+                  <SoftTypography variant="h6">No application for this member</SoftTypography>
+                </SoftBox>
+              )}
             </Grid>
             <Grid item lg={12} sx={{ display: "flex", justifyContent: "flex-end", mt: "20px" }}>
-              {activeMember?.steam64 !== "" && !activeMember?.isWhiteListed ? (
-                <SoftButton
-                  variant="gradient"
-                  color={"primary"}
-                  onClick={() => handleSetWhiteListed(activeMember?.steam64)}
-                >
-                  Approve
-                </SoftButton>
-              ) : (
-                ""
-              )}
-              <SoftBox mr={2} />
-              {activeMember?.isBanned ? (
-                ""
-              ) : (
-                <SoftButton
-                  variant="gradient"
-                  color={"error"}
-                  onClick={() => handleSetBan(activeMember?.steam64, true)}
-                >
-                  Ban
-                </SoftButton>
-              )}
+              <SoftButton
+                variant="gradient"
+                color={"primary"}
+                onClick={() => handleClose()}
+              >
+                Close
+              </SoftButton>
             </Grid>
           </Grid>
         </DialogContent>
