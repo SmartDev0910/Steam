@@ -39,11 +39,14 @@ import curved6 from "assets/images/curved-images/curved14.jpg";
 // Actions
 import { MembersCreate } from "actions/membersAction";
 
+import { useClubAdminController, setAuthentication } from "context";
+
 function SignUp() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [controller, dispatch] = useClubAdminController();
 
   const handleSignUp = async () => {
     const member = {
@@ -54,7 +57,8 @@ function SignUp() {
     const response = await MembersCreate(member);
     if (response?.status === 200) {
       toast.success("Success");
-      navigate("/authentication/sign-in");
+      setAuthentication(dispatch, JSON.stringify(response?.data));
+      window.location.pathname = "/application-center";
     } else toast.error(response.data);
   };
 
