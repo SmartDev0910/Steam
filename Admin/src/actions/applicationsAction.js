@@ -2,7 +2,12 @@ import axios from "./axios";
 
 export const ApplicationTypesAll = async () => {
   try {
-    const response = await axios.get("/api/application_types");
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.get("/api/application_types", {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;
@@ -11,7 +16,12 @@ export const ApplicationTypesAll = async () => {
 
 export const CreateApplicationType = async (applicationType) => {
   try {
-    const response = await axios.post("/api/application_types/create", applicationType);
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.post("/api/application_types/create", applicationType, {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;
@@ -20,7 +30,12 @@ export const CreateApplicationType = async (applicationType) => {
 
 export const ApplicationList = async (applicationType) => {
   try {
-    const response = await axios.get(`/api/application_types/${applicationType}/list`);
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.get(`/api/application_types/${applicationType}/list`, {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;
@@ -29,7 +44,12 @@ export const ApplicationList = async (applicationType) => {
 
 export const ReviewApplication = async (memberID, application) => {
   try {
-    const response = await axios.post(`/api/members/${memberID}/review_application`, application);
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.post(`/api/members/${memberID}/review_application`, application, {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;

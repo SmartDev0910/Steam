@@ -155,7 +155,6 @@ function ProfileSettings() {
       steam64: JSON.parse(localStorage.getItem("currentUser"))?.steam64,
       discordID: JSON.parse(localStorage.getItem("currentUser"))?.discordID,
     };
-    console.log(memberData)
     setFullName(memberData.name)
     setFullNameOld(memberData.name)
     setEmail(memberData.email)

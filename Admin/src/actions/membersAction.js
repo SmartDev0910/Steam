@@ -2,7 +2,7 @@ import axios from "./axios";
 
 export const MembersSignIn = async (email, password) => {
   try {
-    const response = await axios.post("/api/members/signin", { email, password });
+    const response = await axios.post("/api/auth/signin", { email, password });
     return response;
   } catch (error) {
     return error;
@@ -11,7 +11,12 @@ export const MembersSignIn = async (email, password) => {
 
 export const MembersAll = async () => {
   try {
-    const response = await axios.get("/api/members");
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.get("/api/members", {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;
@@ -20,7 +25,12 @@ export const MembersAll = async () => {
 
 export const MembersUpdate = async (id, member) => {
   try {
-    const response = await axios.put(`/api/members/${id}`, member);
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.put(`/api/members/${id}`, member, {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;

@@ -108,27 +108,8 @@ function ApplicationPortal() {
       )}
       <SoftBox p={3}>
         <Grid container spacing={1}>
-          {parseInt(myApplicationTypes.length) === 0 ? (
-            <Grid item lg={12} sx={{display:"flex", justifyContent:"center"}}>
-              <Card
-                sx={{
-                  width: "90%",
-                  height: "100%",
-                  padding: "20px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  border: "2px solid grey",
-                  float: "right",
-                }}
-                >
-                  No applications created
-              </Card>
-            </Grid>
-          ) : (
-          Array.from(
+          {
+            Array.from(
               { length: parseInt(myApplicationTypes.length) },
               (_, i) => 0 + i
             ).map((index) => {
@@ -155,7 +136,6 @@ function ApplicationPortal() {
                 </Grid>
               )
             })
-          )
           }
           <Grid item lg={6} sx={{display:"flex", justifyContent:"center"}}>
             <Card

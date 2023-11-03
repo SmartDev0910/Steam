@@ -2,7 +2,12 @@ import axios from "./axios";
 
 export const ListApplicationTypes = async () => {
   try {
-    const response = await axios.get(`/api/application_types`);
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.get(`/api/application_types`, {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;
@@ -11,7 +16,12 @@ export const ListApplicationTypes = async () => {
 
 export const ListApplicationTypeById = async (id) => {
   try {
-    const response = await axios.get(`/api/application_types/${id}`);
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.get(`/api/application_types/${id}`, {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;
@@ -20,7 +30,12 @@ export const ListApplicationTypeById = async (id) => {
 
 export const Apply = async (memberID, applicationTypeId, audio) => {
   try {
-    const response = await axios.post(`/api/members/${memberID}/apply`, {applicationTypeId, audio});
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.post(`/api/members/${memberID}/apply`, {applicationTypeId, audio}, {
+			headers: {
+				authorization
+			}
+		});
     return response;
   } catch (error) {
     return error;

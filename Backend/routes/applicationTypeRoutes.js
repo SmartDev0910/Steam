@@ -4,14 +4,14 @@ const router = express.Router();
 
 const applicationTypeontroller = require("../controllers/applicationTypeController");
 
-router.get("/api/application_types", applicationTypeontroller.ListApplicationTypes);
-router.get("/api/application_types/:_id", applicationTypeontroller.ListApplicationTypeById);
-router.get("/api/application_types/:_id/list", applicationTypeontroller.ListAppliedMembers);
+router.get("/", applicationTypeontroller.ListApplicationTypes);
+router.get("/:_id", applicationTypeontroller.ListApplicationTypeById);
+router.get("/:_id/list", applicationTypeontroller.ListAppliedMembers);
 
-router.post("/api/application_types/create", applicationTypeontroller.CreateApplicationType);
+router.post("/create", applicationTypeontroller.CreateApplicationType);
 
-router.put("/api/application_types/:_id", applicationTypeontroller.UpdateApplicationTypeById);
+router.put("/:_id", applicationTypeontroller.UpdateApplicationTypeById);
 
-router.delete("/api/application_types/:id", applicationTypeontroller.DeleteApplicationTypeById);
+router.delete("/:id", applicationTypeontroller.DeleteApplicationTypeById);
 
 module.exports = router;

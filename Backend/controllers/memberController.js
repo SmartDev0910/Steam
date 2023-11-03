@@ -1,4 +1,5 @@
 // importing models
+const jwt = require("jsonwebtoken");
 const Member = require("../models/member");
 const md5 = require("md5");
 
@@ -10,7 +11,11 @@ exports.SignIn = (req, res, next) => {
           res.status(401).send("Password is incorrect");
         else if (result.isBanned)
         res.status(401).send("Your account is blocked");
-        else res.status(200).send(result);
+        else {
+          jwt.sign({ user: req.body.email }, "secretkey", (err, token) => {
+            res.status(200).json({token, result});
+          });
+        }
       } else res.status(404).send("Member is not registered");
     })
     .catch((err) => res.status(400).send(err));
@@ -45,7 +50,9 @@ exports.CreateMember = (req, res, next) => {
         newMember
           .save()
           .then((resMember) => {
-            res.status(200).send(resMember);
+            jwt.sign({ user: req.body.email }, "secretkey", (err, token) => {
+              res.status(200).json({token, result: resMember});
+            });
           })
           .catch((err) => {
             res.status(400).send(err);

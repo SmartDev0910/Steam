@@ -9,6 +9,7 @@ const cors = require("cors");
 const passport = require("passport");
 const SteamStrategy = require("passport-steam").Strategy;
 const DiscordStrategy = require("passport-discord").Strategy;
+const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
@@ -24,6 +25,7 @@ const {
   BACKEND_ROOTURL,
 } = require("./config");
 
+const loginRoutes = require("./routes/loginRoutes");
 const memberRoutes = require("./routes/memberRoutes");
 const applicationTypeRoutes = require("./routes/applicationTypeRoutes");
 const changelogRoutes = require("./routes/changelogRoutes");
@@ -165,10 +167,30 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   res.status(200).send(file);
 });
 
+//jwt middleware
+const verifyToken = (req, res, next) => {
+  const bearerHeader = req.headers["authorization"];
+  if (typeof bearerHeader !== "undefined") {
+    const bearerToken = bearerHeader.split(" ")[1];
+    req.token = bearerHeader;
+
+    jwt.verify(req.token, "secretkey", (err, authData) => {
+      if (err) {
+        res.sendStatus(403);
+      } else {
+        next();
+      }
+    });
+  } else {
+    res.sendStatus(403);
+  }
+}
+
 //Routes
-app.use(memberRoutes);
-app.use(applicationTypeRoutes);
-app.use(changelogRoutes);
+app.use("/api/auth", loginRoutes);
+app.use("/api/members", verifyToken, memberRoutes);
+app.use("/api/application_types", verifyToken, applicationTypeRoutes);
+// app.use("/api", verifyToken, changelogRoutes);
 
 const port = BACKEND_PORT || 8080;
 

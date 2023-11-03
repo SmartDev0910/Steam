@@ -50,7 +50,8 @@ function SignIn() {
     const response = await MembersSignIn(email, password);
     if (response?.status === 200) {
       toast.success("Success");
-      setAuthentication(dispatch, JSON.stringify(response?.data));
+      setAuthentication(dispatch, JSON.stringify(response?.data?.result));
+      localStorage.setItem("token", JSON.stringify(response?.data?.token));
       window.location.pathname = "/members";
     } else toast.error(response.data);
   };
