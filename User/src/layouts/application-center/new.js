@@ -41,6 +41,7 @@ import SoftAvatar from "components/SoftAvatar";
 import AudioReactRecorder, { RecordState } from "audio-react-recorder";
 
 import { ListApplicationTypeById, Apply, fileUpload } from "actions/applicationAction";
+import { ListMemberById } from "actions/membersAction";
 import { REACT_APP_SERVER_IP } from "actions/config";
 
 import { formatTime, blobToBase64 } from "layouts/utils";
@@ -78,6 +79,7 @@ function NewApplication() {
   const [recordCounter, setRecordCounter] = useState("00:00");
   const [recordAudioStatus, setRecordAudioStatus] = useState("initiate");
   const [audioData, setAudioData] = useState(null);
+  const [appliedStatus, setAppliedStatus] = useState("");
 
   const [recordState, setRecordState] = useState(null);
 
@@ -117,7 +119,7 @@ function NewApplication() {
   const handleSubmit = async () => {
     setLoading(true);
     const memberID = JSON.parse(localStorage.getItem("currentUser"))?._id;
-    const audio = "AUDIO_BLOB_HERE";
+    const audio = audioData;
     const applyResponse = await Apply(memberID, applicationTypeID, audio);
     if (applyResponse?.status === 200) {
       navigate("/application-center");
@@ -132,7 +134,17 @@ function NewApplication() {
     setLoading(true);
     const myApplicationType = await ListApplicationTypeById(applicationTypeID);
     if (myApplicationType?.status === 200) {
-      setApplicationTypeTitle(myApplicationType.data.title)
+      setApplicationTypeTitle(myApplicationType.data.title);
+    } else {
+      toast.error("Technical error encountered");
+    }
+
+    const memberID = JSON.parse(localStorage.getItem("currentUser"))?._id;
+    const myMemberDetailRes = await ListMemberById(memberID);
+    if (myMemberDetailRes?.status === 200) {
+      const myApplications = myMemberDetailRes.data.applications;
+      const currentApplication = myApplications.find(obj => obj.applicationTypeId === applicationTypeID);
+      setAppliedStatus(currentApplication?.status);
     } else {
       toast.error("Technical error encountered");
     }
@@ -160,7 +172,7 @@ function NewApplication() {
                   {applicationTypeTitle}
                 </SoftTypography>
               </Grid>
-              {JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "" ? (
+              {JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "" || JSON.parse(localStorage.getItem("currentUser"))?.discordID === "" ? (
                 <Grid item lg={12}>
                   <SoftBox
                     sx={{
@@ -175,110 +187,133 @@ function NewApplication() {
                     }}
                   >
                     <SoftTypography sx={{ fontSize: 18, color: "#EC4899" }}>
-                      Please connect your steam account first in order to apply!
+                      Please connect your steam and discord account first in order to apply!
                     </SoftTypography>
                   </SoftBox>
                 </Grid>
               ) : (
-                ""
-              )}
-              <Grid item container lg={12} rowSpacing={6} mt={1} alignItems="flex-start">
-                <SoftTypography variant="h6" color={"dark"} mb={2}>
-                  Record Audio
-                </SoftTypography>
-                <SoftBox
-                  sx={{
-                    display: "flex",
-                    height: "260px",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  {recordAudioStatus === "start recording" ? (
-                    <SoftTypography sx={{ fontSize: "70px" }}>{recordCounter}</SoftTypography>
-                  ) : (
-                    ""
-                  )}
-                  {recordAudioStatus === "initiate" ? (
-                    <Tooltip disableFocusListener title="Record">
-                      <SoftAvatar
-                        src={RecordIcon}
+                appliedStatus === undefined || appliedStatus === "" ? (
+                  <>
+                    <Grid item container lg={12} rowSpacing={6} mt={1} alignItems="flex-start">
+                      <SoftTypography variant="h6" color={"dark"} mb={2}>
+                        Record Audio
+                      </SoftTypography>
+                      <SoftBox
                         sx={{
-                          width: "120px",
-                          height: "120px",
-                          cursor: "pointer",
-                          marginRight: "10px",
+                          display: "flex",
+                          height: "260px",
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
-                        onClick={handleRecordStart}
-                      ></SoftAvatar>
-                    </Tooltip>
-                  ) : (
-                    ""
-                  )}
+                      >
+                        {recordAudioStatus === "start recording" ? (
+                          <SoftTypography sx={{ fontSize: "70px" }}>{recordCounter}</SoftTypography>
+                        ) : (
+                          ""
+                        )}
+                        {recordAudioStatus === "initiate" ? (
+                          <Tooltip disableFocusListener title="Record">
+                            <SoftAvatar
+                              src={RecordIcon}
+                              sx={{
+                                width: "120px",
+                                height: "120px",
+                                cursor: "pointer",
+                                marginRight: "10px",
+                              }}
+                              onClick={handleRecordStart}
+                            ></SoftAvatar>
+                          </Tooltip>
+                        ) : (
+                          ""
+                        )}
 
-                  {recordAudioStatus === "start recording" ? (
-                    <SoftAvatar
-                      src={StopIcon}
-                      sx={{
-                        width: "90px",
-                        height: "90px",
-                        cursor: "pointer",
-                        marginRight: "10px",
-                      }}
-                      onClick={handleRecordStop}
-                    ></SoftAvatar>
-                  ) : (
-                    ""
-                  )}
+                        {recordAudioStatus === "start recording" ? (
+                          <SoftAvatar
+                            src={StopIcon}
+                            sx={{
+                              width: "90px",
+                              height: "90px",
+                              cursor: "pointer",
+                              marginRight: "10px",
+                            }}
+                            onClick={handleRecordStop}
+                          ></SoftAvatar>
+                        ) : (
+                          ""
+                        )}
 
-                  {recordAudioStatus === "finish recording" ? (
-                    <SoftBox
-                      sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                        {recordAudioStatus === "finish recording" ? (
+                          <SoftBox
+                            sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                          >
+                            <audio controls src={audioData} />
+                            <Tooltip disableFocusListener title="Restart recording">
+                              <SoftAvatar
+                                src={RecordIcon}
+                                sx={{
+                                  width: "40px",
+                                  height: "40px",
+                                  cursor: "pointer",
+                                  marginLeft: "20px",
+                                }}
+                                onClick={() => setRecordAudioStatus("initiate")}
+                              ></SoftAvatar>
+                            </Tooltip>
+                          </SoftBox>
+                        ) : (
+                          ""
+                        )}
+                      </SoftBox>
+                      <SoftBox sx={{ display: "none" }}>
+                        <AudioReactRecorder state={recordState} onStop={onRecordStop} />
+                      </SoftBox>
+                    </Grid>
+
+                    <Grid item
+                      xs={12}
+                      md={12}
+                      lg={12}
+                      container
+                      spacing={2}
+                      sx={{ fontSize: "12px", marginTop: "20px" }}
                     >
-                      <audio controls src={audioData} />
-                      <Tooltip disableFocusListener title="Restart recording">
-                        <SoftAvatar
-                          src={RecordIcon}
-                          sx={{
-                            width: "40px",
-                            height: "40px",
-                            cursor: "pointer",
-                            marginLeft: "20px",
-                          }}
-                          onClick={() => setRecordAudioStatus("initiate")}
-                        ></SoftAvatar>
-                      </Tooltip>
+                      <Grid item xs={12} md={4} lg={4}>
+                        <SoftButton
+                          rel="noreferrer"
+                          variant="gradient"
+                          color="info"
+                          sx={{ width: "40%" }}
+                          disabled={JSON.parse(localStorage.getItem("currentUser"))?.steam64 === "" || JSON.parse(localStorage.getItem("currentUser"))?.discordID === "" ? true : false}
+                          onClick={handleSubmit}
+                        >
+                          Submit
+                        </SoftButton>
+                      </Grid>
+                    </Grid>
+                  </>
+                ) : (
+                  <Grid item lg={12}>
+                    <SoftBox
+                      sx={{
+                        width: "66%",
+                        height: "56px",
+                        borderRadius: "8px",
+                        display: "flex",
+                        alignItems: "center",
+                        backgroundColor: appliedStatus == "approved" ? "#d2edcf" : "#ffebf5",
+                        marginTop: "20px",
+                        paddingLeft: "20px",
+                      }}
+                    >
+                      <SoftTypography sx={{ fontSize: 18 }}>
+                        Your application is {appliedStatus}
+                      </SoftTypography>
                     </SoftBox>
-                  ) : (
-                    ""
-                  )}
-                </SoftBox>
-                <SoftBox sx={{ display: "none" }}>
-                  <AudioReactRecorder state={recordState} onStop={onRecordStop} />
-                </SoftBox>
-              </Grid>
-
-              <Grid item
-                xs={12}
-                md={12}
-                lg={12}
-                container
-                spacing={2}
-                sx={{ fontSize: "12px", marginTop: "20px" }}
-              >
-                <Grid item xs={12} md={4} lg={4}>
-                  <SoftButton
-                    rel="noreferrer"
-                    variant="gradient"
-                    color="info"
-                    sx={{ width: "40%" }}
-                    onClick={handleSubmit}
-                  >
-                    Submit
-                  </SoftButton>
-                </Grid>
-              </Grid>
+                  </Grid>
+                )
+              )}
             </Grid>
           </Grid>
         </Card>

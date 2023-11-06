@@ -295,9 +295,9 @@ function Members() {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
-        // sx={{
-        //   "& .css-lzee2o-MuiPaper-root-MuiDialog-paper": { maxWidth: "50%" },
-        // }}
+        sx={{
+          "& .css-lzee2o-MuiPaper-root-MuiDialog-paper": { maxWidth: "50%" },
+        }}
       >
         <DialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">
           <SoftTypography fontWeight="bold" color={"dark"}>

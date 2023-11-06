@@ -18,6 +18,20 @@ export const MembersCreate = async (member) => {
   }
 };
 
+export const ListMemberById = async (id) => {
+  try {
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.get(`/api/members/${id}`, {
+			headers: {
+				authorization
+			}
+		});
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const MembersUpdate = async (id, member) => {
   try {
     const authorization = JSON.parse(localStorage.getItem("token"))
