@@ -41,7 +41,7 @@ exports.CreateMember = (req, res, next) => {
     discordID: req.body.discordID ? req.body.discordID : "",
     isBanned: req.body.isBanned ? req.body.isBanned : false,
     ip: ip,
-    role: "ordinary", // default is ordinary member
+    role: "5", // default is ordinary member
   });
 
   Member.findOne({ email: req.body.email })

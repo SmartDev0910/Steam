@@ -26,6 +26,7 @@ const {
 } = require("./config");
 
 const loginRoutes = require("./routes/loginRoutes");
+const roleRoutes = require("./routes/roleRoutes");
 const memberRoutes = require("./routes/memberRoutes");
 const applicationTypeRoutes = require("./routes/applicationTypeRoutes");
 const changelogRoutes = require("./routes/changelogRoutes");
@@ -188,6 +189,7 @@ const verifyToken = (req, res, next) => {
 
 //Routes
 app.use("/api/auth", loginRoutes);
+app.use("/api/roles", verifyToken, roleRoutes);
 app.use("/api/members", verifyToken, memberRoutes);
 app.use("/api/application_types", verifyToken, applicationTypeRoutes);
 // app.use("/api", verifyToken, changelogRoutes);

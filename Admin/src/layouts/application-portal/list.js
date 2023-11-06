@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 // @mui material components
 import { makeStyles } from "@mui/styles";
@@ -41,6 +41,7 @@ import { Rings } from "react-loader-spinner";
 import { toast } from "react-toastify";
 
 import { ApplicationList, ReviewApplication } from "actions/applicationsAction";
+import { ListRoleById } from "actions/rolesAction";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -69,7 +70,6 @@ const useStyles = makeStyles({
 
 function ApplyList() {
   const classes = useStyles();
-  const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const applicationTypeId = searchParams.get('application_type_id');
@@ -93,8 +93,17 @@ function ApplyList() {
     const applicationList = await ApplicationList(applicationTypeId);
     if (applicationList?.status === 200) {
       if (applicationList?.data?.length) {
+        for (let i = 0; i < applicationList.data.length; i++) {
+          const roleDetailRes = await ListRoleById(applicationList.data[i].role);
+          let roleName = "ordinary";
+          if (roleDetailRes?.status === 200) {
+            roleName = roleDetailRes.data.name;
+          }
+          applicationList.data[i].roleName = roleName
+        }
+
         let data = [];
-        applicationList?.data?.map((member, index) => {
+        applicationList?.data?.map(async (member, index) => {
           data.push({
             no: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
@@ -132,7 +141,7 @@ function ApplyList() {
             ),
             role: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {member.role}
+                {member.roleName}
               </SoftTypography>
             ),
             action: (
@@ -217,7 +226,7 @@ function ApplyList() {
               },
             }}
           >
-            {rowsApplicationList.length ? (
+            {rowsApplicationList.length >= 0 ? (
               <Table columns={columnsApplicationList} rows={rowsApplicationList} />
             ) : (
               <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
@@ -336,7 +345,7 @@ function ApplyList() {
                   Role:
                 </SoftTypography>
                 <SoftTypography variant="h6" color={"dark"}>
-                  {activeMember?.role}
+                  {activeMember?.roleName}
                 </SoftTypography>
               </SoftBox>
             </Grid>

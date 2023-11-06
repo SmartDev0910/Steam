@@ -183,7 +183,7 @@ function ChangeLogs() {
               },
             }}
           >
-            {rows.length ? (
+            {rows.length >= 0 ? (
               <Table columns={columns} rows={rows} />
             ) : (
               <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>

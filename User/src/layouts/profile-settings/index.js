@@ -46,6 +46,7 @@ import { Rings } from "react-loader-spinner";
 
 // Data
 import { ChangePassword, MembersUpdate } from "actions/membersAction";
+import { ListRoleById } from "actions/rolesAction";
 import { REACT_APP_SERVER_IP } from "actions/config";
 import { useClubAdminController, setAuthentication } from "context";
 
@@ -143,6 +144,12 @@ function ProfileSettings() {
 
   const getInitData = async () => {
     setLoading(true);
+    ListRoleById
+    const roleDetailRes = await ListRoleById(JSON.parse(localStorage.getItem("currentUser"))?.role);
+    let roleName = "ordinary";
+    if (roleDetailRes?.status === 200) {
+      roleName = roleDetailRes.data.name;
+    }
     let memberData = {
       name: JSON.parse(localStorage.getItem("currentUser"))?.name,
       email: JSON.parse(localStorage.getItem("currentUser"))?.email,
@@ -159,7 +166,7 @@ function ProfileSettings() {
     setFullNameOld(memberData.name)
     setEmail(memberData.email)
     setEmailOld(memberData.email)
-    setRole(memberData.role)
+    setRole(roleName)
     setPasswordLastChanged(memberData.passwordLastChanged?.substring(0, 10))
 
     const mySteam64 = JSON.parse(localStorage.getItem("currentUser"))?.steam64

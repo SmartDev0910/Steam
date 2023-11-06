@@ -2,16 +2,16 @@
 const express = require("express");
 const router = express.Router();
 
-const applicationTypeontroller = require("../controllers/applicationTypeController");
+const applicationTypeController = require("../controllers/applicationTypeController");
 
-router.get("/", applicationTypeontroller.ListApplicationTypes);
-router.get("/:_id", applicationTypeontroller.ListApplicationTypeById);
-router.get("/:_id/list", applicationTypeontroller.ListAppliedMembers);
+router.get("/", applicationTypeController.ListApplicationTypes);
+router.get("/:_id", applicationTypeController.ListApplicationTypeById);
+router.get("/:_id/list", applicationTypeController.ListAppliedMembers);
 
-router.post("/create", applicationTypeontroller.CreateApplicationType);
+router.post("/create", applicationTypeController.CreateApplicationType);
 
-router.put("/:_id", applicationTypeontroller.UpdateApplicationTypeById);
+router.put("/:_id", applicationTypeController.UpdateApplicationTypeById);
 
-router.delete("/:id", applicationTypeontroller.DeleteApplicationTypeById);
+router.delete("/:id", applicationTypeController.DeleteApplicationTypeById);
 
 module.exports = router;

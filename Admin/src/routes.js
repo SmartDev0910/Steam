@@ -38,6 +38,7 @@ Coded by www.creative-tim.com
 // Soft UI Dashboard React layouts
 import SignIn from "layouts/authentication/sign-in";
 import Members from "layouts/members";
+import Roles from "layouts/roles";
 import ChangeLogs from "layouts/change-logs";
 import StarterGuide from "layouts/starter-guide";
 import NewsLetter from "layouts/news-letter";
@@ -52,6 +53,7 @@ import TextSnippetOutlinedIcon from "@mui/icons-material/TextSnippetOutlined";
 import AutoStoriesOutlinedIcon from "@mui/icons-material/AutoStoriesOutlined";
 import TaskOutlinedIcon from "@mui/icons-material/TaskOutlined";
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
 const routes = [
   {
@@ -62,6 +64,15 @@ const routes = [
     icon: <PeopleAltOutlinedIcon size="12px" />,
     component: <Members />,
     noCollapse: false,
+  },
+  {
+    type: "collapse",
+    name: "Roles",
+    key: "roles",
+    route: "/roles",
+    icon: <SupervisorAccountIcon size="12px" />,
+    component: <Roles />,
+    noCollapse: true,
   },
   {
     type: "collapse",

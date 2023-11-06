@@ -50,6 +50,7 @@ import { Rings } from "react-loader-spinner";
 
 // Data
 import { MembersAll, MembersUpdate } from "actions/membersAction";
+import { ListRoleById } from "actions/rolesAction";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -121,7 +122,7 @@ function Members() {
   const handleClickOpen = (member) => {
     setActiveMember(member);
     setOpen(true);
-    setRoleValue(member.role)
+    setRoleValue(member.roleName)
 
     // prepare application table in modal
     if (member.applications?.length) {
@@ -183,9 +184,18 @@ function Members() {
     const members = await MembersAll();
     if (members?.status === 200) {
       if (members?.data?.length) {
+        for (let i = 0; i < members.data.length; i++) {
+          const roleDetailRes = await ListRoleById(members.data[i].role);
+          let roleName = "ordinary";
+          if (roleDetailRes?.status === 200) {
+            roleName = roleDetailRes.data.name;
+          }
+          members.data[i].roleName = roleName
+        }
+
         let data = [];
         members?.data?.map((member, index) => {
-          if (member.role === "superadmin") return;
+          if (member.roleName === "superadmin" || member.role === "1") return;
           data.push({
             no: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
@@ -223,7 +233,7 @@ function Members() {
             ),
             role: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-                {member.role}
+                {member.roleName}
               </SoftTypography>
             ),
             action: (
@@ -280,7 +290,7 @@ function Members() {
               },
             }}
           >
-            {rowsMember.length ? (
+            {rowsMember.length >= 0 ? (
               <Table columns={columnsMember} rows={rowsMember} />
             ) : (
               <SoftBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
@@ -417,7 +427,7 @@ function Members() {
                   Role:
                 </SoftTypography>
                 <SoftTypography variant="h6" color={"dark"}>
-                  {activeMember?.role}
+                  {activeMember?.roleName}
                 </SoftTypography>
               </SoftBox>
               <SoftBox sx={{ display: "flex" }}>
@@ -429,11 +439,11 @@ function Members() {
                     value={roleValue}
                     onChange={(e) => handleRoleChange(e, activeMember._id)}
                   >
-                    <FormControlLabel value="ordinary" control={<Radio />} label="Ordinary" />
-                    <FormControlLabel value="app team" control={<Radio />} label="AppTeam" />
-                    <FormControlLabel value="moderator" control={<Radio />} label="Moderator" />
-                    <FormControlLabel value="administrator" control={<Radio />} label="Administrator" />
-                    <FormControlLabel value="superadmin" control={<Radio />} label="Superadmin" />
+                    <FormControlLabel value="5" control={<Radio />} label="Ordinary" />
+                    <FormControlLabel value="4" control={<Radio />} label="Moderator" />
+                    <FormControlLabel value="3" control={<Radio />} label="AppTeam" />
+                    <FormControlLabel value="2" control={<Radio />} label="Administrator" />
+                    <FormControlLabel value="1" control={<Radio />} label="Superadmin" />
                   </RadioGroup>
                 </FormControl>
               </SoftBox>
@@ -442,7 +452,7 @@ function Members() {
               <SoftTypography variant="h6" color={"dark"}>
                 Applications
               </SoftTypography>
-              {rowsApplication.length ? (
+              {rowsApplication.length >= 0 ? (
                 <Table columns={columnsApplication} rows={rowsApplication} />
               ) : (
                 <SoftBox display="flex" justifyContent="space-between" alignItems="center">
