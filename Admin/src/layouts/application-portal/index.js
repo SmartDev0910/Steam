@@ -98,6 +98,22 @@ function ApplicationPortal() {
     getInitData();
   }, []);
 
+  const listApplicants = (index) => {
+    const myRole = JSON.parse(localStorage.getItem("currentUser"))?.role;
+    if (myRole == "1" || myRole == "2" || myRole == "3")
+      navigate(`/application-portal/list?application_type_id=${myApplicationTypes[index]._id}`);
+    else
+      toast.error("You don't have permission to review applications");
+  }
+
+  const createNewApplicationType = () => {
+    const myRole = JSON.parse(localStorage.getItem("currentUser"))?.role;
+    if (myRole == "1" || myRole == "2" || myRole == "3")
+      navigate(`/application-portal/create`);
+    else
+      toast.error("You don't have permission to create a new applications");
+  }
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -128,7 +144,7 @@ function ApplicationPortal() {
                       border: "2px solid grey",
                       float: "right",
                     }}
-                    onClick={() => navigate(`/application-portal/list?application_type_id=${myApplicationTypes[index]._id}`)}
+                    onClick={() => listApplicants(index)}
                   >
                     <SoftAvatar src={getApplicationLogo(index)} sx={{ width: "70px", height: "90px" }} />
                     <SoftTypography sx={{ mt: "10px" }}>{myApplicationTypes[index].title}</SoftTypography>
@@ -151,7 +167,7 @@ function ApplicationPortal() {
                 border: "2px solid grey",
                 float: "right",
               }}
-              onClick={() => navigate(`/application-portal/create`)}
+              onClick={() => createNewApplicationType()}
             >
               <AddCircleOutlineOutlinedIcon sx={{ width: "70px", height: "90px" }} />
               <SoftTypography sx={{ mt: "10px" }}>New Application</SoftTypography>

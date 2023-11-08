@@ -49,10 +49,14 @@ function SignIn() {
   const handleSignIn = async () => {
     const response = await MembersSignIn(email, password);
     if (response?.status === 200) {
-      toast.success("Success");
-      setAuthentication(dispatch, JSON.stringify(response?.data?.result));
-      localStorage.setItem("token", JSON.stringify(response?.data?.token));
-      window.location.pathname = "/members";
+      if (response?.data?.result.role == "5") { // not allow ordinary user
+        toast.error("You don't have permission to sign in to this platform");
+      } else {
+        toast.success("Success");
+        setAuthentication(dispatch, JSON.stringify(response?.data?.result));
+        localStorage.setItem("token", JSON.stringify(response?.data?.token));
+        window.location.pathname = "/members";
+      }
     } else toast.error(response.data);
   };
 

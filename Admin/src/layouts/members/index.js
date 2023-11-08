@@ -103,9 +103,18 @@ function Members() {
   const [open, setOpen] = useState(false);
   const [activeMember, setActiveMember] = useState(null);
 
-  const [roleValue, setRoleValue] = useState('ordinary');
+  const [roleValue, setRoleValue] = useState("5");
 
   const handleRoleChange = async (event, memberID) => {
+    const myRole = JSON.parse(localStorage.getItem("currentUser"))?.role;
+    if (myRole == "3" || myRole == "5") { // app team and ordinary forbidden
+      toast.error("You don't have permission to change the member's role");
+      return;
+    }
+    if (activeMember.role == "5" && activeMember.mfaEnabled == false) {
+      toast.error("This member didn't enable MFA.");
+      return;
+    }
     setRoleValue(event.target.value);
     handleClose();
     setLoading(true);
@@ -122,7 +131,7 @@ function Members() {
   const handleClickOpen = (member) => {
     setActiveMember(member);
     setOpen(true);
-    setRoleValue(member.roleName)
+    setRoleValue(member.role)
 
     // prepare application table in modal
     if (member.applications?.length) {
@@ -168,6 +177,11 @@ function Members() {
   };
 
   const handleChangeBan = async (memberID, isBanned) => {
+    const myRole = JSON.parse(localStorage.getItem("currentUser"))?.role;
+    if (myRole == "3" || myRole == "5") { // app team and ordinary forbidden
+      toast.error("You don't have permission to ban member's access");
+      return;
+    }
     handleClose();
     setLoading(true);
     const members = await MembersUpdate(memberID, {isBanned: !isBanned});
@@ -193,9 +207,10 @@ function Members() {
           members.data[i].roleName = roleName
         }
 
+        const myMemberID = JSON.parse(localStorage.getItem("currentUser"))?._id;
         let data = [];
         members?.data?.map((member, index) => {
-          if (member.roleName === "superadmin" || member.role === "1") return;
+          if (member._id === myMemberID) return; //skip myself
           data.push({
             no: (
               <SoftTypography variant="caption" color="secondary" fontWeight="medium">
