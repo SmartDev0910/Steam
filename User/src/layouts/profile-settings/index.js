@@ -118,13 +118,17 @@ function ProfileSettings() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [role, setRole] = useState("");
+  const [mfaEnabled, setMfaEnabled] = useState("");
+  const [mfaPhoneNumberOld, setMfaPhoneNumberOld] = useState("");
+  const [mfaPhoneNumber, setMfaPhoneNumber] = useState("");
   const [isSteamConnected, setIsSteamConnected] = useState(false);
   const [isDiscordConnected, setIsDiscordConnected] = useState(false);
   const [isOpenNamePane, setIsOpenNamePane] = useState(false);
   const [isOpenPasswordPane, setIsOpenPasswordPane] = useState(false);
+  const [isOpenMfaPhoneNumberPane, setIsOpenMfaPhoneNumberPane] = useState(false);
   const [isEditNameAndEmail, setIsEditNameAndEmail] = useState(false);
+  const [isEditMfaPhoneNumber, setIsEditMfaPhoneNumber] = useState(false);
   const [isChangePassword, setIsChangePassword] = useState(false);
-  const [isTwoStepVerification, setIsTwoSteamVerification] = useState(false);
 
   const handleConnectSteam = () => {
     if (isSteamConnected) {
@@ -150,24 +154,14 @@ function ProfileSettings() {
     if (roleDetailRes?.status === 200) {
       roleName = roleDetailRes.data.name;
     }
-    let memberData = {
-      name: JSON.parse(localStorage.getItem("currentUser"))?.name,
-      email: JSON.parse(localStorage.getItem("currentUser"))?.email,
-      role: JSON.parse(localStorage.getItem("currentUser"))?.role,
-      ipAddress: JSON.parse(localStorage.getItem("currentUser"))?.ipAddress,
-      isBanned: JSON.parse(localStorage.getItem("currentUser"))?.isBanned,
-      isWhiteListed: JSON.parse(localStorage.getItem("currentUser"))?.isWhiteListed,
-      password: JSON.parse(localStorage.getItem("currentUser"))?.password,
-      passwordLastChanged: JSON.parse(localStorage.getItem("currentUser"))?.passwordLastChanged,
-      steam64: JSON.parse(localStorage.getItem("currentUser"))?.steam64,
-      discordID: JSON.parse(localStorage.getItem("currentUser"))?.discordID,
-    };
-    setFullName(memberData.name)
-    setFullNameOld(memberData.name)
-    setEmail(memberData.email)
-    setEmailOld(memberData.email)
+    setFullName(JSON.parse(localStorage.getItem("currentUser"))?.name)
+    setFullNameOld(JSON.parse(localStorage.getItem("currentUser"))?.name)
+    setEmail(JSON.parse(localStorage.getItem("currentUser"))?.email)
+    setEmailOld(JSON.parse(localStorage.getItem("currentUser"))?.email)
     setRole(roleName)
-    setPasswordLastChanged(memberData.passwordLastChanged?.substring(0, 10))
+    setMfaEnabled(JSON.parse(localStorage.getItem("currentUser"))?.mfaEnabled)
+    setMfaPhoneNumber(JSON.parse(localStorage.getItem("currentUser"))?.mfaPhoneNumber)
+    setPasswordLastChanged(JSON.parse(localStorage.getItem("currentUser"))?.passwordLastChanged?.substring(0, 10))
 
     const mySteam64 = JSON.parse(localStorage.getItem("currentUser"))?.steam64
     const myDiscord = JSON.parse(localStorage.getItem("currentUser"))?.discordID
@@ -176,7 +170,6 @@ function ProfileSettings() {
     if (myDiscord && myDiscord.length > 0) setIsDiscordConnected(true);
 
     if (steam64) {
-      memberData.steam64 = steam64;
 
       const resUser = await MembersUpdate(
         JSON.parse(localStorage.getItem("currentUser"))?._id,
@@ -193,7 +186,6 @@ function ProfileSettings() {
     }
 
     if (discordID) {
-      memberData.discordID = discordID;
 
       const resUser = await MembersUpdate(
         JSON.parse(localStorage.getItem("currentUser"))?._id,
@@ -234,6 +226,29 @@ function ProfileSettings() {
       localStorage.setItem("currentUser", JSON.stringify(memberData))
 
       setIsEditNameAndEmail(false);
+    } else {
+      toast.error("Technical error encountered");
+    }
+    setLoading(false);
+  };
+
+  const handleSaveMfaPhoneNumber = async () => {
+    setLoading(true);
+    const resUser = await MembersUpdate(
+      JSON.parse(localStorage.getItem("currentUser"))?._id,
+      { mfaEnabled: true, mfaPhoneNumber: mfaPhoneNumberOld }
+    );
+    if (resUser?.status === 200) {
+      toast.success("Successfully updated");
+      setMfaEnabled(true)
+      setMfaPhoneNumber(mfaPhoneNumberOld)
+
+      const memberData = JSON.parse(localStorage.getItem("currentUser"));
+      memberData.mfaEnabled = true;
+      memberData.mfaPhoneNumber = mfaPhoneNumberOld;
+      localStorage.setItem("currentUser", JSON.stringify(memberData))
+
+      setIsEditMfaPhoneNumber(false);
     } else {
       toast.error("Technical error encountered");
     }
@@ -494,7 +509,6 @@ function ProfileSettings() {
                         color="info"
                         onClick={() => {
                           setIsEditNameAndEmail(false);
-                          // setIsOpenNamePane(false);
                         }}
                       >
                         Cancel
@@ -686,7 +700,10 @@ function ProfileSettings() {
               mb: "20px",
             }}
           >
-            <Accordion>
+            <Accordion
+              expanded={isOpenMfaPhoneNumberPane}
+              onChange={() => setIsOpenMfaPhoneNumberPane(!isOpenMfaPhoneNumberPane)}
+            >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
@@ -694,8 +711,15 @@ function ProfileSettings() {
               >
                 <SoftBox sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
                   <SoftTypography>Two-Step Verification</SoftTypography>
-                  <SoftTypography color={"info"} mr="20px">
-                    Turn On
+                  <SoftTypography
+                    color={"info"}
+                    mr="20px"
+                    onClick={() => {
+                      setIsEditMfaPhoneNumber(true);
+                      setIsOpenMfaPhoneNumberPane(true);
+                    }}
+                  >
+                    {mfaEnabled ? "Change" : "Turn On"}
                   </SoftTypography>
                 </SoftBox>
               </AccordionSummary>
@@ -711,20 +735,53 @@ function ProfileSettings() {
                   }}
                 >
                   <Grid container direction="column">
-                    <Grid item lg="12">
-                      <SoftTypography sx={{ color: "grey" }}>
-                        What is two-step verification?
-                      </SoftTypography>
-                    </Grid>
-                    <Grid item lg="12" mt="10px">
-                      <SoftTypography>
-                        Two-step verification is a way to use account more securely. When you
-                        perform certain account-related actions, we&apos;ll send a code to your
-                        mobile phone that you enter to verify it&apos;s you.
-                      </SoftTypography>
-                    </Grid>
+                    {isEditMfaPhoneNumber ? (
+                      <SoftInput
+                      value={mfaPhoneNumberOld}
+                      onChange={(e) => setMfaPhoneNumberOld(e.target.value)}
+                      placeholder={"Enter your phone number"}
+                      />
+                    ) : (
+                      !mfaEnabled ? (
+                        <>
+                          <Grid item lg="12">
+                            <SoftTypography sx={{ color: "grey" }}>
+                              What is two-step verification?
+                            </SoftTypography>
+                          </Grid>
+                          <Grid item lg="12" mt="10px">
+                            <SoftTypography>
+                              Two-step verification is a way to use account more securely. When you
+                              perform certain account-related actions, we&apos;ll send a code to your
+                              mobile phone that you enter to verify it&apos;s you.
+                            </SoftTypography>
+                          </Grid>
+                        </>
+                      ) : (
+                        <SoftTypography ml="30px">Your number is {mfaPhoneNumber}</SoftTypography>
+                      )
+                    )}
                   </Grid>
                 </SoftBox>
+                {isEditMfaPhoneNumber ? (
+                  <SoftBox sx={{ display: "flex", justifyContent: "center" }} mt="30px">
+                    <SoftButton variant="gradient" color="info" onClick={handleSaveMfaPhoneNumber}>
+                      Save
+                    </SoftButton>
+                    <SoftBox width="20px"></SoftBox>
+                    <SoftButton
+                      variant="outlined"
+                      color="info"
+                      onClick={() => {
+                        setIsEditMfaPhoneNumber(false);
+                      }}
+                    >
+                      Cancel
+                    </SoftButton>
+                  </SoftBox>
+                ) : (
+                  ""
+                )}
               </AccordionDetails>
             </Accordion>
           </SoftBox>
