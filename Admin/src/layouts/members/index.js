@@ -49,6 +49,7 @@ import { Rings } from "react-loader-spinner";
 
 // Data
 import { MembersAll, MembersUpdate } from "actions/membersAction";
+import { ListApplicationTypeById } from "actions/applicationsAction";
 import { ListRoleById } from "actions/rolesAction";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -137,13 +138,22 @@ function Members() {
     setLoading(false);
   };
 
-  const handleClickOpen = (member) => {
+  const handleClickOpen = async (member) => {
     setActiveMember(member);
     setOpen(true);
     setRoleValue(member.role)
 
     // prepare application table in modal
     if (member.applications?.length) {
+      for (let i = 0; i < member.applications.length; i++) {
+        const applicationTypeDetailRes = await ListApplicationTypeById(member.applications[i].applicationTypeId);
+        let applicationTypeTitle = "Whitelist application";
+        if (applicationTypeDetailRes?.status === 200) {
+          applicationTypeTitle = applicationTypeDetailRes.data.title;
+        }
+        member.applications[i].applicationTypeTitle = applicationTypeTitle
+      }
+
       let data = [];
       member.applications?.map((application, index) => {
         data.push({
@@ -154,7 +164,7 @@ function Members() {
           ),
           type: (
             <SoftTypography variant="caption" color="secondary" fontWeight="medium">
-              {application.applicationTypeId}
+              {application.applicationTypeTitle}
             </SoftTypography>
           ),
           status: (

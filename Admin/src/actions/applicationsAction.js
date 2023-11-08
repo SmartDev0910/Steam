@@ -14,6 +14,20 @@ export const ApplicationTypesAll = async () => {
   }
 };
 
+export const ListApplicationTypeById = async (id) => {
+  try {
+    const authorization = JSON.parse(localStorage.getItem("token"))
+    const response = await axios.get(`/api/application_types/${id}`, {
+			headers: {
+				authorization
+			}
+		});
+    return response;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const CreateApplicationType = async (applicationType) => {
   try {
     const authorization = JSON.parse(localStorage.getItem("token"))
