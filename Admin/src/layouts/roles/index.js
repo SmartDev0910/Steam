@@ -38,7 +38,7 @@ import Table from "examples/Tables/Table";
 import Footer from "examples/Footer";
 
 import { Rings } from "react-loader-spinner";
-import { toast } from "react-toastify";
+import Alert from '@mui/material/Alert';
 
 import { RolesAll, CreateRole, DeleteRole } from "actions/rolesAction";
 
@@ -75,7 +75,16 @@ function Roles() {
   const [rowsRolesList, setRowsRolesList] = useState([]);
   const [roleTitle, setRoleTitle] = useState("");
   const [roleID, setRoleID] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("success");
+  const [alertVisible, setAlertVisible] = useState("none");
+  const [alertMessage, setAlertMessage] = useState("");
 
+  const showAlert = (msg, isError) => {
+    setAlertVisible("visible");
+    setAlertSeverity(isError ? "error" : "success");
+    setAlertMessage(msg);
+  }
+  
   const columnsRolesList = [
     { name: "no", align: "center" },
     { name: "role Name", align: "center" },
@@ -131,7 +140,7 @@ function Roles() {
         setRowsRolesList([]);
       }
     } else {
-      toast.error("Technical Error Encountered");
+      showAlert("Technical Error Encountered", true);
     }
   }
 
@@ -140,8 +149,9 @@ function Roles() {
     const rolesList = await DeleteRole(roleID);
     if (rolesList?.status === 200) {
       await resetRolesList();
+      showAlert("Successfully deleted the role", false);
     } else {
-      toast.error("Technical Error Encountered");
+      showAlert("Technical Error Encountered", true);
     }
     setLoading(false);
   }
@@ -167,15 +177,15 @@ function Roles() {
   const handleCreateRole = async () => {
     setLoading(true);
     if (roleTitle == "" || roleID == "") {
-      toast.error("Please fill in the required fields");
+      showAlert("Please fill in the required fields", true);
     } else {
-      const newAppRes = await CreateRole({name: roleTitle, roleID});
+      const newAppRes = await CreateRole({ name: roleTitle, roleID });
       if (newAppRes?.status === 200) {
-        toast.success("Successfully created a new role");
+        showAlert("Successfully created a new role", false);
         handleClose();
         await resetRolesList();
       } else {
-        toast.error("Error");
+        showAlert("Technical Error Encountered", true);
       }
     }
     setLoading(false);
@@ -189,6 +199,7 @@ function Roles() {
           <Rings color="#4FC0AE" height={120} width={120} />
         </div>
       )}
+      <Alert severity={alertSeverity} onClose={() => { setAlertVisible("none") }} sx={{ display: alertVisible }}>{alertMessage}</Alert>
       <SoftBox py={3} mx="20px">
         <Grid item lg={12} sx={{ display: "flex", justifyContent: "flex-end", mb: "10px" }}>
           <SoftButton

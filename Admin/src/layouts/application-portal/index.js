@@ -33,7 +33,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 import { Rings } from "react-loader-spinner";
-import { toast } from "react-toastify";
+import Alert from '@mui/material/Alert';
 
 import DevIcon from "assets/images/dev-icon.png";
 import WhitelistIcon from "assets/images/whitelist-icon.png";
@@ -64,6 +64,16 @@ function ApplicationPortal() {
   const [loading, setLoading] = useState(false);
   const [myApplicationTypes, setMyApplicationTypes] = useState([]);
 
+  const [alertSeverity, setAlertSeverity] = useState("success");
+  const [alertVisible, setAlertVisible] = useState("none");
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const showAlert = (msg, isError) => {
+    setAlertVisible("visible");
+    setAlertSeverity(isError ? "error" : "success");
+    setAlertMessage(msg);
+  }
+
   const getInitData = async () => {
     setLoading(true);
     await resetApplicationTypes();
@@ -79,7 +89,7 @@ function ApplicationPortal() {
         setMyApplicationTypes([]);
       }
     } else {
-      toast.error("Error");
+      showAlert("Technical Error Encountered", true);
     }
   }
 
@@ -103,7 +113,7 @@ function ApplicationPortal() {
     if (myRole == "1" || myRole == "2" || myRole == "3")
       navigate(`/application-portal/list?application_type_id=${myApplicationTypes[index]._id}`);
     else
-      toast.error("You don't have permission to review applications");
+      showAlert("You don't have permission to review applications", true);
   }
 
   const createNewApplicationType = () => {
@@ -111,7 +121,7 @@ function ApplicationPortal() {
     if (myRole == "1" || myRole == "2" || myRole == "3")
       navigate(`/application-portal/create`);
     else
-      toast.error("You don't have permission to create a new applications");
+      showAlert("You don't have permission to create a new application", true);
   }
 
   return (
@@ -122,6 +132,7 @@ function ApplicationPortal() {
           <Rings color="#4FC0AE" height={120} width={120} />
         </div>
       )}
+      <Alert severity={alertSeverity} onClose={() => { setAlertVisible("none") }} sx={{ display: alertVisible }}>{alertMessage}</Alert>
       <SoftBox p={3}>
         <Grid container spacing={1}>
           {

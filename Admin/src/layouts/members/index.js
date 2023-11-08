@@ -44,8 +44,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import Table from "examples/Tables/Table";
 
-import Select from "react-select";
-import { toast } from "react-toastify";
+import Alert from '@mui/material/Alert';
 import { Rings } from "react-loader-spinner";
 
 // Data
@@ -105,14 +104,24 @@ function Members() {
 
   const [roleValue, setRoleValue] = useState("5");
 
+  const [alertSeverity, setAlertSeverity] = useState("success");
+  const [alertVisible, setAlertVisible] = useState("none");
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const showAlert = (msg, isError) => {
+    setAlertVisible("visible");
+    setAlertSeverity(isError ? "error" : "success");
+    setAlertMessage(msg);
+  }
+
   const handleRoleChange = async (event, memberID) => {
     const myRole = JSON.parse(localStorage.getItem("currentUser"))?.role;
     if (myRole == "3" || myRole == "5") { // app team and ordinary forbidden
-      toast.error("You don't have permission to change the member's role");
+      showAlert("You don't have permission to change the member's role", true);
       return;
     }
     if (activeMember.role == "5" && activeMember.mfaEnabled == false) {
-      toast.error("This member didn't enable MFA.");
+      showAlert("This member didn't enable MFA.", true);
       return;
     }
     setRoleValue(event.target.value);
@@ -121,9 +130,9 @@ function Members() {
     const members = await MembersUpdate(memberID, {role: event.target.value});
     if (members?.status === 200) {
       await resetMemberData();
-      toast.success("Successfully updated");
+      showAlert("Successfully updated", false);
     } else {
-      toast.error("Error");
+      showAlert("Technical Error Encountered", true);
     }
     setLoading(false);
   };
@@ -179,7 +188,7 @@ function Members() {
   const handleChangeBan = async (memberID, isBanned) => {
     const myRole = JSON.parse(localStorage.getItem("currentUser"))?.role;
     if (myRole == "3" || myRole == "5") { // app team and ordinary forbidden
-      toast.error("You don't have permission to ban member's access");
+      showAlert("You don't have permission to ban member's access", true);
       return;
     }
     handleClose();
@@ -187,9 +196,9 @@ function Members() {
     const members = await MembersUpdate(memberID, {isBanned: !isBanned});
     if (members?.status === 200) {
       await resetMemberData();
-      toast.success("Successfully updated");
+      showAlert("Successfully updated", false);
     } else {
-      toast.error("Error");
+      showAlert("Technical Error Encountered", true);
     }
     setLoading(false);
   }
@@ -277,7 +286,7 @@ function Members() {
         setRowsMember([]);
       }
     } else {
-      toast.error("Error");
+      showAlert("Technical Error Encountered", true);
     }
   }
 
@@ -293,6 +302,7 @@ function Members() {
           <Rings color="#1383C3" height={240} width={240} />
         </div>
       )}
+      <Alert severity={alertSeverity} onClose={() => { setAlertVisible("none") }} sx={{ display: alertVisible }}>{alertMessage}</Alert>
       <SoftBox py={3} mx="20px">
         <Card>
           <SoftBox
@@ -321,7 +331,7 @@ function Members() {
         aria-labelledby="customized-dialog-title"
         open={open}
         sx={{
-          "& .css-lzee2o-MuiPaper-root-MuiDialog-paper": { maxWidth: "50%" },
+          "& .css-lzee2o-MuiPaper-root-MuiDialog-paper": { maxWidth: "50%", marginTop: "150px" },
         }}
       >
         <DialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">

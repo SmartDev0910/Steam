@@ -37,7 +37,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
 import { Rings } from "react-loader-spinner";
-import { toast } from "react-toastify";
+import Alert from '@mui/material/Alert';
 
 import { CreateApplicationType } from "actions/applicationsAction";
 
@@ -65,6 +65,16 @@ function NewApplication() {
   const [roleValue, setRoleValue] = useState('administrator');
   const [permissionValue, setPermissionValue] = useState('whitelist');
 
+  const [alertSeverity, setAlertSeverity] = useState("success");
+  const [alertVisible, setAlertVisible] = useState("none");
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const showAlert = (msg, isError) => {
+    setAlertVisible("visible");
+    setAlertSeverity(isError ? "error" : "success");
+    setAlertMessage(msg);
+  }
+
   const handleRoleChange = async (event) => {
     setRoleValue(event.target.value);
   };
@@ -86,10 +96,10 @@ function NewApplication() {
     const newAppRes = await CreateApplicationType({title: applicationTypeTitle, userGr
     : roleValue, permission: permissionValue});
     if (newAppRes?.status === 200) {
-      toast.success("Successfully created a new application");
+      showAlert("Successfully created a new application", false);
       navigate(`/application-portal`);
     } else {
-      toast.error("Error");
+      showAlert("Technical Error Encountered", true);
     }
   }
 
@@ -101,6 +111,7 @@ function NewApplication() {
           <Rings color="#4FC0AE" height={120} width={120} />
         </div>
       )}
+      <Alert severity={alertSeverity} onClose={() => { setAlertVisible("none") }} sx={{ display: alertVisible }}>{alertMessage}</Alert>
       <Grid container spacing={1} alignItems="center" sx={{ padding: "10px", marginTop: "50px" }}>
         <Grid item lg={2}></Grid>
         <Grid item lg={3}>

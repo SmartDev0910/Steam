@@ -38,7 +38,7 @@ import Table from "examples/Tables/Table";
 import Footer from "examples/Footer";
 
 import { Rings } from "react-loader-spinner";
-import { toast } from "react-toastify";
+import Alert from '@mui/material/Alert';
 
 import { ApplicationList, ReviewApplication } from "actions/applicationsAction";
 import { ListRoleById } from "actions/rolesAction";
@@ -78,6 +78,16 @@ function ApplyList() {
   const [open, setOpen] = useState(false);
   const [activeMember, setActiveMember] = useState(null);
   const [rowsApplicationList, setRowsApplicationList] = useState([]);
+
+  const [alertSeverity, setAlertSeverity] = useState("success");
+  const [alertVisible, setAlertVisible] = useState("none");
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const showAlert = (msg, isError) => {
+    setAlertVisible("visible");
+    setAlertSeverity(isError ? "error" : "success");
+    setAlertMessage(msg);
+  }
 
   const columnsApplicationList = [
     { name: "no", align: "center" },
@@ -170,7 +180,7 @@ function ApplyList() {
         setRowsApplicationList([]);
       }
     } else {
-      toast.error("Technical Error Encountered");
+      showAlert("Technical Error Encountered", true);
     }
   }
 
@@ -180,9 +190,9 @@ function ApplyList() {
     if (reviewApplicationRes?.status === 200) {
       handleClose();
       await resetApplicationList();
-      toast.success("Successfully updated");
+      showAlert("Successfully updated", false);
     } else {
-      toast.error("Technical Error Encountered");
+      showAlert("Technical Error Encountered", true);
     }
     setLoading(false);
   }
@@ -214,6 +224,7 @@ function ApplyList() {
           <Rings color="#4FC0AE" height={120} width={120} />
         </div>
       )}
+      <Alert severity={alertSeverity} onClose={() => { setAlertVisible("none") }} sx={{ display: alertVisible }}>{alertMessage}</Alert>
       <SoftBox py={3} mx="20px">
         <Card>
           <SoftBox
