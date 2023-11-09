@@ -28,6 +28,7 @@ const loginRoutes = require("./routes/loginRoutes");
 const roleRoutes = require("./routes/roleRoutes");
 const memberRoutes = require("./routes/memberRoutes");
 const applicationTypeRoutes = require("./routes/applicationTypeRoutes");
+const starterGuideRoutes = require("./routes/starterGuideRoutes");
 const changelogRoutes = require("./routes/changelogRoutes");
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -172,6 +173,7 @@ app.use("/api/auth", loginRoutes);
 app.use("/api/roles", verifyToken, roleRoutes);
 app.use("/api/members", verifyToken, memberRoutes);
 app.use("/api/application_types", verifyToken, applicationTypeRoutes);
+app.use("/api/starter_guides", verifyToken, starterGuideRoutes);
 // app.use("/api", verifyToken, changelogRoutes);
 
 const port = BACKEND_PORT || 8080;

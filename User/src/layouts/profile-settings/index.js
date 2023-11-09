@@ -148,7 +148,6 @@ function ProfileSettings() {
 
   const getInitData = async () => {
     setLoading(true);
-    ListRoleById
     const roleDetailRes = await ListRoleById(JSON.parse(localStorage.getItem("currentUser"))?.role);
     let roleName = "ordinary";
     if (roleDetailRes?.status === 200) {
