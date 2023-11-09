@@ -2,20 +2,33 @@
 const StarterGuide = require("../models/starterGuide");
 
 exports.CreateStarterGuide = (req, res, next) => {
-
-  const newStarterGuide = new StarterGuide({
-    content: req.body.content ? req.body.content : "",
-    version: "1.0",
-  });
-
-  newStarterGuide
-    .save()
+  const version = "1.0";
+  StarterGuide.findOne({ version })
     .then((resStarterGuide) => {
-      res.status(200).send(resStarterGuide);
+      if (resStarterGuide) {
+        resStarterGuide = Object.assign(resStarterGuide, req.body);
+
+        resStarterGuide
+          .save()
+          .then((editStarterGuide) => res.status(200).send(editStarterGuide))
+          .catch((err) => {
+            res.status(400).send(err)
+          });
+      } else {
+        const newStarterGuide = new StarterGuide({
+          content: req.body.content ? req.body.content : "",
+          version,
+        });
+
+        newStarterGuide
+          .save()
+          .then((resStarterGuide) => {
+            res.status(200).send(resStarterGuide);
+          })
+          .catch((err) => res.status(400).send(err));
+      }
     })
-    .catch((err) => {
-      res.status(400).send(err);
-    });
+    .catch((err) => res.status(400).send(err));
 };
 
 exports.ListStarterGuides = (req, res, next) => {

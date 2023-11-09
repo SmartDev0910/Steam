@@ -75,7 +75,6 @@ function StarterGuide() {
 
   const handleSaveStarterGuide = async () => {
     setLoading(true);
-    // use one of CreateStarterGuide or StarterGuideUpdate
     const res = await CreateStarterGuide(
       { content: myStarterGuideOld }
     );
