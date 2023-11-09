@@ -40,9 +40,8 @@ import SoftAvatar from "components/SoftAvatar";
 
 import AudioReactRecorder, { RecordState } from "audio-react-recorder";
 
-import { ListApplicationTypeById, Apply, fileUpload } from "actions/applicationAction";
+import { ListApplicationTypeById, Apply } from "actions/applicationAction";
 import { ListMemberById } from "actions/membersAction";
-import { REACT_APP_SERVER_IP } from "actions/config";
 
 import { formatTime, blobToBase64 } from "layouts/utils";
 
@@ -112,7 +111,6 @@ function NewApplication() {
   //audioData contains blob and blobUrl
   const onRecordStop = async (audioData) => {
     const base64AudioMessage = await blobToBase64(audioData.blob);
-    console.log(base64AudioMessage);
     setAudioData(base64AudioMessage);
   };
 

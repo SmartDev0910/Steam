@@ -43,6 +43,8 @@ import Alert from '@mui/material/Alert';
 import { ApplicationList, ReviewApplication } from "actions/applicationsAction";
 import { ListRoleById } from "actions/rolesAction";
 
+import { REACT_APP_SERVER_IP } from "actions/config";
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
@@ -104,12 +106,18 @@ function ApplyList() {
     if (applicationList?.status === 200) {
       if (applicationList?.data?.length) {
         for (let i = 0; i < applicationList.data.length; i++) {
+          // set role name
           const roleDetailRes = await ListRoleById(applicationList.data[i].role);
           let roleName = "ordinary";
           if (roleDetailRes?.status === 200) {
             roleName = roleDetailRes.data.name;
           }
           applicationList.data[i].roleName = roleName
+
+          // set audio
+          const myApplications = applicationList.data[i].applications;
+          const currentApplication = myApplications.find(obj => obj.applicationTypeId === applicationTypeId);
+          applicationList.data[i].audio = currentApplication.audio;
         }
 
         let data = [];
@@ -252,9 +260,9 @@ function ApplyList() {
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
-        // sx={{
-        //   "& .css-lzee2o-MuiPaper-root-MuiDialog-paper": { maxWidth: "50%" },
-        // }}
+        sx={{
+          "& .css-lzee2o-MuiPaper-root-MuiDialog-paper": { maxWidth: "50%" },
+        }}
       >
         <DialogTitle sx={{ m: 0, p: 3 }} id="customized-dialog-title">
           <SoftTypography fontWeight="bold" color={"dark"}>
@@ -350,7 +358,7 @@ function ApplyList() {
                 </SoftTypography>
               </SoftBox>
             </Grid>
-            <Grid item lg={12}>
+            <Grid item lg={6}>
               <SoftBox sx={{ display: "flex" }}>
                 <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
                   Role:
@@ -358,6 +366,14 @@ function ApplyList() {
                 <SoftTypography variant="h6" color={"dark"}>
                   {activeMember?.roleName}
                 </SoftTypography>
+              </SoftBox>
+            </Grid>
+            <Grid item lg={12}>
+              <SoftBox sx={{ display: "flex", alignItems: "center" }}>
+                <SoftTypography variant="h6" color={"dark"} mr={"20px"}>
+                  Audio:
+                </SoftTypography>
+                <audio controls src={`${REACT_APP_SERVER_IP}${activeMember?.audio}`} />
               </SoftBox>
             </Grid>
             <Grid item lg={12} sx={{ display: "flex", justifyContent: "flex-end", mt: "20px" }}>

@@ -10,7 +10,6 @@ const passport = require("passport");
 const SteamStrategy = require("passport-steam").Strategy;
 const DiscordStrategy = require("passport-discord").Strategy;
 const jwt = require("jsonwebtoken");
-const multer = require("multer");
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
@@ -114,6 +113,7 @@ app.use(passport.initialize()); //must declared before passport.session()
 app.use(passport.session());
 
 app.get("/api/heartbeat", (req, res) => res.send("Hello World!"));
+app.use('/uploads', express.static('uploads'));
 
 // Steam Routes
 app.get(
@@ -147,26 +147,6 @@ app.get(
 );
 
 app.get("/failed", (req, res) => res.send("You failed to log in!"));
-
-const storage = multer.diskStorage({
-  destination: "uploads/audio",
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + ".wav");
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 100 * 1024 * 1024 },
-});
-
-app.post("/api/upload", upload.single("file"), (req, res) => {
-  // Handle the uploaded file here
-  const file = req.file;
-
-  // Send a response back to the client
-  res.status(200).send(file);
-});
 
 //jwt middleware
 const verifyToken = (req, res, next) => {

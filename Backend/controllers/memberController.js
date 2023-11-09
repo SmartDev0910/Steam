@@ -69,7 +69,7 @@ exports.CreateMember = (req, res, next) => {
 exports.Apply = (req, res, next) => {
   const { _id } = req.params;
   const applicationTypeId = req.body.applicationTypeId ? req.body.applicationTypeId : "";
-  const audio = req.body.audio ? req.body.audio : "";
+  const filePath = req.file.path;
   Member.findOne({ _id })
     .then((resMember) => {
       const myApplications = resMember.applications;
@@ -78,7 +78,7 @@ exports.Apply = (req, res, next) => {
         res.status(400).send("Already Applied");
         return;
       }
-      resMember.applications.push({ applicationTypeId, audio, status: "pending"});
+      resMember.applications.push({ applicationTypeId, audio: filePath, status: "pending"});
       resMember
           .save()
           .then((editMember) => res.status(200).send(editMember))
